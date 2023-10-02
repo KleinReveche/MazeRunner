@@ -8,16 +8,6 @@ public static class Game
     {
         var gameState = new GameState();
         InitConsole();
-
-        string guess;
-        
-        while (true)
-        {
-            guess = Console.ReadLine() ?? string.Empty;
-            if (guess != string.Empty && guess.Length == 5) break;
-        }
-
-        gameState.Guess = guess.ToCharArray();
         
         GameEngine.Play(gameState);
     }
