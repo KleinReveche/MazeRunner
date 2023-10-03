@@ -1,13 +1,11 @@
 ﻿namespace Reveche.MazeRunner;
 
-internal static class MazeRunner
+public static class MazeRunner
 {
     public static void Main(string[] args)
     {
-        Console.Clear();
-        Console.WriteLine("Hello, World!");
-        WorcleQuest.Game.Start();
-
+        var gameState = new GameState();
+        Program.Play(gameState);
         Console.ReadKey();
     }
 }
