@@ -5,8 +5,10 @@ namespace Reveche.WorcleQuest;
 
 internal static class GameEngine
 {
-    internal static void Play(GameState gameState)
+    internal static void Play(GameState gameState, out bool result)
     {
+        var win = false;
+        
         while (true)
         {
             GetGuess(gameState);
@@ -21,23 +23,26 @@ internal static class GameEngine
             if (currentGuess.Count == 5 && currentGuess.All(x => x.Item2 == LetterState.Correct))
             {
                 Console.WriteLine("\nYou win!");
+                win = true;
                 break;
             }
 
             if (gameState.Tries == 5)
             {
-                Console.WriteLine("\n You Lose!");
+                Console.WriteLine($"\n You Lose! The word is {selectedWord}");
                 break;
             }
         
             NextRound(gameState);
         }
+        
+        result = win;
     }
     
     private static void GetGuess(GameState gameState)
     {
-        var wordsList = GetWords();
         string guess;
+        Console.SetCursorPosition(6, 17 + gameState.Tries);
         while (true)
         {
             guess = Console.ReadLine() ?? string.Empty;
@@ -58,11 +63,6 @@ internal static class GameEngine
             {
                 letterState = guess[letterIndex] == letter ? LetterState.Correct : LetterState.Misplaced;
             }
-
-            Console.BackgroundColor = (ConsoleColor)letterState;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write(letter);
-            Console.ResetColor();
 
             currentGuess.Add((letter, letterState));
         }
@@ -109,30 +109,22 @@ internal static class GameEngine
             currentGuess.Add((letter, letterState));
         }
     }
-    
+
     private static void NextRound(GameState gameState)
     {
         gameState.PreviousGuesses.Add(gameState.CurrentGuess);
         gameState.CurrentGuess = new List<(char, LetterState)>();
         gameState.Tries++;
-        Console.Clear();
+        Console.SetCursorPosition(6, 2);
         PrintPreviousGuesses(gameState);
-        PrintCurrentGuess(gameState);
+        //PrintCurrentGuess(gameState);
     }
-    
-    internal static void PrintGameState(GameState gameState)
-    {
-        Console.WriteLine($"Tries: {gameState.Tries}");
-        Console.WriteLine($"Previous Guesses: {gameState.PreviousGuesses.Count}");
-        Console.WriteLine($"Current Guess: {gameState.CurrentGuess.Count}");
-        Console.WriteLine($"Selected Word: {gameState.SelectedWord}");
-        Console.WriteLine($"Guess: {new string(gameState.Guess)}");
-    }
-    
+
     private static void PrintPreviousGuesses(GameState gameState)
     {
         foreach (var previousGuess in gameState.PreviousGuesses)
         {
+            Console.SetCursorPosition(6,17 + gameState.PreviousGuesses.IndexOf(previousGuess));
             foreach (var (letter, letterState) in previousGuess)
             {
                 Console.BackgroundColor = (ConsoleColor)letterState;
@@ -146,6 +138,7 @@ internal static class GameEngine
     
     private static void PrintCurrentGuess(GameState gameState)
     {
+        Console.SetCursorPosition(6,17 + gameState.PreviousGuesses.Count);
         foreach (var (letter, letterState) in gameState.CurrentGuess)
         {
             Console.BackgroundColor = (ConsoleColor)letterState;
