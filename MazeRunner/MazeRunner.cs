@@ -5,7 +5,7 @@ public static class MazeRunner
     public static void Main(string[] args)
     {
         var gameState = new GameState();
-        Program.Play(gameState);
+        Game.Play(gameState);
         Console.ReadKey();
     }
 }

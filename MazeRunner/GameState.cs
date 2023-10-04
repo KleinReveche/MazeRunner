@@ -5,6 +5,7 @@ public class GameState
 
     public int PlayerX { get; set; } = 1;
     public int PlayerY { get; set; } = 1;
+    public int PlayerLife { get; set; } = 3;
     public int CurrentLevel { get; set; } = 1; // Current level number
     public int MaxLevels { get; set; } = 3; // Set the maximum number of levels
     public int EnemyX { get; set; } = 1;

@@ -2,11 +2,10 @@
 
 namespace Reveche.MazeRunner;
 
-public static class Program
+public static class Game
 {
     public static void Play(GameState gameState)
     {
-        
         Console.OutputEncoding = Encoding.UTF8;
         Console.CursorVisible = false;
 
@@ -19,22 +18,39 @@ public static class Program
             
             PrintMaze(gameState);
 
+            if (gameState.PlayerLife == 0)
+            {
+                Console.SetCursorPosition(2,1);
+                Console.WriteLine("🟥🟥🟥🟥🟥🟥🟥🟥");
+                Console.SetCursorPosition(2,2);
+                Console.WriteLine("🟥 Game Over! 🟥");
+                Console.SetCursorPosition(2,3);
+                Console.WriteLine("🟥🟥🟥🟥🟥🟥🟥🟥");
+                break;
+            }
+            
+
             if (gameState.PlayerX == gameState.EnemyX && gameState.PlayerY == gameState.EnemyY)
             {
-                //TODO: Add Game-over message.
-                Console.WriteLine("Game Over");
-                break;
+                //TODO: Add Game-over message. Use Console.SetCursorPosition
+                Console.WriteLine("You died!");
+                gameState.PlayerLife--;
             }
 
             if (gameState.PlayerX == gameState.ExitX && gameState.PlayerY == gameState.ExitY)
             {
+                Console.WriteLine($"Congratulations! You completed level {gameState.CurrentLevel}.");
                 switch (gameState.CurrentLevel)
                 {
                     case 2:
-                        WorcleQuest.Game.Start();
+                        if (!WorcleQuest.Game.Start())
+                        {
+                            gameState.PlayerLife--;
+                            Console.WriteLine("You lost a life!");
+                        }
+
                         break;
                 }
-                Console.WriteLine($"Congratulations! You completed level {gameState.CurrentLevel}.");
                 gameState.CurrentLevel++;
                 if (!(gameState.CurrentLevel <= gameState.MaxLevels))
                 {
@@ -58,11 +74,11 @@ public static class Program
                 gameState.ExitY = 1;
                 gameState.Maze = new[,]
                 {
-                    {"🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥"},
-                    {"🟥", "  ", "🟥", "  ", "  ", "  ", "  ", "🟥", "  ", "🟥"},
-                    {"🟥", "  ", "🟥", "🟥", "  ", "🟥", "  ", "🟥", "  ", "🟥"},
-                    {"🟥", "  ", "  ", "  ", "  ", "🟥", "  ", "  ", "  ", "🟥"},
-                    {"🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥"},
+                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
+                    {"🟩", "  ", "🟩", "  ", "  ", "  ", "  ", "🟩", "  ", "🟩"},
+                    {"🟩", "  ", "🟩", "🟩", "  ", "🟩", "  ", "🟩", "  ", "🟩"},
+                    {"🟩", "  ", "  ", "  ", "  ", "🟩", "  ", "  ", "  ", "🟩"},
+                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
                 };
                 break;
             case 2:
@@ -72,16 +88,16 @@ public static class Program
                 gameState.ExitY = 7;
                 gameState.Maze = new[,]
                 {
-                    {"🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥"},
-                    {"🟥", "  ", "🟥", "  ", "  ", "  ", "  ", "  ", "  ", "🟥"},
-                    {"🟥", "  ", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "  ", "🟥"},
-                    {"🟥", "  ", "  ", "  ", "  ", "  ", "  ", "🟥", "  ", "🟥"},
-                    {"🟥", "🟥", "  ", "🟥", "🟥", "  ", "🟥", "🟥", "  ", "🟥"},
-                    {"🟥", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟥"},
-                    {"🟥", "🟥", "🟥", "🟥", "  ", "🟥", "🟥", "🟥", "🟥", "🟥"},
-                    {"🟥", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟥"},
-                    {"🟥", "  ", "🟥", "🟥", "🟥", "🟥", "🟥", "  ", "  ", "🟥"},
-                    {"🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥"},
+                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
+                    {"🟩", "  ", "🟩", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
+                    {"🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "  ", "🟩"},
+                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "🟩", "  ", "🟩"},
+                    {"🟩", "🟩", "  ", "🟩", "🟩", "  ", "🟩", "🟩", "  ", "🟩"},
+                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
+                    {"🟩", "🟩", "🟩", "🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩"},
+                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
+                    {"🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩", "  ", "  ", "🟩"},
+                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
                 };
                 break;
             case 3:
@@ -89,16 +105,16 @@ public static class Program
                 gameState.ExitY = 2;
                 gameState.Maze = new[,]
                 {
-                    {"🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥"},
-                    {"🟥", "  ", "🟥", "  ", "  ", "  ", "  ", "  ", "  ", "🟥"},
-                    {"🟥", "  ", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "  ", "🟥"},
-                    {"🟥", "  ", "  ", "  ", "  ", "  ", "  ", "🟥", "  ", "🟥"},
-                    {"🟥", "🟥", "  ", "🟥", "🟥", "  ", "🟥", "🟥", "  ", "🟥"},
-                    {"🟥", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟥"},
-                    {"🟥", "🟥", "🟥", "🟥", "  ", "🟥", "🟥", "🟥", "🟥", "🟥"},
-                    {"🟥", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟥"},
-                    {"🟥", "  ", "🟥", "🟥", "🟥", "🟥", "🟥", "  ", "  ", "🟥"},
-                    {"🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥", "🟥"},
+                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
+                    {"🟩", "  ", "🟩", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
+                    {"🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "  ", "🟩"},
+                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "🟩", "  ", "🟩"},
+                    {"🟩", "🟩", "  ", "🟩", "🟩", "  ", "🟩", "🟩", "  ", "🟩"},
+                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
+                    {"🟩", "🟩", "🟩", "🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩"},
+                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
+                    {"🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩", "  ", "  ", "🟩"},
+                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
                 };
                 break;
         }
@@ -158,6 +174,8 @@ public static class Program
             case ConsoleKey.RightArrow:
                 newPlayerX++;
                 break;
+            default:
+                return;
         }
 
         if (!IsCellEmpty(gameState, newPlayerX, newPlayerY)) return;
