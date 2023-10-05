@@ -5,8 +5,11 @@ public static class MazeRunner
     public static void Main(string[] args)
     {
         Console.Title = "Maze Runner";
+        
         var gameState = new GameState();
-        Game.Play(gameState);
+        var game = new Game(gameState);
+        game.Play();
+        
         Console.ReadKey();
     }
 }

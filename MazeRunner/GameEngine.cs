@@ -4,31 +4,48 @@ namespace Reveche.MazeRunner;
 
 public class Game
 {
-    public static void Play(GameState gameState)
+    private readonly GameState _gameState;
+    private readonly MazeGen _mazeGen;
+    private int PlayerX => _gameState.PlayerX;
+    private int PlayerY => _gameState.PlayerY;
+    private int ExitX => _gameState.ExitX;
+    private int ExitY => _gameState.ExitY;
+    private int EnemyX => _gameState.EnemyX;
+    private int EnemyY => _gameState.EnemyY;
+    private string[,] Maze => _gameState.Maze;
+    
+    public Game(GameState gameState)
+    {
+        _gameState = gameState;
+        _mazeGen = new MazeGen(_gameState);
+    }
+    
+    
+    public void Play()
     {
         Console.OutputEncoding = Encoding.UTF8;
         Console.CursorVisible = false;
         var levelIsCompleted = true;
         
-        while (gameState.CurrentLevel <= gameState.MaxLevels)
+        while (_gameState.CurrentLevel <= _gameState.MaxLevels)
         {
             Console.Clear();
 
             if (levelIsCompleted)
             {
-                gameState.MazeHeight = GenerateRandomMazeSize(gameState.CurrentLevel);
-                gameState.MazeWidth = GenerateRandomMazeSize(gameState.CurrentLevel);
-                MazeGen.InitializeMaze(gameState);
-                MazeGen.GenerateMaze(gameState, gameState.PlayerX, gameState.PlayerY); // Start generating maze from (1, 1)
-                MazeGen.GenerateExitAndEnemy(gameState);
+                _gameState.MazeHeight = GenerateRandomMazeSize(_gameState.CurrentLevel);
+                _gameState.MazeWidth = GenerateRandomMazeSize(_gameState.CurrentLevel);
+                _mazeGen.InitializeMaze();
+                _mazeGen.GenerateMaze(_gameState.PlayerX, _gameState.PlayerY); // Start generating maze from (1, 1)
+                _mazeGen.GenerateExitAndEnemy();
                 levelIsCompleted = false;
             }
             
-            if (gameState.CurrentLevel != 1) MoveEnemy(gameState);
+            if (_gameState.CurrentLevel != 1) MoveEnemy();
             
-            PrintMaze(gameState);
+            PrintMaze();
 
-            if (gameState.PlayerLife == 0)
+            if (_gameState.PlayerLife == 0)
             {
                 Console.SetCursorPosition(2,1);
                 Console.WriteLine("🟥🟥🟥🟥🟥🟥🟥🟥");
@@ -40,28 +57,28 @@ public class Game
             }
             
 
-            if (gameState.PlayerX == gameState.EnemyX && gameState.PlayerY == gameState.EnemyY)
+            if (_gameState.PlayerX == _gameState.EnemyX && _gameState.PlayerY == _gameState.EnemyY)
             {
                 Console.WriteLine("You died!");
-                gameState.PlayerLife--;
+                _gameState.PlayerLife--;
             }
 
-            if (gameState.PlayerX == gameState.ExitX && gameState.PlayerY == gameState.ExitY)
+            if (_gameState.PlayerX == _gameState.ExitX && _gameState.PlayerY == _gameState.ExitY)
             {
-                Console.WriteLine($"Congratulations! You completed level {gameState.CurrentLevel}.");
-                switch (gameState.CurrentLevel)
+                Console.WriteLine($"Congratulations! You completed level {_gameState.CurrentLevel}.");
+                switch (_gameState.CurrentLevel)
                 {
                     case 2:
                         if (!WorcleQuest.Game.Start())
                         {
-                            gameState.PlayerLife--;
+                            _gameState.PlayerLife--;
                             Console.WriteLine("You lost a life!");
                         }
 
                         break;
                 }
-                gameState.CurrentLevel++;
-                if (!(gameState.CurrentLevel <= gameState.MaxLevels))
+                _gameState.CurrentLevel++;
+                if (!(_gameState.CurrentLevel <= _gameState.MaxLevels))
                 {
                     Console.WriteLine("You have completed all levels. Press Enter to exit.");
                     Console.ReadLine();
@@ -72,21 +89,14 @@ public class Game
             }
 
             var key = Console.ReadKey().Key;
-            MovePlayer(gameState, key);
+            MovePlayer(key);
         }
     }
 
-    private static void PrintMaze(GameState gameState)
+    private void PrintMaze()
     {
-        var maze = gameState.Maze;
-        var playerX = gameState.PlayerX;
-        var playerY = gameState.PlayerY;
-        var enemyX = gameState.EnemyX;
-        var enemyY = gameState.EnemyY;
-        var exitX = gameState.ExitX;
-        var exitY = gameState.ExitY;
         
-        gameState.Player = gameState.PlayerLife switch
+        _gameState.Player = _gameState.PlayerLife switch
         {
             2 => "😩",
             1 => "🤕",
@@ -94,35 +104,35 @@ public class Game
             _ => "😀"
         };
         
-        for (var y = 0; y < gameState.MazeHeight; y++)
+        for (var y = 0; y < _gameState.MazeHeight; y++)
         {
-            for (var x = 0; x < gameState.MazeWidth; x++)
+            for (var x = 0; x < _gameState.MazeWidth; x++)
             {
-                if (x == playerX && y == playerY)
+                if (x == PlayerX && y == PlayerY)
                 {
-                    Console.Write(gameState.Player); // Player
+                    Console.Write(_gameState.Player); // Player
                 }
-                else if (x == exitX && y == exitY)
+                else if (x == ExitX && y == ExitY)
                 {
                     Console.Write(MazeIcons.Exit); // Exit
                 }
-                else if (x == enemyX && y == enemyY)
+                else if (x == EnemyX && y == EnemyY)
                 {
                     Console.Write(MazeIcons.Enemy); // Enemy
                 }
                 else
                 {
-                    Console.Write(maze[y, x]);
+                    Console.Write(Maze[y, x]);
                 }
             }
             Console.WriteLine();
         }
     }
 
-    private static void MovePlayer(GameState gameState, ConsoleKey key)
+    private void MovePlayer(ConsoleKey key)
     {
-        var newPlayerX = gameState.PlayerX;
-        var newPlayerY = gameState.PlayerY;
+        var newPlayerX = _gameState.PlayerX;
+        var newPlayerY = _gameState.PlayerY;
 
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (key)
@@ -141,19 +151,19 @@ public class Game
                 break;
         }
 
-        if (!Game.IsCellEmpty(gameState, newPlayerX, newPlayerY)) return;
+        if (!IsCellEmpty(newPlayerX, newPlayerY)) return;
         // Clear previous player position
-        gameState.Maze[gameState.PlayerY, gameState.PlayerX] = MazeIcons.Empty;
+        _gameState.Maze[_gameState.PlayerY, _gameState.PlayerX] = MazeIcons.Empty;
         // Set new player position
-        gameState.PlayerX = newPlayerX;
-        gameState.PlayerY = newPlayerY;
+        _gameState.PlayerX = newPlayerX;
+        _gameState.PlayerY = newPlayerY;
         // Set player in the maze
-        gameState.Maze[gameState.PlayerY, gameState.PlayerX] = gameState.Player;
+        _gameState.Maze[_gameState.PlayerY, _gameState.PlayerX] = _gameState.Player;
     }
 
-    private static bool IsCellEmpty(GameState gameState, int x, int y)
+    private bool IsCellEmpty(int x, int y)
     {
-        var maze = gameState.Maze;
+        var maze = _gameState.Maze;
         if (x >= 0 && x < maze.GetLength(1) && y >= 0 && y < maze.GetLength(0))
         {
             return maze[y, x] == MazeIcons.Empty;
@@ -161,12 +171,12 @@ public class Game
         return false;
     }
     
-    private static void MoveEnemy(GameState gameState)
+    private void MoveEnemy()
     {
-        var enemyX = gameState.EnemyX;
-        var enemyY = gameState.EnemyY;
-        var exitX = gameState.ExitX;
-        var exitY = gameState.ExitY;
+        var enemyX = _gameState.EnemyX;
+        var enemyY = _gameState.EnemyY;
+        var exitX = _gameState.ExitX;
+        var exitY = _gameState.ExitY;
         
         var random = new Random();
         var direction = random.Next(4); // 0: up, 1: down, 2: left, 3: right
@@ -191,9 +201,9 @@ public class Game
         }
         
         if (newEnemyY == exitX && newEnemyY == exitY) return;
-        if (!IsCellEmpty(gameState, newEnemyX, newEnemyY)) return;
-        gameState.EnemyX = newEnemyX;
-        gameState.EnemyY = newEnemyY;
+        if (!IsCellEmpty(newEnemyX, newEnemyY)) return;
+        _gameState.EnemyX = newEnemyX;
+        _gameState.EnemyY = newEnemyY;
     }
 
     private static int GenerateRandomMazeSize(int level)
@@ -205,7 +215,7 @@ public class Game
         do
         {
             randomNum = random.Next(min, max + 1);
-        } while (randomNum % 2 == 0); // Ensure it's odd
+        } while (randomNum % 2 == 0);
         
         return randomNum;
     }

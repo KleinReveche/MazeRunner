@@ -1,30 +1,37 @@
 ﻿namespace Reveche.MazeRunner;
 
-public static class MazeGen
+public class MazeGen
 {
-    public static void InitializeMaze(GameState gameState)
+    private readonly GameState _gameState;
+    
+    public MazeGen(GameState gameState)
     {
-        var mazeHeight = gameState.MazeHeight;
-        var mazeWidth = gameState.MazeWidth;
+        _gameState = gameState;
+    }
+    
+    public void InitializeMaze()
+    {
+        var mazeHeight = _gameState.MazeHeight;
+        var mazeWidth = _gameState.MazeWidth;
 
-        gameState.Maze = new string[mazeHeight, mazeWidth];
+        _gameState.Maze = new string[mazeHeight, mazeWidth];
 
         for (var y = 0; y < mazeHeight; y++)
         {
             for (var x = 0; x < mazeWidth; x++)
             {
                 var isBorder = x == 0 || x == mazeWidth - 1 || y == 0 || y == mazeHeight - 1;
-                gameState.Maze[y, x] = (isBorder) ? MazeIcons.Border : MazeIcons.Wall; 
+                _gameState.Maze[y, x] = (isBorder) ? MazeIcons.Border : MazeIcons.Wall; 
             }
         }
 
         // Set player, exit, and enemy in the maze
-        gameState.Maze[gameState.PlayerY, gameState.PlayerX] = gameState.Player;
+        _gameState.Maze[_gameState.PlayerY, _gameState.PlayerX] = _gameState.Player;
     }
 
-    public static void GenerateMaze(GameState gameState, int x, int y)
+    public void GenerateMaze(int x, int y)
     {
-        gameState.Maze[y, x] = MazeIcons.Empty;
+        _gameState.Maze[y, x] = MazeIcons.Empty;
         int[] directions = { 0, 1, 2, 3 };
         Shuffle(directions);
 
@@ -49,29 +56,29 @@ public static class MazeGen
                     break;
             }
 
-            if (!IsInBounds(gameState, newX, newY) || gameState.Maze[newY, newX] != MazeIcons.Wall) continue;
-            gameState.Maze[newY, newX] = MazeIcons.Empty;
-            gameState.Maze[y + (newY - y) / 2, x + (newX - x) / 2] = MazeIcons.Empty;
-            GenerateMaze(gameState, newX, newY);
+            if (!IsInBounds(newX, newY) || _gameState.Maze[newY, newX] != MazeIcons.Wall) continue;
+            _gameState.Maze[newY, newX] = MazeIcons.Empty;
+            _gameState.Maze[y + (newY - y) / 2, x + (newX - x) / 2] = MazeIcons.Empty;
+            GenerateMaze(newX, newY);
         }
     }
 
-    public static void GenerateExitAndEnemy(GameState gameState)
+    public void GenerateExitAndEnemy()
     {
         var random = new Random();
-        var mazeHeight = gameState.MazeHeight;
-        var mazeWidth = gameState.MazeWidth;
+        var mazeHeight = _gameState.MazeHeight;
+        var mazeWidth = _gameState.MazeWidth;
 
-        gameState.ExitX = random.Next(1, mazeWidth - 1);
-        gameState.ExitY = random.Next(1, mazeHeight - 1);
+        _gameState.ExitX = random.Next(1, mazeWidth - 1);
+        _gameState.ExitY = random.Next(1, mazeHeight - 1);
 
         do
         {
-            gameState.EnemyX = random.Next(1, mazeWidth - 1);
-            gameState.EnemyY = random.Next(1, mazeHeight - 1);
-        } while (gameState.EnemyX == gameState.ExitX && gameState.EnemyY == gameState.ExitY);
+            _gameState.EnemyX = random.Next(1, mazeWidth - 1);
+            _gameState.EnemyY = random.Next(1, mazeHeight - 1);
+        } while (_gameState.EnemyX == _gameState.ExitX && _gameState.EnemyY == _gameState.ExitY);
 
-        gameState.Maze[gameState.ExitY, gameState.ExitX] = MazeIcons.Empty;
+        _gameState.Maze[_gameState.ExitY, _gameState.ExitX] = MazeIcons.Empty;
     }
 
     private static void Shuffle(IList<int> array)
@@ -84,17 +91,17 @@ public static class MazeGen
         }
     }
 
-    private static bool IsInBounds(GameState gameState, int x, int y)
+    private bool IsInBounds(int x, int y)
     {
-        return x >= 0 && x < gameState.MazeWidth && y >= 0 && y < gameState.MazeHeight && gameState.Maze[y, x] != MazeIcons.Border;
+        return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight && _gameState.Maze[y, x] != MazeIcons.Border;
     }
 
 }
 
 public static class MazeIcons
 {
-    public static string Wall => "🟨";
-    public static string Border => "🟩";
+    public static string Wall => "🟪";
+    public static string Border => "🟦";
     public static string Exit => "🚪";
     public static string Enemy => "👾";
     public static string Empty => "  ";
