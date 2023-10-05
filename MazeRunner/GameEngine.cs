@@ -2,17 +2,27 @@
 
 namespace Reveche.MazeRunner;
 
-public static class Game
+public class Game
 {
     public static void Play(GameState gameState)
     {
         Console.OutputEncoding = Encoding.UTF8;
         Console.CursorVisible = false;
-
+        var levelIsCompleted = true;
+        
         while (gameState.CurrentLevel <= gameState.MaxLevels)
         {
             Console.Clear();
-            InitializeLevel(gameState, gameState.CurrentLevel);
+
+            if (levelIsCompleted)
+            {
+                gameState.MazeHeight = GenerateRandomMazeSize(gameState.CurrentLevel);
+                gameState.MazeWidth = GenerateRandomMazeSize(gameState.CurrentLevel);
+                MazeGen.InitializeMaze(gameState);
+                MazeGen.GenerateMaze(gameState, gameState.PlayerX, gameState.PlayerY); // Start generating maze from (1, 1)
+                MazeGen.GenerateExitAndEnemy(gameState);
+                levelIsCompleted = false;
+            }
             
             if (gameState.CurrentLevel != 1) MoveEnemy(gameState);
             
@@ -57,65 +67,12 @@ public static class Game
                     Console.ReadLine();
                     break;
                 }
+
+                levelIsCompleted = true;
             }
 
             var key = Console.ReadKey().Key;
             MovePlayer(gameState, key);
-        }
-    }
-
-    private static void InitializeLevel(GameState gameState, int level)
-    {
-        switch (level)
-        {
-            case 1:
-                gameState.ExitX = 8;
-                gameState.ExitY = 1;
-                gameState.Maze = new[,]
-                {
-                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
-                    {"🟩", "  ", "🟩", "  ", "  ", "  ", "  ", "🟩", "  ", "🟩"},
-                    {"🟩", "  ", "🟩", "🟩", "  ", "🟩", "  ", "🟩", "  ", "🟩"},
-                    {"🟩", "  ", "  ", "  ", "  ", "🟩", "  ", "  ", "  ", "🟩"},
-                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
-                };
-                break;
-            case 2:
-                gameState.ExitX = 8;
-                gameState.ExitY = 8;
-                gameState.EnemyX = 1;
-                gameState.ExitY = 7;
-                gameState.Maze = new[,]
-                {
-                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
-                    {"🟩", "  ", "🟩", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
-                    {"🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "  ", "🟩"},
-                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "🟩", "  ", "🟩"},
-                    {"🟩", "🟩", "  ", "🟩", "🟩", "  ", "🟩", "🟩", "  ", "🟩"},
-                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
-                    {"🟩", "🟩", "🟩", "🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩"},
-                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
-                    {"🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩", "  ", "  ", "🟩"},
-                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
-                };
-                break;
-            case 3:
-                gameState.ExitX = 1;
-                gameState.ExitY = 2;
-                gameState.Maze = new[,]
-                {
-                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
-                    {"🟩", "  ", "🟩", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
-                    {"🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "  ", "🟩"},
-                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "🟩", "  ", "🟩"},
-                    {"🟩", "🟩", "  ", "🟩", "🟩", "  ", "🟩", "🟩", "  ", "🟩"},
-                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
-                    {"🟩", "🟩", "🟩", "🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩"},
-                    {"🟩", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "🟩"},
-                    {"🟩", "  ", "🟩", "🟩", "🟩", "🟩", "🟩", "  ", "  ", "🟩"},
-                    {"🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩", "🟩"},
-                };
-                break;
         }
     }
 
@@ -137,9 +94,9 @@ public static class Game
             _ => "😀"
         };
         
-        for (var y = 0; y < maze.GetLength(0); y++)
+        for (var y = 0; y < gameState.MazeHeight; y++)
         {
-            for (var x = 0; x < maze.GetLength(1); x++)
+            for (var x = 0; x < gameState.MazeWidth; x++)
             {
                 if (x == playerX && y == playerY)
                 {
@@ -147,11 +104,11 @@ public static class Game
                 }
                 else if (x == exitX && y == exitY)
                 {
-                    Console.Write("🚪"); // Exit
+                    Console.Write(MazeIcons.Exit); // Exit
                 }
                 else if (x == enemyX && y == enemyY)
                 {
-                    Console.Write("👾"); // Enemy
+                    Console.Write(MazeIcons.Enemy); // Enemy
                 }
                 else
                 {
@@ -167,7 +124,7 @@ public static class Game
         var newPlayerX = gameState.PlayerX;
         var newPlayerY = gameState.PlayerY;
 
-        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (key)
         {
             case ConsoleKey.UpArrow:
@@ -182,13 +139,16 @@ public static class Game
             case ConsoleKey.RightArrow:
                 newPlayerX++;
                 break;
-            default:
-                return;
         }
 
-        if (!IsCellEmpty(gameState, newPlayerX, newPlayerY)) return;
+        if (!Game.IsCellEmpty(gameState, newPlayerX, newPlayerY)) return;
+        // Clear previous player position
+        gameState.Maze[gameState.PlayerY, gameState.PlayerX] = MazeIcons.Empty;
+        // Set new player position
         gameState.PlayerX = newPlayerX;
         gameState.PlayerY = newPlayerY;
+        // Set player in the maze
+        gameState.Maze[gameState.PlayerY, gameState.PlayerX] = gameState.Player;
     }
 
     private static bool IsCellEmpty(GameState gameState, int x, int y)
@@ -196,12 +156,11 @@ public static class Game
         var maze = gameState.Maze;
         if (x >= 0 && x < maze.GetLength(1) && y >= 0 && y < maze.GetLength(0))
         {
-            return maze[y, x] == "  ";
+            return maze[y, x] == MazeIcons.Empty;
         }
         return false;
     }
-
-
+    
     private static void MoveEnemy(GameState gameState)
     {
         var enemyX = gameState.EnemyX;
@@ -236,5 +195,18 @@ public static class Game
         gameState.EnemyX = newEnemyX;
         gameState.EnemyY = newEnemyY;
     }
-}
 
+    private static int GenerateRandomMazeSize(int level)
+    {
+        var random = new Random();
+        int randomNum;
+        var min = 7 * level;
+        var max = 10 * level;
+        do
+        {
+            randomNum = random.Next(min, max + 1);
+        } while (randomNum % 2 == 0); // Ensure it's odd
+        
+        return randomNum;
+    }
+}
