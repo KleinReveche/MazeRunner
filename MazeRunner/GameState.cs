@@ -2,7 +2,7 @@
 
 public class GameState
 {
-
+    public string Player { get; set; } = "😀";
     public int PlayerX { get; set; } = 1;
     public int PlayerY { get; set; } = 1;
     public int PlayerLife { get; set; } = 3;

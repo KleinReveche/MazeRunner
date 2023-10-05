@@ -32,7 +32,6 @@ public static class Game
 
             if (gameState.PlayerX == gameState.EnemyX && gameState.PlayerY == gameState.EnemyY)
             {
-                //TODO: Add Game-over message. Use Console.SetCursorPosition
                 Console.WriteLine("You died!");
                 gameState.PlayerLife--;
             }
@@ -130,13 +129,21 @@ public static class Game
         var exitX = gameState.ExitX;
         var exitY = gameState.ExitY;
         
+        gameState.Player = gameState.PlayerLife switch
+        {
+            2 => "😩",
+            1 => "🤕",
+            0 => "👻",
+            _ => "😀"
+        };
+        
         for (var y = 0; y < maze.GetLength(0); y++)
         {
             for (var x = 0; x < maze.GetLength(1); x++)
             {
                 if (x == playerX && y == playerY)
                 {
-                    Console.Write("😀"); // Player
+                    Console.Write(gameState.Player); // Player
                 }
                 else if (x == exitX && y == exitY)
                 {
@@ -160,6 +167,7 @@ public static class Game
         var newPlayerX = gameState.PlayerX;
         var newPlayerY = gameState.PlayerY;
 
+        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (key)
         {
             case ConsoleKey.UpArrow:
