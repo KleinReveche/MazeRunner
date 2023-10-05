@@ -3,19 +3,26 @@ using System.Text;
 
 namespace Reveche.WorcleQuest;
 
-internal static class GameEngine
+public class GameEngine
 {
-    internal static void Play(GameState gameState, out bool result)
+    private readonly GameState _gameState;
+    
+    public GameEngine(GameState gameState)
+    {
+        _gameState = gameState;
+    }
+    
+    public void Play(out bool result)
     {
         var win = false;
         
         while (true)
         {
-            GetGuess(gameState);
+            GetGuess();
             
-            var guess = gameState.Guess;
-            var selectedWord = gameState.SelectedWord;
-            var currentGuess = gameState.CurrentGuess;
+            var guess = _gameState.Guess;
+            var selectedWord = _gameState.SelectedWord;
+            var currentGuess = _gameState.CurrentGuess;
         
             CheckLetters(selectedWord, guess, currentGuess);
             
@@ -27,29 +34,29 @@ internal static class GameEngine
                 break;
             }
 
-            if (gameState.Tries == 5)
+            if (_gameState.Tries == 5)
             {
                 Console.WriteLine($"\n You Lose! The word is {selectedWord}");
                 break;
             }
         
-            NextRound(gameState);
+            NextRound();
         }
         
         result = win;
     }
     
-    private static void GetGuess(GameState gameState)
+    private void GetGuess()
     {
         string guess;
-        Console.SetCursorPosition(6, 17 + gameState.Tries);
+        Console.SetCursorPosition(6, 17 + _gameState.Tries);
         while (true)
         {
             guess = Console.ReadLine() ?? string.Empty;
             if (guess != string.Empty && guess.Length == 5) break;
         }
 
-        gameState.Guess = guess;
+        _gameState.Guess = guess;
     }
     
     private static void CheckLetters(string word, string guess, ICollection<(char, LetterState)> currentGuess)
@@ -110,21 +117,21 @@ internal static class GameEngine
         }
     }
 
-    private static void NextRound(GameState gameState)
+    private void NextRound()
     {
-        gameState.PreviousGuesses.Add(gameState.CurrentGuess);
-        gameState.CurrentGuess = new List<(char, LetterState)>();
-        gameState.Tries++;
+        _gameState.PreviousGuesses.Add(_gameState.CurrentGuess);
+        _gameState.CurrentGuess = new List<(char, LetterState)>();
+        _gameState.Tries++;
         Console.SetCursorPosition(6, 2);
-        PrintPreviousGuesses(gameState);
+        PrintPreviousGuesses();
         //PrintCurrentGuess(gameState);
     }
 
-    private static void PrintPreviousGuesses(GameState gameState)
+    private void PrintPreviousGuesses()
     {
-        foreach (var previousGuess in gameState.PreviousGuesses)
+        foreach (var previousGuess in _gameState.PreviousGuesses)
         {
-            Console.SetCursorPosition(6,17 + gameState.PreviousGuesses.IndexOf(previousGuess));
+            Console.SetCursorPosition(6,17 + _gameState.PreviousGuesses.IndexOf(previousGuess));
             foreach (var (letter, letterState) in previousGuess)
             {
                 Console.BackgroundColor = (ConsoleColor)letterState;
@@ -136,21 +143,7 @@ internal static class GameEngine
         }
     }
     
-    private static void PrintCurrentGuess(GameState gameState)
-    {
-        Console.SetCursorPosition(6,17 + gameState.PreviousGuesses.Count);
-        foreach (var (letter, letterState) in gameState.CurrentGuess)
-        {
-            Console.BackgroundColor = (ConsoleColor)letterState;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write(letter);
-            Console.ResetColor();
-        }
-        Console.WriteLine();
-    }
-    
-    
-    internal static string[] GetWords()
+    public static string[] GetWords()
     {
         var assembly = Assembly.GetExecutingAssembly(); // Get File from Assembly
         var stream = assembly.GetManifestResourceStream($"Reveche.WorcleQuest.words.txt")!;
@@ -164,7 +157,7 @@ internal static class GameEngine
     }
 }
 
-internal enum LetterState
+public enum LetterState
 {
     Wrong = ConsoleColor.Gray,
     Correct = ConsoleColor.DarkGreen,

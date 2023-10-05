@@ -1,6 +1,6 @@
 ﻿namespace Reveche.WorcleQuest;
 
-internal class GameState
+public class GameState
 {
     public string SelectedWord { get; private set; }
     public string Guess { get; set; }

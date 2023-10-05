@@ -9,7 +9,8 @@ public static class Game
         Console.WriteLine("Worcle!");
         Console.SetCursorPosition(6, 17);
         var gameState = new GameState();
-        GameEngine.Play(gameState, out var win);
+        var gameEngine = new GameEngine(gameState);
+        gameEngine.Play(out var win);
 
         return win;
     }
