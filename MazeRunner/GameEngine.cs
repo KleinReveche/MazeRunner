@@ -4,6 +4,7 @@ namespace Reveche.MazeRunner;
 
 public class Game
 {
+    private readonly StringBuilder _buffer = new StringBuilder();
     private readonly GameState _gameState;
     private readonly MazeGen _mazeGen;
     private int PlayerX => _gameState.PlayerX;
@@ -20,17 +21,15 @@ public class Game
         _mazeGen = new MazeGen(_gameState);
     }
     
-    
     public void Play()
     {
         Console.OutputEncoding = Encoding.UTF8;
         Console.CursorVisible = false;
         var levelIsCompleted = true;
+        var shouldRedraw = true;
         
         while (_gameState.CurrentLevel <= _gameState.MaxLevels)
         {
-            Console.Clear();
-
             if (levelIsCompleted)
             {
                 _gameState.MazeHeight = GenerateRandomMazeSize(_gameState.CurrentLevel);
@@ -40,10 +39,15 @@ public class Game
                 _mazeGen.GenerateExitAndEnemy();
                 levelIsCompleted = false;
             }
-            
-            if (_gameState.CurrentLevel != 1) MoveEnemy();
-            
-            PrintMaze();
+
+            if (shouldRedraw)
+            {
+                DrawMaze();
+                Console.Clear();
+                Console.Write(_buffer);
+                if (_gameState.CurrentLevel != 1) MoveEnemy();
+                shouldRedraw = false;
+            }
 
             if (_gameState.PlayerLife == 0)
             {
@@ -56,7 +60,6 @@ public class Game
                 break;
             }
             
-
             if (_gameState.PlayerX == _gameState.EnemyX && _gameState.PlayerY == _gameState.EnemyY)
             {
                 Console.WriteLine("You died!");
@@ -66,17 +69,6 @@ public class Game
             if (_gameState.PlayerX == _gameState.ExitX && _gameState.PlayerY == _gameState.ExitY)
             {
                 Console.WriteLine($"Congratulations! You completed level {_gameState.CurrentLevel}.");
-                switch (_gameState.CurrentLevel)
-                {
-                    case 2:
-                        if (!WorcleQuest.Game.Start())
-                        {
-                            _gameState.PlayerLife--;
-                            Console.WriteLine("You lost a life!");
-                        }
-
-                        break;
-                }
                 _gameState.CurrentLevel++;
                 if (!(_gameState.CurrentLevel <= _gameState.MaxLevels))
                 {
@@ -89,13 +81,13 @@ public class Game
             }
 
             var key = Console.ReadKey().Key;
-            MovePlayer(key);
+            if (MovePlayer(key))
+                shouldRedraw = true;
         }
     }
 
-    private void PrintMaze()
+    private void DrawMaze()
     {
-        
         _gameState.Player = _gameState.PlayerLife switch
         {
             2 => "😩",
@@ -104,32 +96,34 @@ public class Game
             _ => "😀"
         };
         
-        for (var y = 0; y < _gameState.MazeHeight; y++)
+        _buffer.Clear();
+
+        for (var y = 0; y < Maze.GetLength(0); y++)
         {
-            for (var x = 0; x < _gameState.MazeWidth; x++)
+            for (var x = 0; x < Maze.GetLength(1); x++)
             {
                 if (x == PlayerX && y == PlayerY)
                 {
-                    Console.Write(_gameState.Player); // Player
+                    _buffer.Append(_gameState.Player); // Player
                 }
                 else if (x == ExitX && y == ExitY)
                 {
-                    Console.Write(MazeIcons.Exit); // Exit
+                    _buffer.Append(MazeIcons.Exit); // Exit
                 }
                 else if (x == EnemyX && y == EnemyY)
                 {
-                    Console.Write(MazeIcons.Enemy); // Enemy
+                    _buffer.Append(MazeIcons.Enemy); // Enemy
                 }
                 else
                 {
-                    Console.Write(Maze[y, x]);
+                    _buffer.Append(Maze[y, x]);
                 }
             }
-            Console.WriteLine();
+            _buffer.AppendLine(); // Move to the next row in the buffer
         }
     }
 
-    private void MovePlayer(ConsoleKey key)
+    private bool MovePlayer(ConsoleKey key)
     {
         var newPlayerX = _gameState.PlayerX;
         var newPlayerY = _gameState.PlayerY;
@@ -151,14 +145,16 @@ public class Game
                 break;
         }
 
-        if (!IsCellEmpty(newPlayerX, newPlayerY)) return;
+        if (!IsCellEmpty(newPlayerX, newPlayerY)) return false;
         // Clear previous player position
-        _gameState.Maze[_gameState.PlayerY, _gameState.PlayerX] = MazeIcons.Empty;
+        Maze[PlayerY, PlayerX] = MazeIcons.Empty;
         // Set new player position
         _gameState.PlayerX = newPlayerX;
         _gameState.PlayerY = newPlayerY;
         // Set player in the maze
-        _gameState.Maze[_gameState.PlayerY, _gameState.PlayerX] = _gameState.Player;
+        Maze[PlayerY, PlayerX] = _gameState.Player;
+        return true; // Player has moved, indicate that screen should be redrawn
+
     }
 
     private bool IsCellEmpty(int x, int y)
