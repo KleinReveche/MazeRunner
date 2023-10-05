@@ -4,7 +4,7 @@ namespace Reveche.MazeRunner;
 
 public class Game
 {
-    private readonly StringBuilder _buffer = new StringBuilder();
+    private readonly StringBuilder _buffer = new();
     private readonly GameState _gameState;
     private readonly MazeGen _mazeGen;
     private int PlayerX => _gameState.PlayerX;
@@ -32,10 +32,10 @@ public class Game
         {
             if (levelIsCompleted)
             {
-                _gameState.MazeHeight = GenerateRandomMazeSize(_gameState.CurrentLevel);
-                _gameState.MazeWidth = GenerateRandomMazeSize(_gameState.CurrentLevel);
+                _gameState.MazeHeight = _mazeGen.GenerateRandomMazeSize();
+                _gameState.MazeWidth = _mazeGen.GenerateRandomMazeSize();
                 _mazeGen.InitializeMaze();
-                _mazeGen.GenerateMaze(_gameState.PlayerX, _gameState.PlayerY); // Start generating maze from (1, 1)
+                _mazeGen.GenerateMaze(1, 1); // Start generating maze from (1, 1)
                 _mazeGen.GenerateExitAndEnemy();
                 levelIsCompleted = false;
             }
@@ -110,7 +110,7 @@ public class Game
                 {
                     _buffer.Append(MazeIcons.Exit); // Exit
                 }
-                else if (x == EnemyX && y == EnemyY)
+                else if (x == EnemyX && y == EnemyY && _gameState.CurrentLevel != 1)
                 {
                     _buffer.Append(MazeIcons.Enemy); // Enemy
                 }
@@ -200,19 +200,5 @@ public class Game
         if (!IsCellEmpty(newEnemyX, newEnemyY)) return;
         _gameState.EnemyX = newEnemyX;
         _gameState.EnemyY = newEnemyY;
-    }
-
-    private static int GenerateRandomMazeSize(int level)
-    {
-        var random = new Random();
-        int randomNum;
-        var min = 7 * level;
-        var max = 10 * level;
-        do
-        {
-            randomNum = random.Next(min, max + 1);
-        } while (randomNum % 2 == 0);
-        
-        return randomNum;
     }
 }

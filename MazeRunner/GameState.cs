@@ -8,8 +8,8 @@ public class GameState
     public int PlayerLife { get; set; } = 3;
     public int CurrentLevel { get; set; } = 1; // Current level number
     public int MaxLevels { get; set; } = 5; // Set the maximum number of levels
-    public int EnemyX { get; set; } = 1;
-    public int EnemyY { get; set; } = 5;
+    public int EnemyX { get; set; }
+    public int EnemyY { get; set; }
     public int ExitX { get; set; } // Exit X-coordinate
     public int ExitY { get; set; } // Exit Y-coordinate
     public int MazeWidth { get; set; } = 7;

@@ -14,6 +14,8 @@ public class MazeGen
         var mazeHeight = _gameState.MazeHeight;
         var mazeWidth = _gameState.MazeWidth;
 
+        _gameState.PlayerX = 1;
+        _gameState.PlayerY = 1;
         _gameState.Maze = new string[mazeHeight, mazeWidth];
 
         for (var y = 0; y < mazeHeight; y++)
@@ -25,7 +27,6 @@ public class MazeGen
             }
         }
 
-        // Set player, exit, and enemy in the maze
         _gameState.Maze[_gameState.PlayerY, _gameState.PlayerX] = _gameState.Player;
     }
 
@@ -69,16 +70,18 @@ public class MazeGen
         var mazeHeight = _gameState.MazeHeight;
         var mazeWidth = _gameState.MazeWidth;
 
-        _gameState.ExitX = random.Next(1, mazeWidth - 1);
-        _gameState.ExitY = random.Next(1, mazeHeight - 1);
+        var min = _gameState.CurrentLevel * 4 / 2;
+        
+        _gameState.ExitX = random.Next(min, mazeWidth - 1);
+        _gameState.ExitY = random.Next(min, mazeHeight - 1);
+        _gameState.Maze[_gameState.ExitY, _gameState.ExitX] = MazeIcons.Empty;
 
+        if(_gameState.CurrentLevel == 1) return;
         do
         {
-            _gameState.EnemyX = random.Next(1, mazeWidth - 1);
-            _gameState.EnemyY = random.Next(1, mazeHeight - 1);
+            _gameState.EnemyX = random.Next(min, mazeWidth - 1);
+            _gameState.EnemyY = random.Next(min, mazeHeight - 1);
         } while (_gameState.EnemyX == _gameState.ExitX && _gameState.EnemyY == _gameState.ExitY);
-
-        _gameState.Maze[_gameState.ExitY, _gameState.ExitX] = MazeIcons.Empty;
     }
 
     private static void Shuffle(IList<int> array)
@@ -96,6 +99,20 @@ public class MazeGen
         return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight && _gameState.Maze[y, x] != MazeIcons.Border;
     }
 
+    public int GenerateRandomMazeSize()
+    {
+        var random = new Random();
+        int randomNum;
+        var min = 5 * _gameState.CurrentLevel;
+        var max = 7 * _gameState.CurrentLevel;
+        
+        do
+        {
+            randomNum = random.Next(min + 1, max + 1);
+        } while (randomNum % 2 == 0);
+        
+        return randomNum;
+    }
 }
 
 public static class MazeIcons
