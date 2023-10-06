@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public static class OptionMenu
+public class OptionMenu
 {
     private readonly GameState _gameState;
     
@@ -19,7 +19,7 @@ public static class OptionMenu
         {
             { "Difficulty", "Normal" },
             { "Sound", (_gameState.IsSoundOn) ? "On" : "Off" },
-            { "Text Style", "UTF-8" },
+            { "Text Style", (_gameState.IsUtf8) ? "UTF-8" : "ASCII" },
             { "Back", "" }
         };
 
@@ -86,7 +86,7 @@ public static class OptionMenu
         }
     }
 
-    private static void ChangeOptionValue(string optionKey, IDictionary<string, string> options, int change)
+    private void ChangeOptionValue(string optionKey, IDictionary<string, string> options, int change)
     {
         if (!options.TryGetValue(optionKey, out var value)) return;
         switch (optionKey)
@@ -114,6 +114,7 @@ public static class OptionMenu
                 var currentIndex = textStyleValues.IndexOf(value);
                 var newIndex = (currentIndex + change + textStyleValues.Count) % textStyleValues.Count;
                 options[optionKey] = textStyleValues[newIndex];
+                _gameState.IsUtf8 = !_gameState.IsUtf8;
                 break;
             }
         }

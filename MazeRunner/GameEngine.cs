@@ -7,6 +7,7 @@ public class Game
     private readonly StringBuilder _buffer = new();
     private readonly GameState _gameState;
     private readonly MazeGen _mazeGen;
+    private readonly MazeIcons _mazeIcons = new(GameMenu.GameState);
     private int PlayerX => _gameState.PlayerX;
     private int PlayerY => _gameState.PlayerY;
     private int ExitX => _gameState.ExitX;
@@ -90,10 +91,10 @@ public class Game
     {
         _gameState.Player = _gameState.PlayerLife switch
         {
-            2 => "😩",
-            1 => "🤕",
-            0 => "👻",
-            _ => "😀"
+            2 => (_gameState.IsUtf8) ? "😐" : "P",
+            1 => (_gameState.IsUtf8) ? "🤕" : "P",
+            0 => (_gameState.IsUtf8) ? "👻" : "X",
+            _ => (_gameState.IsUtf8) ? "😀" : "P"
         };
         
         _buffer.Clear();
@@ -108,11 +109,11 @@ public class Game
                 }
                 else if (x == ExitX && y == ExitY)
                 {
-                    _buffer.Append(MazeIcons.Exit); // Exit
+                    _buffer.Append(_mazeIcons.Exit); // Exit
                 }
                 else if (x == EnemyX && y == EnemyY && _gameState.CurrentLevel != 1)
                 {
-                    _buffer.Append(MazeIcons.Enemy); // Enemy
+                    _buffer.Append(_mazeIcons.Enemy); // Enemy
                 }
                 else
                 {
@@ -147,7 +148,7 @@ public class Game
 
         if (!IsCellEmpty(newPlayerX, newPlayerY)) return false;
         // Clear previous player position
-        Maze[PlayerY, PlayerX] = MazeIcons.Empty;
+        Maze[PlayerY, PlayerX] = _mazeIcons.Empty;
         // Set new player position
         _gameState.PlayerX = newPlayerX;
         _gameState.PlayerY = newPlayerY;
@@ -162,7 +163,7 @@ public class Game
         var maze = _gameState.Maze;
         if (x >= 0 && x < maze.GetLength(1) && y >= 0 && y < maze.GetLength(0))
         {
-            return maze[y, x] == MazeIcons.Empty;
+            return maze[y, x] == _mazeIcons.Empty;
         }
         return false;
     }

@@ -16,4 +16,5 @@ public class GameState
     public int MazeHeight { get; set; } = 9;
     public string[,] Maze { get; set; } = null!;
     public bool IsSoundOn { get; set; } = true;
+    public bool IsUtf8 { get; set; } = true;
 }
