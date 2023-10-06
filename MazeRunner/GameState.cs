@@ -15,4 +15,5 @@ public class GameState
     public int MazeWidth { get; set; } = 7;
     public int MazeHeight { get; set; } = 9;
     public string[,] Maze { get; set; } = null!;
+    public bool IsSoundOn { get; set; } = true;
 }

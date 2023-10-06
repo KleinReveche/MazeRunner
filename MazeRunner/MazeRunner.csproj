@@ -12,6 +12,18 @@
   <ItemGroup>
     <ProjectReference Include="..\WorcleQuest\WorcleQuest.csproj" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <PackageReference Include="System.Windows.Extensions" Version="7.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="Music\KLPeachGameOverII.wav" />
+    <EmbeddedResource Include="Music\KLPeachGameOverII.wav" />
+    <None Remove="Music\BitBeats3.wav" />
+    <EmbeddedResource Include="Music\BitBeats3.wav" />
+    <None Remove="Music\8BitAirFight.wav" />
+    <EmbeddedResource Include="Music\8BitAirFight.wav" />
+  </ItemGroup>
 
 </Project>

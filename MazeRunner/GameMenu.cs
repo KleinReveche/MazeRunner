@@ -20,6 +20,11 @@ public static class GameMenu
                                   ╚═╝░░╚═╝░╚═════╝░╚═╝░░╚══╝╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝
                                   """;
     public static readonly int CenterX = (Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
+    
+    public static readonly GameState GameState = new(); 
+    private static readonly Game Game = new(GameState); 
+    private static readonly OptionMenu OptionMenu = new(GameState);
+    
     public static void DisplayTitle()
     {
 
@@ -45,9 +50,7 @@ public static class GameMenu
             { 
                 "Start", () => 
                 { 
-                    var gameState = new GameState(); 
-                    var game = new Game(gameState); 
-                    game.Play();
+                    Game.Play();
                 } 
             },
             { "Options", OptionMenu.DisplayOptions },

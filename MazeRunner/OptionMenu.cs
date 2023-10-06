@@ -6,12 +6,19 @@ using System.Linq;
 
 public static class OptionMenu
 {
-    public static void DisplayOptions()
+    private readonly GameState _gameState;
+    
+    public OptionMenu(GameState gameState)
+    {
+        _gameState = gameState;
+    }
+    
+    public void DisplayOptions()
     {
         var options = new Dictionary<string, string>
         {
             { "Difficulty", "Normal" },
-            { "Sound", "On" },
+            { "Sound", (_gameState.IsSoundOn) ? "On" : "Off" },
             { "Text Style", "UTF-8" },
             { "Back", "" }
         };
@@ -98,6 +105,7 @@ public static class OptionMenu
                 var currentIndex = soundValues.IndexOf(value);
                 var newIndex = (currentIndex + change + soundValues.Count) % soundValues.Count;
                 options[optionKey] = soundValues[newIndex];
+                _gameState.IsSoundOn = !_gameState.IsSoundOn;
                 break;
             }
             case "Text Style":
