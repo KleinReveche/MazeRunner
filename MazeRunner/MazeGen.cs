@@ -73,8 +73,15 @@ public class MazeGen
 
         var min = _gameState.CurrentLevel * 4 / 2;
         
-        _gameState.ExitX = random.Next(min, mazeWidth - 1);
-        _gameState.ExitY = random.Next(min, mazeHeight - 1);
+        do
+        {
+            _gameState.ExitX = random.Next(min, mazeWidth - 1);
+            _gameState.ExitY = random.Next(min, mazeHeight - 1);
+        } while (
+            _gameState.ExitX == _gameState.PlayerX && _gameState.ExitY == _gameState.PlayerY 
+            ||  _gameState.Maze[_gameState.ExitY, _gameState.ExitX] == _mazeIcons.Wall
+            );
+        
         _gameState.Maze[_gameState.ExitY, _gameState.ExitX] = _mazeIcons.Empty;
 
         if(_gameState.CurrentLevel == 1) return;
