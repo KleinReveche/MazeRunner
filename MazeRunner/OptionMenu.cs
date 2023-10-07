@@ -81,7 +81,7 @@ public class OptionMenu
                 case ConsoleKey.Enter:
                     if (selectedIndex == options.Count - 1)
                         GameMenu.StartMenu();
-                    break;
+                    return;
             }
         }
     }

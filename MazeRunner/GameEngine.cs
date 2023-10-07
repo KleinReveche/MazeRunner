@@ -46,6 +46,13 @@ public class Game
                 DrawMaze();
                 Console.Clear();
                 Console.Write(_buffer);
+                
+                if (_gameState.PlayerX == _gameState.EnemyX && _gameState.PlayerY == _gameState.EnemyY)
+                {
+                    Console.WriteLine("You died!");
+                    _gameState.PlayerLife--;
+                }
+                
                 if (_gameState.CurrentLevel != 1) MoveEnemy();
                 shouldRedraw = false;
             }
@@ -60,12 +67,6 @@ public class Game
                 Console.WriteLine("🟥🟥🟥🟥🟥🟥🟥🟥");
                 break;
             }
-            
-            if (_gameState.PlayerX == _gameState.EnemyX && _gameState.PlayerY == _gameState.EnemyY)
-            {
-                Console.WriteLine("You died!");
-                _gameState.PlayerLife--;
-            }
 
             if (_gameState.PlayerX == _gameState.ExitX && _gameState.PlayerY == _gameState.ExitY)
             {
@@ -73,11 +74,11 @@ public class Game
                 _gameState.CurrentLevel++;
                 if (!(_gameState.CurrentLevel <= _gameState.MaxLevels))
                 {
-                    Console.WriteLine("You have completed all levels. Press Enter to exit.");
-                    Console.ReadLine();
+                    Console.WriteLine("You have completed all levels. Press Any Key to exit.");
+                    Console.ReadKey();
                     break;
                 }
-
+                shouldRedraw = true;
                 levelIsCompleted = true;
             }
 
