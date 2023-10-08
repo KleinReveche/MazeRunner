@@ -2,8 +2,9 @@
 
 namespace Reveche.MazeRunner;
 
-public class Game
+public partial class GameEngine
 {
+    private const int PlayerVisibilityRadius = 3;
     private const int BlastRadius = 1;
     private readonly StringBuilder _buffer = new();
     private readonly GameState _gameState;
@@ -21,7 +22,7 @@ public class Game
     private int EnemyY => _gameState.EnemyY;
     private string[,] Maze => _gameState.Maze;
     
-    public Game(GameState gameState)
+    public GameEngine(GameState gameState)
     {
         _gameState = gameState;
         _mazeGen = new MazeGen(_gameState);
@@ -111,113 +112,34 @@ public class Game
         {
             for (var x = 0; x < Maze.GetLength(1); x++)
             {
-                if (x == PlayerX && y == PlayerY)
+                var distanceToPlayer = Math.Abs(x - PlayerX) + Math.Abs(y - PlayerY);
+            
+                if (distanceToPlayer <= PlayerVisibilityRadius)
                 {
-                    _buffer.Append(_gameState.Player); // Player
-                }
-                else if (x == ExitX && y == ExitY)
-                {
-                    _buffer.Append(_mazeIcons.Exit); // Exit
-                }
-                else if (x == EnemyX && y == EnemyY && _gameState.CurrentLevel != 1)
-                {
-                    _buffer.Append(_mazeIcons.Enemy); // Enemy
+                    if (x == PlayerX && y == PlayerY)
+                    {
+                        _buffer.Append(_gameState.Player); // Player
+                    }
+                    else if (x == ExitX && y == ExitY)
+                    {
+                        _buffer.Append(_mazeIcons.Exit); // Exit
+                    }
+                    else if (x == EnemyX && y == EnemyY && _gameState.CurrentLevel != 1)
+                    {
+                        _buffer.Append(_mazeIcons.Enemy); // Enemy
+                    }
+                    else
+                    {
+                        _buffer.Append(Maze[y, x]);
+                    }
                 }
                 else
                 {
-                    _buffer.Append(Maze[y, x]);
+                    _buffer.Append(_mazeIcons.Darkness);
                 }
             }
             _buffer.AppendLine(); // Move to the next row in the buffer
         }
-    }
-
-    private bool PlayerAction(ConsoleKey key)
-    {
-        var placeBomb = false;
-        var newPlayerX = _gameState.PlayerX;
-        var newPlayerY = _gameState.PlayerY;
-
-        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
-        switch (key)
-        {
-            case ConsoleKey.UpArrow:
-                newPlayerY--;
-                break;
-            case ConsoleKey.DownArrow:
-                newPlayerY++;
-                break;
-            case ConsoleKey.LeftArrow:
-                newPlayerX--;
-                break;
-            case ConsoleKey.RightArrow:
-                newPlayerX++;
-                break;
-            case ConsoleKey.B:
-                placeBomb = true;
-                break;
-        }
-        
-        if (placeBomb && _gameState is { BombCount: > 0, BombIsUsed: false })
-        {
-            _gameState.BombCount--;
-            _gameState.Maze[LastPlayerY, LastPlayerX] = _mazeIcons.Bomb;
-            BombX = LastPlayerX;
-            BombY = LastPlayerY;
-            
-            BombSequence(true);
-            return true;
-        }
-
-
-        if (!IsCellEmpty(newPlayerX, newPlayerY)) return false;
-        LastPlayerX = _gameState.PlayerX;
-        LastPlayerY = _gameState.PlayerY;
-        // Clear previous player position
-        Maze[PlayerY, PlayerX] = _mazeIcons.Empty;
-        // Set new player position
-        _gameState.PlayerX = newPlayerX;
-        _gameState.PlayerY = newPlayerY;
-        // Set player in the maze
-        Maze[PlayerY, PlayerX] = _gameState.Player;
-        return true; // Player has moved, indicate that screen should be redrawn
-
-    }
-    
-    private void BombSequence(bool startBomb = false)
-    {
-        if (startBomb)
-        {
-            _gameState.BombIsUsed = true;
-            _gameState.BombTimer = 3;
-            return;
-        }
-
-        if (_gameState.BombTimer != 0)
-            _gameState.BombTimer--;
-        
-        if (_gameState is not { BombIsUsed: true, BombTimer: 0 }) return;
-        for (var y = -BlastRadius; y <= BlastRadius; y++)
-        {
-            for (var x = -BlastRadius; x <= BlastRadius; x++)
-            {
-                if (BombX + x == PlayerX && BombY + y == PlayerY)
-                {
-                    _gameState.PlayerLife--;
-                    Console.SetCursorPosition(0, Console.CursorTop);
-                    Console.WriteLine("You died!");
-                    Console.ReadKey();
-                }
-                if (BombX + x == EnemyX && BombY + y == EnemyY)
-                {
-                    _gameState.EnemyX = -1;
-                    _gameState.EnemyY = -1;
-                }
-                if (_mazeGen.IsInBounds(BombX + x, BombY + y))
-                    Maze[BombY + y, BombX + x] = _mazeIcons.Empty;
-            }
-        }
-        _gameState.BombIsUsed = false;
     }
 
     private bool IsCellEmpty(int x, int y)

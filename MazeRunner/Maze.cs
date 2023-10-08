@@ -131,11 +131,12 @@ public class MazeIcons
         _gameState = gameState;
     }
     
-    public string Wall => (_gameState.IsUtf8) ? "🟪" : "#";
-    public string Border => (_gameState.IsUtf8) ? "🟦" : "*";
+    public string Wall => (_gameState.IsUtf8) ? "🟪" : "*";
+    public string Border => (_gameState.IsUtf8) ? "🟦" : "#";
     public string Exit => (_gameState.IsUtf8) ? "🚪" : "E";
     public string Enemy => (_gameState.IsUtf8) ? "👾" : "V";
     
     public string Empty => (_gameState.IsUtf8) ? "  " : " ";
     public string Bomb => (_gameState.IsUtf8) ? "💣" : "B";
+    public string Darkness => (_gameState.IsUtf8) ? "🟫" : "@";
 }

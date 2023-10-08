@@ -24,7 +24,7 @@ public static class GameMenu
     public static readonly int CenterX = (Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
     
     public static readonly GameState GameState = new(); 
-    private static readonly Game Game = new(GameState); 
+    private static readonly GameEngine GameEngine = new(GameState); 
     private static readonly OptionMenu OptionMenu = new(GameState);
     
     public static void DisplayTitle()
@@ -58,7 +58,7 @@ public static class GameMenu
             { 
                 "Start", () => 
                 { 
-                    Game.Play();
+                    GameEngine.Play();
                 } 
             },
             { "Options", OptionMenu.DisplayOptions },
