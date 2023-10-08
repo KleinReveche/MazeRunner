@@ -32,6 +32,14 @@ public partial class GameEngine
                 break;
         }
 
+        if (placeCandle)
+        {
+            if (_gameState.CandleCount == 0) return false;
+            _gameState.CandleCount--;
+            _candleLocations.Add((LastPlayerY, LastPlayerX));
+            return true;
+        }
+
         if (placeBomb && _gameState is { BombCount: > 0, BombIsUsed: false })
         {
             _gameState.BombCount--;

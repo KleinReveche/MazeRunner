@@ -5,11 +5,13 @@ namespace Reveche.MazeRunner;
 public partial class GameEngine
 {
     private const int PlayerVisibilityRadius = 3;
+    private const int CandleVisibilityRadius = 1;
     private const int BlastRadius = 1;
     private readonly StringBuilder _buffer = new();
     private readonly GameState _gameState;
     private readonly MazeGen _mazeGen;
     private readonly MazeIcons _mazeIcons = new(GameMenu.GameState);
+    private readonly List<(int y, int x)> _candleLocations = new();
     private int PlayerX => _gameState.PlayerX;
     private int PlayerY => _gameState.PlayerY;
     private int LastPlayerX { get; set; }
@@ -39,6 +41,7 @@ public partial class GameEngine
         {
             if (levelIsCompleted)
             {
+                _candleLocations.Clear();
                 _gameState.BombIsUsed = false;
                 _gameState.MazeHeight = _mazeGen.GenerateRandomMazeSize();
                 _gameState.MazeWidth = _mazeGen.GenerateRandomMazeSize();
@@ -113,8 +116,12 @@ public partial class GameEngine
             for (var x = 0; x < Maze.GetLength(1); x++)
             {
                 var distanceToPlayer = Math.Abs(x - PlayerX) + Math.Abs(y - PlayerY);
-            
-                if (distanceToPlayer <= PlayerVisibilityRadius)
+                var isWithinCandleRadius = _candleLocations
+                    .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= CandleVisibilityRadius 
+                                           && Math.Abs(y - candleLocation.Item1) <= CandleVisibilityRadius);
+                var isCandle = _candleLocations.Any(candleLocation => x == candleLocation.Item2 && y == candleLocation.Item1);
+                
+                if (distanceToPlayer <= PlayerVisibilityRadius || isWithinCandleRadius)
                 {
                     if (x == PlayerX && y == PlayerY)
                     {
@@ -127,6 +134,10 @@ public partial class GameEngine
                     else if (x == EnemyX && y == EnemyY && _gameState.CurrentLevel != 1)
                     {
                         _buffer.Append(_mazeIcons.Enemy); // Enemy
+                    }
+                    else if (isCandle)
+                    {
+                        _buffer.Append(_mazeIcons.Candle); // Candle
                     }
                     else
                     {

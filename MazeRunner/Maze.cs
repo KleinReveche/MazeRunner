@@ -138,5 +138,6 @@ public class MazeIcons
     
     public string Empty => (_gameState.IsUtf8) ? "  " : " ";
     public string Bomb => (_gameState.IsUtf8) ? "💣" : "B";
+    public string Candle => (_gameState.IsUtf8) ? "🕯️" : "C";
     public string Darkness => (_gameState.IsUtf8) ? "🟫" : "@";
 }
