@@ -1,4 +1,6 @@
-﻿namespace Reveche.MazeRunner;
+﻿using System.Text;
+
+namespace Reveche.MazeRunner;
 
 public static class GameMenu
 {
@@ -27,18 +29,23 @@ public static class GameMenu
     
     public static void DisplayTitle()
     {
+        var buffer = new StringBuilder();
 
         foreach (var line in Maze.Split('\n'))
         {
-            Console.SetCursorPosition(CenterX + 8, Console.CursorTop);
-            Console.WriteLine(line);
+            buffer.Append(' ', CenterX + 8);
+            buffer.AppendLine(line);
         }
 
         foreach (var line in Runner.Split('\n'))
         {
-            Console.SetCursorPosition(CenterX, Console.CursorTop);
-            Console.WriteLine(line);
+            buffer.Append(' ', CenterX);
+            buffer.AppendLine(line);
         }
+
+        // Clear the console and render the entire frame
+        Console.Clear();
+        Console.Write(buffer.ToString());
         Console.WriteLine("\n");
     }
     
