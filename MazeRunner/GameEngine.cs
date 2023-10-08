@@ -4,12 +4,17 @@ namespace Reveche.MazeRunner;
 
 public class Game
 {
+    private const int BlastRadius = 1;
     private readonly StringBuilder _buffer = new();
     private readonly GameState _gameState;
     private readonly MazeGen _mazeGen;
     private readonly MazeIcons _mazeIcons = new(GameMenu.GameState);
     private int PlayerX => _gameState.PlayerX;
     private int PlayerY => _gameState.PlayerY;
+    private int LastPlayerX { get; set; }
+    private int LastPlayerY { get; set; }
+    private int BombX { get; set; }
+    private int BombY { get; set; }
     private int ExitX => _gameState.ExitX;
     private int ExitY => _gameState.ExitY;
     private int EnemyX => _gameState.EnemyX;
@@ -33,6 +38,7 @@ public class Game
         {
             if (levelIsCompleted)
             {
+                _gameState.BombIsUsed = false;
                 _gameState.MazeHeight = _mazeGen.GenerateRandomMazeSize();
                 _gameState.MazeWidth = _mazeGen.GenerateRandomMazeSize();
                 _mazeGen.InitializeMaze();
@@ -43,6 +49,7 @@ public class Game
 
             if (shouldRedraw)
             {
+                BombSequence();
                 DrawMaze();
                 Console.Clear();
                 Console.Write(_buffer);
@@ -83,7 +90,7 @@ public class Game
             }
 
             var key = Console.ReadKey().Key;
-            if (MovePlayer(key))
+            if (PlayerAction(key))
                 shouldRedraw = true;
         }
     }
@@ -125,8 +132,9 @@ public class Game
         }
     }
 
-    private bool MovePlayer(ConsoleKey key)
+    private bool PlayerAction(ConsoleKey key)
     {
+        var placeBomb = false;
         var newPlayerX = _gameState.PlayerX;
         var newPlayerY = _gameState.PlayerY;
 
@@ -145,9 +153,26 @@ public class Game
             case ConsoleKey.RightArrow:
                 newPlayerX++;
                 break;
+            case ConsoleKey.B:
+                placeBomb = true;
+                break;
+        }
+        
+        if (placeBomb && _gameState is { BombCount: > 0, BombIsUsed: false })
+        {
+            _gameState.BombCount--;
+            _gameState.Maze[LastPlayerY, LastPlayerX] = _mazeIcons.Bomb;
+            BombX = LastPlayerX;
+            BombY = LastPlayerY;
+            
+            BombSequence(true);
+            return true;
         }
 
+
         if (!IsCellEmpty(newPlayerX, newPlayerY)) return false;
+        LastPlayerX = _gameState.PlayerX;
+        LastPlayerY = _gameState.PlayerY;
         // Clear previous player position
         Maze[PlayerY, PlayerX] = _mazeIcons.Empty;
         // Set new player position
@@ -157,6 +182,42 @@ public class Game
         Maze[PlayerY, PlayerX] = _gameState.Player;
         return true; // Player has moved, indicate that screen should be redrawn
 
+    }
+    
+    private void BombSequence(bool startBomb = false)
+    {
+        if (startBomb)
+        {
+            _gameState.BombIsUsed = true;
+            _gameState.BombTimer = 3;
+            return;
+        }
+
+        if (_gameState.BombTimer != 0)
+            _gameState.BombTimer--;
+        
+        if (_gameState is not { BombIsUsed: true, BombTimer: 0 }) return;
+        for (var y = -BlastRadius; y <= BlastRadius; y++)
+        {
+            for (var x = -BlastRadius; x <= BlastRadius; x++)
+            {
+                if (BombX + x == PlayerX && BombY + y == PlayerY)
+                {
+                    _gameState.PlayerLife--;
+                    Console.SetCursorPosition(0, Console.CursorTop);
+                    Console.WriteLine("You died!");
+                    Console.ReadKey();
+                }
+                if (BombX + x == EnemyX && BombY + y == EnemyY)
+                {
+                    _gameState.EnemyX = -1;
+                    _gameState.EnemyY = -1;
+                }
+                if (_mazeGen.IsInBounds(BombX + x, BombY + y))
+                    Maze[BombY + y, BombX + x] = _mazeIcons.Empty;
+            }
+        }
+        _gameState.BombIsUsed = false;
     }
 
     private bool IsCellEmpty(int x, int y)

@@ -102,7 +102,7 @@ public class MazeGen
         }
     }
 
-    private bool IsInBounds(int x, int y)
+    public bool IsInBounds(int x, int y)
     {
         return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight && _gameState.Maze[y, x] != _mazeIcons.Border;
     }
@@ -137,4 +137,5 @@ public class MazeIcons
     public string Enemy => (_gameState.IsUtf8) ? "👾" : "V";
     
     public string Empty => (_gameState.IsUtf8) ? "  " : " ";
+    public string Bomb => (_gameState.IsUtf8) ? "💣" : "B";
 }

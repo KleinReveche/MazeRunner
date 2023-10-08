@@ -6,6 +6,9 @@ public class GameState
     public int PlayerX { get; set; } = 1;
     public int PlayerY { get; set; } = 1;
     public int PlayerLife { get; set; } = 3;
+    public int BombCount { get; set; } = 2;
+    public bool BombIsUsed { get; set; }
+    public int BombTimer { get; set; } = 2;
     public int CurrentLevel { get; set; } = 1; // Current level number
     public int MaxLevels { get; set; } = 5; // Set the maximum number of levels
     public int EnemyX { get; set; }
