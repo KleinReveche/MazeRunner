@@ -4,6 +4,7 @@ public class MazeGen
 {
     private readonly GameState _gameState;
     private readonly MazeIcons _mazeIcons = new(GameMenu.GameState);
+    private readonly Random _random = new();
     
     public MazeGen(GameState gameState)
     {
@@ -92,6 +93,41 @@ public class MazeGen
         } while (_gameState.EnemyX == _gameState.ExitX && _gameState.EnemyY == _gameState.ExitY);
     }
 
+    public void GenerateTreasure()
+    {
+        //TODO: ENSURE RANDOMNESS OF TREASURE LOCATION
+        if (_gameState.CurrentLevel <= 2) return;
+        var treasureCount = _random.Next(1, _gameState.CurrentLevel - 1);
+        
+        for (var i = 0; i < treasureCount; i++)
+        {
+            int treasureX, treasureY, treasureTypeRandom, treasureCountRandom;
+            var random2 = new Random(_gameState.CurrentLevel * (int)DateTime.UtcNow.ToOADate());
+            var random3 = new Random((int)Math.Pow(i, 3) * (int)DateTime.UtcNow.ToOADate());
+            var random4 = new Random((int)Math.Pow(i, 4) * (int)DateTime.UtcNow.ToOADate());
+            
+            do
+            {
+                treasureX = random3.Next(2, _gameState.MazeWidth - 2);
+                treasureY = random4.Next(2, _gameState.MazeHeight - 2);
+                treasureTypeRandom = random3.Next(100);
+                treasureCountRandom = random2.Next(1, _gameState.CurrentLevel);
+            } while (_gameState.Maze[treasureY, treasureX] != _mazeIcons.Empty);
+
+            var treasureType = treasureTypeRandom switch
+            {
+                <= 20 => TreasureType.Bomb,
+                <= 40 => TreasureType.Candle,
+                <= 60 => TreasureType.Life,
+                _ => TreasureType.None
+            };
+
+            if (treasureType == TreasureType.None) continue;
+            _gameState.TreasureLocations.Add((treasureY, treasureX, treasureType, treasureCountRandom));
+        }
+        
+    }
+
     private static void Shuffle(IList<int> array)
     {
         var rand = new Random();
@@ -139,5 +175,14 @@ public class MazeIcons
     public string Empty => (_gameState.IsUtf8) ? "  " : " ";
     public string Bomb => (_gameState.IsUtf8) ? "💣" : "B";
     public string Candle => (_gameState.IsUtf8) ? "🕯️" : "C";
+    public string Treasure => (_gameState.IsUtf8) ? "📦" : "T";
     public string Darkness => (_gameState.IsUtf8) ? "🟫" : "@";
+}
+
+public enum TreasureType
+{
+    Bomb,
+    Candle,
+    Life,
+    None
 }

@@ -36,7 +36,7 @@ public partial class GameEngine
         {
             if (_gameState.CandleCount == 0) return false;
             _gameState.CandleCount--;
-            _candleLocations.Add((LastPlayerY, LastPlayerX));
+            _gameState.CandleLocations.Add((LastPlayerY, LastPlayerX));
             return true;
         }
 
@@ -87,6 +87,30 @@ public partial class GameEngine
                     Console.SetCursorPosition(0, Console.CursorTop);
                     Console.WriteLine("You died!");
                     Console.ReadKey();
+                }
+                //TODO: FIX THIS!!!
+                var treasure = _gameState.TreasureLocations.FirstOrDefault(treasureLocation =>
+                    treasureLocation.treasureX == PlayerX && treasureLocation.treasureY == PlayerY);
+
+                if (treasure.treasureType != TreasureType.None)
+                {
+                    switch (treasure.treasureType)
+                    {
+                        case TreasureType.Bomb:
+                            _gameState.BombCount += treasure.count;
+                            break;
+                        case TreasureType.Candle:
+                            _gameState.CandleCount += treasure.count;
+                            break;
+                        case TreasureType.Life:
+                            _gameState.PlayerLife += treasure.count;
+                            break;
+                        case TreasureType.None:
+                        default:
+                            break;
+                    }
+                    Console.WriteLine($"You found {treasure.count} {treasure.treasureType}!");
+                    _gameState.TreasureLocations.Remove(treasure);
                 }
 
                 if (BombX + x == EnemyX && BombY + y == EnemyY)

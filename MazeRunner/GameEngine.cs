@@ -11,7 +11,6 @@ public partial class GameEngine
     private readonly GameState _gameState;
     private readonly MazeGen _mazeGen;
     private readonly MazeIcons _mazeIcons = new(GameMenu.GameState);
-    private readonly List<(int y, int x)> _candleLocations = new();
     private int PlayerX => _gameState.PlayerX;
     private int PlayerY => _gameState.PlayerY;
     private int LastPlayerX { get; set; }
@@ -39,15 +38,18 @@ public partial class GameEngine
         
         while (_gameState.CurrentLevel <= _gameState.MaxLevels)
         {
+            var random = new Random();
+            //_gameState.CurrentLevel = random.Next(1, _gameState.MaxLevels);
             if (levelIsCompleted)
             {
-                _candleLocations.Clear();
+                _gameState.CandleLocations.Clear();
                 _gameState.BombIsUsed = false;
                 _gameState.MazeHeight = _mazeGen.GenerateRandomMazeSize();
                 _gameState.MazeWidth = _mazeGen.GenerateRandomMazeSize();
                 _mazeGen.InitializeMaze();
                 _mazeGen.GenerateMaze(1, 1); // Start generating maze from (1, 1)
                 _mazeGen.GenerateExitAndEnemy();
+                _mazeGen.GenerateTreasure();
                 levelIsCompleted = false;
             }
 
@@ -99,60 +101,6 @@ public partial class GameEngine
         }
     }
 
-    private void DrawMaze()
-    {
-        _gameState.Player = _gameState.PlayerLife switch
-        {
-            2 => (_gameState.IsUtf8) ? "😐" : "P",
-            1 => (_gameState.IsUtf8) ? "🤕" : "P",
-            0 => (_gameState.IsUtf8) ? "👻" : "X",
-            _ => (_gameState.IsUtf8) ? "😀" : "P"
-        };
-        
-        _buffer.Clear();
-
-        for (var y = 0; y < Maze.GetLength(0); y++)
-        {
-            for (var x = 0; x < Maze.GetLength(1); x++)
-            {
-                var distanceToPlayer = Math.Abs(x - PlayerX) + Math.Abs(y - PlayerY);
-                var isWithinCandleRadius = _candleLocations
-                    .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= CandleVisibilityRadius 
-                                           && Math.Abs(y - candleLocation.Item1) <= CandleVisibilityRadius);
-                var isCandle = _candleLocations.Any(candleLocation => x == candleLocation.Item2 && y == candleLocation.Item1);
-                
-                if (distanceToPlayer <= PlayerVisibilityRadius || isWithinCandleRadius)
-                {
-                    if (x == PlayerX && y == PlayerY)
-                    {
-                        _buffer.Append(_gameState.Player); // Player
-                    }
-                    else if (x == ExitX && y == ExitY)
-                    {
-                        _buffer.Append(_mazeIcons.Exit); // Exit
-                    }
-                    else if (x == EnemyX && y == EnemyY && _gameState.CurrentLevel != 1)
-                    {
-                        _buffer.Append(_mazeIcons.Enemy); // Enemy
-                    }
-                    else if (isCandle)
-                    {
-                        _buffer.Append(_mazeIcons.Candle); // Candle
-                    }
-                    else
-                    {
-                        _buffer.Append(Maze[y, x]);
-                    }
-                }
-                else
-                {
-                    _buffer.Append(_mazeIcons.Darkness);
-                }
-            }
-            _buffer.AppendLine(); // Move to the next row in the buffer
-        }
-    }
-
     private bool IsCellEmpty(int x, int y)
     {
         var maze = _gameState.Maze;
@@ -160,9 +108,9 @@ public partial class GameEngine
         {
             return maze[y, x] == _mazeIcons.Empty;
         }
+
         return false;
     }
-    
     private void MoveEnemy()
     {
         var enemyX = _gameState.EnemyX;
