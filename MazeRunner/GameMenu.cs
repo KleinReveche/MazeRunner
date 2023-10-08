@@ -30,7 +30,7 @@ public static class GameMenu
     public static void DisplayTitle()
     {
         var buffer = new StringBuilder();
-
+        Console.ForegroundColor = ConsoleColor.White;
         foreach (var line in Maze.Split('\n'))
         {
             buffer.Append(' ', CenterX + 8);
@@ -46,7 +46,8 @@ public static class GameMenu
         // Clear the console and render the entire frame
         Console.Clear();
         Console.Write(buffer.ToString());
-        Console.WriteLine("\n");
+        Console.WriteLine();
+        Console.ResetColor();
     }
     
     public static void StartMenu()
@@ -66,9 +67,11 @@ public static class GameMenu
         };
 
         var selectedIndex = 0;
+        var buffer = new StringBuilder();
 
         while (true)
         {
+            buffer.Clear();
             Console.Clear();
             DisplayTitle();
 
@@ -77,20 +80,14 @@ public static class GameMenu
             for (var i = 0; i < menuOptions.Count; i++)
             {
                 var option = optionKeys[i];
-                Console.SetCursorPosition(CenterX + 20, Console.CursorTop);
+                buffer.Append(' ', CenterX + 20);
+                
                 if (i == selectedIndex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(">> " + option + " <<");
-                }
+                    buffer.AppendLine("\u001b[93m>> " + option + " <<\u001b[0m");
                 else
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("   " + option);
-                }
+                    buffer.AppendLine("   " + option);
             }
-            
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(buffer);
             var keyInfo = Console.ReadKey();
             
             // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault

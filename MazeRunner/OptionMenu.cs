@@ -1,4 +1,6 @@
-﻿namespace Reveche.MazeRunner;
+﻿using System.Text;
+
+namespace Reveche.MazeRunner;
 
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ public class OptionMenu
     
     public void DisplayOptions()
     {
+        var buffer = new StringBuilder();
         var options = new Dictionary<string, string>
         {
             { "Difficulty", "Normal" },
@@ -32,31 +35,24 @@ public class OptionMenu
 
         while (true)
         {
+            buffer.Clear();
             Console.Clear();
 
             GameMenu.DisplayTitle();
-            Console.SetCursorPosition(GameMenu.CenterX + 17, Console.CursorTop);
-            Console.WriteLine("Select an option:");
 
             for (var i = 0; i < options.Count; i++)
             {
                 var option = options.ElementAt(i);
                 var colon = option.Key == "Back" ? "" : ":";
-                Console.SetCursorPosition(GameMenu.CenterX + 19, Console.CursorTop);
+                buffer.Append(' ', GameMenu.CenterX + 18);
+                
                 if (i == selectedIndex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(">> " + option.Key + $"{colon} " + option.Value + " <<");
-                }
+                    buffer.AppendLine("\u001b[93m>> " + option.Key + $"{colon} " + option.Value + " <<\u001b[0m");
                 else
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("   " + option.Key + $"{colon} " + option.Value);
-                }
+                    buffer.AppendLine($"   " + option.Key + $"{colon} " + option.Value);
             }
-
-            Console.ForegroundColor = ConsoleColor.White;
-
+            
+            Console.WriteLine(buffer);
             var keyInfo = Console.ReadKey();
 
             // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
