@@ -6,21 +6,20 @@ namespace Reveche.MazeRunner;
 public class MusicPlayer
 {
     private readonly GameState _gameState;
-    
+
     public MusicPlayer(GameState gameState)
     {
         _gameState = gameState;
     }
-    
-    #pragma warning disable CA1416 //Before called, the OS is checked to ensure that the SoundPlayer class is available.
+#pragma warning disable CA1416 //Before called, the OS is checked to ensure that the SoundPlayer class is available.
     public void PlayBackgroundMusic(CancellationToken cancellationToken)
     {
         const string resLoc = "Reveche.MazeRunner.Music.";
         var wavResources = new Dictionary<string, int>
         {
-            { $"{resLoc}8BitAirFight.wav", 115_000},
+            { $"{resLoc}8BitAirFight.wav", 115_000 },
             { $"{resLoc}BitBeats3.wav", 82_000 },
-            { $"{resLoc}KLPeachGameOverII.wav", 20_000}
+            { $"{resLoc}KLPeachGameOverII.wav", 20_000 }
         };
 
         var random = new Random();
@@ -33,7 +32,7 @@ public class MusicPlayer
             var wavResourceKeys = wavResources.Keys.ToArray();
             var wavResourceLength = wavResources.Values.ToArray();
             var selectedResource = wavResourceKeys[randomIndex];
-        
+
             var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(selectedResource);
             player = new SoundPlayer(resourceStream);
             player.Play();

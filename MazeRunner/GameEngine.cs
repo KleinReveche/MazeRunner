@@ -35,10 +35,11 @@ public partial class GameEngine
         Console.CursorVisible = false;
         var levelIsCompleted = true;
         var shouldRedraw = true;
-        
+
         while (_gameState.CurrentLevel <= _gameState.MaxLevels)
         {
-            var random = new Random();
+            //For Testing Levels
+            //var random = new Random();
             //_gameState.CurrentLevel = random.Next(1, _gameState.MaxLevels);
             if (levelIsCompleted)
             {
@@ -59,24 +60,24 @@ public partial class GameEngine
                 DrawMaze();
                 Console.Clear();
                 Console.Write(_buffer);
-                
+
                 if (_gameState.PlayerX == _gameState.EnemyX && _gameState.PlayerY == _gameState.EnemyY)
                 {
                     Console.WriteLine("You died!");
                     _gameState.PlayerLife--;
                 }
-                
+
                 if (_gameState.CurrentLevel != 1) MoveEnemy();
                 shouldRedraw = false;
             }
 
             if (_gameState.PlayerLife == 0)
             {
-                Console.SetCursorPosition(2,1);
+                Console.SetCursorPosition(2, 1);
                 Console.WriteLine("🟥🟥🟥🟥🟥🟥🟥🟥");
-                Console.SetCursorPosition(2,2);
+                Console.SetCursorPosition(2, 2);
                 Console.WriteLine("🟥 Game Over! 🟥");
-                Console.SetCursorPosition(2,3);
+                Console.SetCursorPosition(2, 3);
                 Console.WriteLine("🟥🟥🟥🟥🟥🟥🟥🟥");
                 break;
             }
@@ -91,6 +92,7 @@ public partial class GameEngine
                     Console.ReadKey();
                     break;
                 }
+
                 shouldRedraw = true;
                 levelIsCompleted = true;
             }
@@ -104,20 +106,19 @@ public partial class GameEngine
     private bool IsCellEmpty(int x, int y)
     {
         var maze = _gameState.Maze;
-        if (x >= 0 && x < maze.GetLength(1) && y >= 0 && y < maze.GetLength(0))
-        {
+        if (x >= 0 && x < maze.GetLength(1) && y >= 0 && y < maze.GetLength(0)) 
             return maze[y, x] == _mazeIcons.Empty;
-        }
 
         return false;
     }
+
     private void MoveEnemy()
     {
         var enemyX = _gameState.EnemyX;
         var enemyY = _gameState.EnemyY;
         var exitX = _gameState.ExitX;
         var exitY = _gameState.ExitY;
-        
+
         var random = new Random();
         var direction = random.Next(4); // 0: up, 1: down, 2: left, 3: right
 
@@ -139,7 +140,7 @@ public partial class GameEngine
                 newEnemyX++;
                 break;
         }
-        
+
         if (newEnemyY == exitX && newEnemyY == exitY) return;
         if (!IsCellEmpty(newEnemyX, newEnemyY)) return;
         _gameState.EnemyX = newEnemyX;

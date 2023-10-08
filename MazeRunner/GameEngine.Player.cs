@@ -50,7 +50,7 @@ public partial class GameEngine
             BombSequence(true);
             return true;
         }
-        
+
         if (!IsCellEmpty(newPlayerX, newPlayerY)) return false;
         LastPlayerX = _gameState.PlayerX;
         LastPlayerY = _gameState.PlayerY;
@@ -88,6 +88,7 @@ public partial class GameEngine
                     Console.WriteLine("You died!");
                     Console.ReadKey();
                 }
+
                 //TODO: FIX THIS!!!
                 var treasure = _gameState.TreasureLocations.FirstOrDefault(treasureLocation =>
                     treasureLocation.treasureX == PlayerX && treasureLocation.treasureY == PlayerY);
@@ -109,6 +110,7 @@ public partial class GameEngine
                         default:
                             break;
                     }
+
                     Console.WriteLine($"You found {treasure.count} {treasure.treasureType}!");
                     _gameState.TreasureLocations.Remove(treasure);
                 }

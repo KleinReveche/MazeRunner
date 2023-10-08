@@ -2,6 +2,9 @@
 
 public class GameState
 {
+    public readonly List<(int candleY, int CandleX)> CandleLocations = new();
+    public readonly List<(int treasureY, int treasureX, TreasureType treasureType, int count)>
+        TreasureLocations = new();
     public string Player { get; set; } = "😀";
     public int PlayerX { get; set; } = 1;
     public int PlayerY { get; set; } = 1;
@@ -21,6 +24,4 @@ public class GameState
     public string[,] Maze { get; set; } = null!;
     public bool IsSoundOn { get; set; } = true;
     public bool IsUtf8 { get; set; } = true;
-    public readonly List<(int candleY, int CandleX)> CandleLocations = new();
-    public readonly List<(int treasureY, int treasureX, TreasureType treasureType, int count)> TreasureLocations = new();
 }

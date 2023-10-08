@@ -2,27 +2,23 @@
 
 namespace Reveche.MazeRunner;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 public class OptionMenu
 {
     private readonly GameState _gameState;
-    
+
     public OptionMenu(GameState gameState)
     {
         _gameState = gameState;
     }
-    
+
     public void DisplayOptions()
     {
         var buffer = new StringBuilder();
         var options = new Dictionary<string, string>
         {
             { "Difficulty", "Normal" },
-            { "Sound", (_gameState.IsSoundOn) ? "On" : "Off" },
-            { "Text Style", (_gameState.IsUtf8) ? "UTF-8" : "ASCII" },
+            { "Sound", _gameState.IsSoundOn ? "On" : "Off" },
+            { "Text Style", _gameState.IsUtf8 ? "UTF-8" : "ASCII" },
             { "Back", "" }
         };
 
@@ -45,13 +41,13 @@ public class OptionMenu
                 var option = options.ElementAt(i);
                 var colon = option.Key == "Back" ? "" : ":";
                 buffer.Append(' ', GameMenu.CenterX + 18);
-                
+
                 if (i == selectedIndex)
                     buffer.AppendLine("\u001b[93m>> " + option.Key + $"{colon} " + option.Value + " <<\u001b[0m");
                 else
-                    buffer.AppendLine($"   " + option.Key + $"{colon} " + option.Value);
+                    buffer.AppendLine("   " + option.Key + $"{colon} " + option.Value);
             }
-            
+
             Console.WriteLine(buffer);
             var keyInfo = Console.ReadKey();
 

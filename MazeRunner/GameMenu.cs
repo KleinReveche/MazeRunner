@@ -21,12 +21,13 @@ public static class GameMenu
                                   ██║░░██║╚██████╔╝██║░╚███║██║░╚███║███████╗██║░░██║
                                   ╚═╝░░╚═╝░╚═════╝░╚═╝░░╚══╝╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝
                                   """;
+
     public static readonly int CenterX = (Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
-    
-    public static readonly GameState GameState = new(); 
-    private static readonly GameEngine GameEngine = new(GameState); 
+
+    public static readonly GameState GameState = new();
+    private static readonly GameEngine GameEngine = new(GameState);
     private static readonly OptionMenu OptionMenu = new(GameState);
-    
+
     public static void DisplayTitle()
     {
         var buffer = new StringBuilder();
@@ -49,17 +50,13 @@ public static class GameMenu
         Console.WriteLine();
         Console.ResetColor();
     }
-    
+
     public static void StartMenu()
     {
-        
         Dictionary<string, Action> menuOptions = new()
         {
-            { 
-                "Start", () => 
-                { 
-                    GameEngine.Play();
-                } 
+            {
+                "Start", () => { GameEngine.Play(); }
             },
             { "Options", OptionMenu.DisplayOptions },
             { "Credits", ShowCreditsScreen },
@@ -76,20 +73,21 @@ public static class GameMenu
             DisplayTitle();
 
             var optionKeys = menuOptions.Keys.ToList();
-            
+
             for (var i = 0; i < menuOptions.Count; i++)
             {
                 var option = optionKeys[i];
                 buffer.Append(' ', CenterX + 20);
-                
+
                 if (i == selectedIndex)
                     buffer.AppendLine("\u001b[93m>> " + option + " <<\u001b[0m");
                 else
                     buffer.AppendLine("   " + option);
             }
+
             Console.WriteLine(buffer);
             var keyInfo = Console.ReadKey();
-            
+
             // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (keyInfo.Key)
             {
@@ -108,7 +106,7 @@ public static class GameMenu
             }
         }
     }
-    
+
     private static void ShowCreditsScreen()
     {
         const string about = """
@@ -116,24 +114,25 @@ public static class GameMenu
                              --------
                              Created by Klein Reveche.
                              Version 0.5.0
-                             
-                             Music 
+
+                             Music
                              --------
                              KL Peach Game Over II by Kim Lightyear from Pixabay
                              8-bit Air Fight by moodmode from Pixabay
                              Bit Beats 3 by by XtremeFreddy from Pixabay
-                             
+
                              © 2023 Klein Reveche. All rights reserved
                              """;
-        
+
         Console.Clear();
         DisplayTitle();
-        
+
         foreach (var line in about.Split('\n'))
         {
             Console.SetCursorPosition(CenterX + 8, Console.CursorTop);
             Console.WriteLine(line);
         }
+
         Console.ReadKey();
         StartMenu();
     }

@@ -9,7 +9,7 @@ public static class MazeRunner
 
         var cancellationTokenSource = new CancellationTokenSource();
         Thread? musicThread = null;
-        
+
         // Start the background music thread
         if (OperatingSystem.IsWindows())
         {
@@ -21,10 +21,10 @@ public static class MazeRunner
 
             musicThread.Start();
         }
-        
+
         GameMenu.StartMenu();
         Console.ReadKey();
-        
+
         if (musicThread == null) return;
         cancellationTokenSource.Cancel();
         musicThread.Join();
