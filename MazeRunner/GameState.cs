@@ -3,8 +3,10 @@
 public class GameState
 {
     public readonly List<(int candleY, int CandleX)> CandleLocations = new();
+
     public readonly List<(int treasureY, int treasureX, TreasureType treasureType, int count)>
         TreasureLocations = new();
+
     public string Player { get; set; } = "😀";
     public int PlayerX { get; set; } = 1;
     public int PlayerY { get; set; } = 1;

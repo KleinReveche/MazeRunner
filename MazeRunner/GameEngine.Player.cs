@@ -59,7 +59,7 @@ public partial class GameEngine
         // Set new player position
         _gameState.PlayerX = newPlayerX;
         _gameState.PlayerY = newPlayerY;
-        
+
         if (_gameState is { PlayerHasIncreasedVisibility: true, PlayerIncreasedVisibilityEffectDuration: > 0 })
             _gameState.PlayerIncreasedVisibilityEffectDuration--;
         else if (_gameState.PlayerHasIncreasedVisibility)
@@ -69,10 +69,10 @@ public partial class GameEngine
             _gameState.PlayerInvincibilityEffectDuration--;
         else if (_gameState.IsPlayerInvulnerable)
             _gameState.IsPlayerInvulnerable = false;
-        
+
         if (_gameState.AtAGlance)
             _gameState.AtAGlance = false;
-        
+
         var treasure = _gameState.TreasureLocations.FirstOrDefault(treasureLocation =>
             treasureLocation.treasureX == PlayerX && treasureLocation.treasureY == PlayerY);
 
@@ -98,9 +98,10 @@ public partial class GameEngine
                     Console.WriteLine($"You found {treasure.count} {treasure.treasureType}!");
                     break;
             }
+
             Console.ReadKey();
         }
-        
+
         // Set player in the maze
         Maze[PlayerY, PlayerX] = _gameState.Player;
         return true; // Player has moved, indicate that screen should be redrawn
@@ -135,6 +136,7 @@ public partial class GameEngine
             default:
                 break;
         }
+
         _gameState.TreasureLocations.Remove(treasure);
     }
 
@@ -152,27 +154,25 @@ public partial class GameEngine
 
         if (_gameState is not { BombIsUsed: true, BombTimer: 0 }) return;
         for (var y = -BlastRadius; y <= BlastRadius; y++)
+        for (var x = -BlastRadius; x <= BlastRadius; x++)
         {
-            for (var x = -BlastRadius; x <= BlastRadius; x++)
+            var playerIsInvulnerable = _gameState.IsPlayerInvulnerable;
+            if (BombX + x == PlayerX && BombY + y == PlayerY && !playerIsInvulnerable)
             {
-                var playerIsInvulnerable = _gameState.IsPlayerInvulnerable;
-                if (BombX + x == PlayerX && BombY + y == PlayerY && !playerIsInvulnerable)
-                {
-                    _gameState.PlayerLife--;
-                    Console.SetCursorPosition(0, Console.CursorTop);
-                    Console.WriteLine("You died!");
-                    Console.ReadKey();
-                }
-                
-                if (BombX + x == EnemyX && BombY + y == EnemyY)
-                {
-                    _gameState.EnemyX = -1;
-                    _gameState.EnemyY = -1;
-                }
-
-                if (_mazeGen.IsInBounds(BombX + x, BombY + y))
-                    Maze[BombY + y, BombX + x] = _mazeIcons.Empty;
+                _gameState.PlayerLife--;
+                Console.SetCursorPosition(0, Console.CursorTop);
+                Console.WriteLine("You died!");
+                Console.ReadKey();
             }
+
+            if (BombX + x == EnemyX && BombY + y == EnemyY)
+            {
+                _gameState.EnemyX = -1;
+                _gameState.EnemyY = -1;
+            }
+
+            if (_mazeGen.IsInBounds(BombX + x, BombY + y))
+                Maze[BombY + y, BombX + x] = _mazeIcons.Empty;
         }
 
         _gameState.BombIsUsed = false;

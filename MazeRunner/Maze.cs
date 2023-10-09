@@ -125,10 +125,11 @@ public class MazeGen
             };
 
             if (treasureType == TreasureType.None) continue;
-            _gameState.TreasureLocations.Add((treasureY, treasureX, treasureType, 
-                    treasureType is TreasureType.Life 
-                        or TreasureType.IncreasedVisibilityEffect 
-                        or TreasureType.TemporaryInvulnerabilityEffect ? 1 : treasureCountRandom));
+            _gameState.TreasureLocations.Add((treasureY, treasureX, treasureType,
+                treasureType is TreasureType.Life
+                    or TreasureType.IncreasedVisibilityEffect
+                    or TreasureType.TemporaryInvulnerabilityEffect
+                    ? 1 : treasureCountRandom));
             _gameState.Maze[treasureY, treasureX] = _mazeIcons.Empty;
         }
     }
