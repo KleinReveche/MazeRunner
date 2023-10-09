@@ -59,9 +59,41 @@ public partial class GameEngine
         // Set new player position
         _gameState.PlayerX = newPlayerX;
         _gameState.PlayerY = newPlayerY;
+        
+        var treasure = _gameState.TreasureLocations.FirstOrDefault(treasureLocation =>
+            treasureLocation.treasureX == PlayerX && treasureLocation.treasureY == PlayerY);
+
+        if (treasure != default)
+        {
+            AcquireTreasure(treasure);
+            Console.WriteLine($"You found {treasure.count} {treasure.treasureType}!");
+            Console.ReadKey();
+        }
+        
         // Set player in the maze
         Maze[PlayerY, PlayerX] = _gameState.Player;
         return true; // Player has moved, indicate that screen should be redrawn
+    }
+
+    private void AcquireTreasure((int treasureY, int treasureX, TreasureType treasureType, int count) treasure)
+    {
+        if (treasure.treasureType == TreasureType.None) return;
+        switch (treasure.treasureType)
+        {
+            case TreasureType.Bomb:
+                _gameState.BombCount += treasure.count;
+                break;
+            case TreasureType.Candle:
+                _gameState.CandleCount += treasure.count;
+                break;
+            case TreasureType.Life:
+                _gameState.PlayerLife += treasure.count;
+                break;
+            case TreasureType.None:
+            default:
+                break;
+        }
+        _gameState.TreasureLocations.Remove(treasure);
     }
 
     private void BombSequence(bool startBomb = false)
@@ -88,33 +120,7 @@ public partial class GameEngine
                     Console.WriteLine("You died!");
                     Console.ReadKey();
                 }
-
-                //TODO: FIX THIS!!!
-                var treasure = _gameState.TreasureLocations.FirstOrDefault(treasureLocation =>
-                    treasureLocation.treasureX == PlayerX && treasureLocation.treasureY == PlayerY);
-
-                if (treasure.treasureType != TreasureType.None)
-                {
-                    switch (treasure.treasureType)
-                    {
-                        case TreasureType.Bomb:
-                            _gameState.BombCount += treasure.count;
-                            break;
-                        case TreasureType.Candle:
-                            _gameState.CandleCount += treasure.count;
-                            break;
-                        case TreasureType.Life:
-                            _gameState.PlayerLife += treasure.count;
-                            break;
-                        case TreasureType.None:
-                        default:
-                            break;
-                    }
-
-                    Console.WriteLine($"You found {treasure.count} {treasure.treasureType}!");
-                    _gameState.TreasureLocations.Remove(treasure);
-                }
-
+                
                 if (BombX + x == EnemyX && BombY + y == EnemyY)
                 {
                     _gameState.EnemyX = -1;
