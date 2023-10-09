@@ -60,11 +60,6 @@ public partial class GameEngine
         _gameState.PlayerX = newPlayerX;
         _gameState.PlayerY = newPlayerY;
 
-        if (_gameState is { PlayerHasIncreasedVisibility: true, PlayerIncreasedVisibilityEffectDuration: > 0 })
-            _gameState.PlayerIncreasedVisibilityEffectDuration--;
-        else if (_gameState.PlayerHasIncreasedVisibility)
-            _gameState.PlayerHasIncreasedVisibility = false;
-
         if (_gameState is { IsPlayerInvulnerable: true, PlayerInvincibilityEffectDuration: > 0 })
             _gameState.PlayerInvincibilityEffectDuration--;
         else if (_gameState.IsPlayerInvulnerable)
@@ -82,13 +77,13 @@ public partial class GameEngine
             switch (treasure.treasureType)
             {
                 case TreasureType.IncreasedVisibilityEffect:
-                    Console.WriteLine($"You have increased visibility for {_gameState.PlayerIncreasedVisibilityEffectDuration} turns.");
+                    Console.WriteLine("You have increased visibility for the current level.");
                     break;
                 case TreasureType.TemporaryInvulnerabilityEffect:
                     Console.WriteLine($"You have temporarily invulnerable for {_gameState.PlayerInvincibilityEffectDuration} turns.");
                     break;
                 case TreasureType.AtAGlanceEffect:
-                    Console.WriteLine("Glance at the maze. At your next turn, it'll be hidden again.");
+                    Console.WriteLine("Glance at the maze after pressing a key. At your next turn, it'll be hidden again.");
                     break;
                 case TreasureType.Bomb:
                 case TreasureType.Candle:
@@ -123,7 +118,6 @@ public partial class GameEngine
                 break;
             case TreasureType.IncreasedVisibilityEffect:
                 _gameState.PlayerHasIncreasedVisibility = true;
-                _gameState.PlayerIncreasedVisibilityEffectDuration = 5;
                 break;
             case TreasureType.TemporaryInvulnerabilityEffect:
                 _gameState.IsPlayerInvulnerable = true;

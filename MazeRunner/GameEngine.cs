@@ -45,6 +45,8 @@ public partial class GameEngine
             //_gameState.AtAGlance = true;
             if (levelIsCompleted)
             {
+                if (_gameState.PlayerHasIncreasedVisibility)
+                    _gameState.PlayerHasIncreasedVisibility = false;
                 _gameState.CandleLocations.Clear();
                 _gameState.BombIsUsed = false;
                 _gameState.MazeHeight = _mazeGen.GenerateRandomMazeSize();

@@ -15,7 +15,6 @@ public class GameState
     public int CandleCount { get; set; } = 4;
     public bool BombIsUsed { get; set; }
     public int BombTimer { get; set; } = 2;
-    public int PlayerIncreasedVisibilityEffectDuration { get; set; }
     public int PlayerInvincibilityEffectDuration { get; set; }
     public bool IsPlayerInvulnerable { get; set; }
     public bool PlayerHasIncreasedVisibility { get; set; }
