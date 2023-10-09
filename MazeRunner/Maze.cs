@@ -115,16 +115,20 @@ public class MazeGen
 
             var treasureType = treasureTypeRandom switch
             {
-                <= 40 => TreasureType.Bomb,
-                <= 80 => TreasureType.Candle,
-                <= 90 => TreasureType.Life,
+                <= 35 => TreasureType.Bomb,
+                <= 60 => TreasureType.Candle,
+                <= 75 => TreasureType.IncreasedVisibilityEffect,
+                <= 85 => TreasureType.TemporaryInvulnerabilityEffect,
+                <= 96 => TreasureType.Life,
+                <= 98 => TreasureType.AtAGlanceEffect,
                 _ => TreasureType.None
             };
 
             if (treasureType == TreasureType.None) continue;
-            _gameState.TreasureLocations.Add(
-                (treasureY, treasureX, treasureType, treasureType == TreasureType.Life ? 1 : treasureCountRandom)
-                );
+            _gameState.TreasureLocations.Add((treasureY, treasureX, treasureType, 
+                    treasureType is TreasureType.Life 
+                        or TreasureType.IncreasedVisibilityEffect 
+                        or TreasureType.TemporaryInvulnerabilityEffect ? 1 : treasureCountRandom));
             _gameState.Maze[treasureY, treasureX] = _mazeIcons.Empty;
         }
     }
@@ -159,25 +163,4 @@ public class MazeGen
 
         return randomNum;
     }
-}
-
-public class MazeIcons
-{
-    private readonly GameState _gameState;
-
-    public MazeIcons(GameState gameState)
-    {
-        _gameState = gameState;
-    }
-
-    public string Wall => _gameState.IsUtf8 ? "🟪" : "*";
-    public string Border => _gameState.IsUtf8 ? "🟦" : "#";
-    public string Exit => _gameState.IsUtf8 ? "🚪" : "E";
-    public string Enemy => _gameState.IsUtf8 ? "👾" : "V";
-
-    public string Empty => _gameState.IsUtf8 ? "  " : " ";
-    public string Bomb => _gameState.IsUtf8 ? "💣" : "B";
-    public string Candle => _gameState.IsUtf8 ? "🕯️" : "C";
-    public string Treasure => _gameState.IsUtf8 ? "📦" : "T";
-    public string Darkness => _gameState.IsUtf8 ? "🟫" : "@";
 }

@@ -60,13 +60,44 @@ public partial class GameEngine
         _gameState.PlayerX = newPlayerX;
         _gameState.PlayerY = newPlayerY;
         
+        if (_gameState is { PlayerHasIncreasedVisibility: true, PlayerIncreasedVisibilityEffectDuration: > 0 })
+            _gameState.PlayerIncreasedVisibilityEffectDuration--;
+        else if (_gameState.PlayerHasIncreasedVisibility)
+            _gameState.PlayerHasIncreasedVisibility = false;
+
+        if (_gameState is { IsPlayerInvulnerable: true, PlayerInvincibilityEffectDuration: > 0 })
+            _gameState.PlayerInvincibilityEffectDuration--;
+        else if (_gameState.IsPlayerInvulnerable)
+            _gameState.IsPlayerInvulnerable = false;
+        
+        if (_gameState.AtAGlance)
+            _gameState.AtAGlance = false;
+        
         var treasure = _gameState.TreasureLocations.FirstOrDefault(treasureLocation =>
             treasureLocation.treasureX == PlayerX && treasureLocation.treasureY == PlayerY);
 
         if (treasure != default)
         {
             AcquireTreasure(treasure);
-            Console.WriteLine($"You found {treasure.count} {treasure.treasureType}!");
+            switch (treasure.treasureType)
+            {
+                case TreasureType.IncreasedVisibilityEffect:
+                    Console.WriteLine($"You have increased visibility for {_gameState.PlayerIncreasedVisibilityEffectDuration} turns.");
+                    break;
+                case TreasureType.TemporaryInvulnerabilityEffect:
+                    Console.WriteLine($"You have temporarily invulnerable for {_gameState.PlayerInvincibilityEffectDuration} turns.");
+                    break;
+                case TreasureType.AtAGlanceEffect:
+                    Console.WriteLine("Glance at the maze. At your next turn, it'll be hidden again.");
+                    break;
+                case TreasureType.Bomb:
+                case TreasureType.Candle:
+                case TreasureType.Life:
+                case TreasureType.None:
+                default:
+                    Console.WriteLine($"You found {treasure.count} {treasure.treasureType}!");
+                    break;
+            }
             Console.ReadKey();
         }
         
@@ -88,6 +119,17 @@ public partial class GameEngine
                 break;
             case TreasureType.Life:
                 _gameState.PlayerLife += treasure.count;
+                break;
+            case TreasureType.IncreasedVisibilityEffect:
+                _gameState.PlayerHasIncreasedVisibility = true;
+                _gameState.PlayerIncreasedVisibilityEffectDuration = 5;
+                break;
+            case TreasureType.TemporaryInvulnerabilityEffect:
+                _gameState.IsPlayerInvulnerable = true;
+                _gameState.PlayerInvincibilityEffectDuration = 5;
+                break;
+            case TreasureType.AtAGlanceEffect:
+                _gameState.AtAGlance = true;
                 break;
             case TreasureType.None:
             default:
@@ -113,7 +155,8 @@ public partial class GameEngine
         {
             for (var x = -BlastRadius; x <= BlastRadius; x++)
             {
-                if (BombX + x == PlayerX && BombY + y == PlayerY)
+                var playerIsInvulnerable = _gameState.IsPlayerInvulnerable;
+                if (BombX + x == PlayerX && BombY + y == PlayerY && !playerIsInvulnerable)
                 {
                     _gameState.PlayerLife--;
                     Console.SetCursorPosition(0, Console.CursorTop);

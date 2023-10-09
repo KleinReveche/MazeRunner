@@ -5,7 +5,8 @@ namespace Reveche.MazeRunner;
 public partial class GameEngine
 {
     private const int PlayerVisibilityRadius = 3;
-    private const int CandleVisibilityRadius = 1;
+    private const int CandleVisibilityRadius = 2;
+    private const int IncreasedVisibilityEffectRadius = 2;
     private const int BlastRadius = 1;
     private readonly StringBuilder _buffer = new();
     private readonly GameState _gameState;
@@ -41,6 +42,7 @@ public partial class GameEngine
             //For Testing Levels
             //var random = new Random();
             //_gameState.CurrentLevel = random.Next(1, _gameState.MaxLevels);
+            //_gameState.AtAGlance = true;
             if (levelIsCompleted)
             {
                 _gameState.CandleLocations.Clear();
@@ -61,7 +63,19 @@ public partial class GameEngine
                 Console.Clear();
                 Console.Write(_buffer);
 
-                if (_gameState.PlayerX == _gameState.EnemyX && _gameState.PlayerY == _gameState.EnemyY)
+                var isInvincible = false;
+                
+                if (_gameState.IsPlayerInvulnerable)
+                {
+                    _gameState.PlayerInvincibilityEffectDuration--;
+                    isInvincible = true;
+                }
+
+                if (
+                    _gameState.PlayerX == _gameState.EnemyX 
+                    && _gameState.PlayerY == _gameState.EnemyY 
+                    && !isInvincible
+                )
                 {
                     Console.WriteLine("You died!");
                     _gameState.PlayerLife--;

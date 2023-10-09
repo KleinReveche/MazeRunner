@@ -26,8 +26,12 @@ public partial class GameEngine
                     .Any(candleLocation => x == candleLocation.CandleX && y == candleLocation.candleY);
                 var isTreasure = _gameState.TreasureLocations
                     .Any(treasureLocation => x == treasureLocation.treasureX && y == treasureLocation.treasureY);
-
-                if (distanceToPlayer <= PlayerVisibilityRadius || isWithinCandleRadius)
+                var isTemporaryVisible = _gameState is { PlayerIncreasedVisibilityEffectDuration: > 0, PlayerHasIncreasedVisibility: true };
+                
+                if (
+                    distanceToPlayer <= PlayerVisibilityRadius + (isTemporaryVisible ? IncreasedVisibilityEffectRadius : 0) 
+                    || isWithinCandleRadius || _gameState.AtAGlance
+                    )
                 {
                     if (x == PlayerX && y == PlayerY)
                         _buffer.Append(_gameState.Player); // Player
