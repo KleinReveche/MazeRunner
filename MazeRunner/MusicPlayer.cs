@@ -1,4 +1,5 @@
-﻿using System.Media;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Media;
 using System.Reflection;
 
 namespace Reveche.MazeRunner;
@@ -11,13 +12,14 @@ public class MusicPlayer
     {
         _gameState = gameState;
     }
-#pragma warning disable CA1416 //Before called, the OS is checked to ensure that the SoundPlayer class is available.
+
+    // This method is only available on Windows and is checked before calling it.
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
     public void PlayBackgroundMusic(CancellationToken cancellationToken)
     {
         const string resLoc = "Reveche.MazeRunner.Music.";
         var wavResources = new Dictionary<string, int>
         {
-            { $"{resLoc}8BitAirFight.wav", 115_000 },
             { $"{resLoc}BitBeats3.wav", 82_000 },
             { $"{resLoc}KLPeachGameOverII.wav", 20_000 }
         };

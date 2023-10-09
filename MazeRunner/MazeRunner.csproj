@@ -22,8 +22,6 @@
         <EmbeddedResource Include="Music\KLPeachGameOverII.wav"/>
         <None Remove="Music\BitBeats3.wav"/>
         <EmbeddedResource Include="Music\BitBeats3.wav"/>
-        <None Remove="Music\8BitAirFight.wav"/>
-        <EmbeddedResource Include="Music\8BitAirFight.wav"/>
     </ItemGroup>
 
 </Project>
