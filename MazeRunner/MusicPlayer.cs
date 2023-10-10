@@ -7,26 +7,26 @@ namespace Reveche.MazeRunner;
 public class MusicPlayer
 {
     private readonly GameState _gameState;
+    private SoundPlayer? _player;
 
     public MusicPlayer(GameState gameState)
     {
         _gameState = gameState;
+        this._player = null;
     }
 
     // This method is only available on Windows and is checked before calling it.
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
     public void PlayBackgroundMusic(CancellationToken cancellationToken)
     {
-        const string resLoc = "Reveche.MazeRunner.Music.";
+        const string resLoc = "Reveche.MazeRunner.Resources.Music.";
         var wavResources = new Dictionary<string, int>
         {
-            { $"{resLoc}BitBeats3.wav", 82_000 },
-            { $"{resLoc}KLPeachGameOverII.wav", 20_000 }
+            { $"{resLoc}BitBeats3.wav", 82_155 },
+            { $"{resLoc}KLPeachGameOverII.wav", 20_062 }
         };
 
         var random = new Random();
-
-        SoundPlayer? player = null;
 
         while (!cancellationToken.IsCancellationRequested && _gameState.IsSoundOn)
         {
@@ -35,12 +35,23 @@ public class MusicPlayer
             var wavResourceLength = wavResources.Values.ToArray();
             var selectedResource = wavResourceKeys[randomIndex];
 
-            var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(selectedResource);
-            player = new SoundPlayer(resourceStream);
-            player.Play();
-            Thread.Sleep(wavResourceLength[randomIndex]);
+            using var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(selectedResource);
+            _player = new SoundPlayer(resourceStream);
+            _player.Play();
+            
+            if (_gameState.IsCurrentlyPlaying) Thread.Sleep(wavResourceLength[randomIndex]);
+            
+            // This ensures that unnecessary checks are not done when the game is not playing.
+            var millisecondsPassed = 0;
+            while (!cancellationToken.IsCancellationRequested
+                   && _gameState is { IsSoundOn: true, IsCurrentlyPlaying: false }
+                   && millisecondsPassed < wavResourceLength[randomIndex])
+            {
+                millisecondsPassed += 500;
+                Thread.Sleep(500);
+            }
         }
-
-        player?.Dispose();
+        _player?.Stop();
+        _player?.Dispose();
     }
 }
