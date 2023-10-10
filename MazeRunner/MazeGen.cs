@@ -65,7 +65,7 @@ public class MazeGen
         }
     }
 
-    public void GenerateExitAndEnemy()
+    public void GenerateExit()
     {
         var random = new Random();
         var mazeHeight = _gameState.MazeHeight;
@@ -83,13 +83,36 @@ public class MazeGen
         );
 
         _gameState.Maze[_gameState.ExitY, _gameState.ExitX] = _mazeIcons.Empty;
-
+    }
+    
+    public void GenerateEnemy()
+    {
+        var random = new Random();
+        var mazeHeight = _gameState.MazeHeight;
+        var mazeWidth = _gameState.MazeWidth;
+        var min = _gameState.CurrentLevel * 4 / 2;
+        var maxEnemies = random.Next(1, _gameState.CurrentLevel);
+        
         if (_gameState.CurrentLevel == 1) return;
-        do
+
+        for (var i = 0; i < maxEnemies; i++)
         {
-            _gameState.EnemyX = random.Next(min, mazeWidth - 1);
-            _gameState.EnemyY = random.Next(min, mazeHeight - 1);
-        } while (_gameState.EnemyX == _gameState.ExitX && _gameState.EnemyY == _gameState.ExitY);
+            int enemyX, enemyY;
+            bool isEnemyAlreadyThere, isInBounds, isInsideWalls;
+            
+            do
+            {
+                enemyX = random.Next(min, mazeWidth - 1);
+                enemyY = random.Next(min, mazeHeight - 1);
+                
+                isEnemyAlreadyThere = _gameState.EnemyLocations.Any(enemyLocation =>
+                    enemyLocation.enemyX == enemyX && enemyLocation.enemyY == enemyY);
+                isInBounds = IsInBounds(enemyX, enemyY);
+                isInsideWalls = IsInsideWalls(enemyX, enemyY);
+            } while (enemyX == _gameState.ExitX && enemyY == _gameState.ExitY && isEnemyAlreadyThere && isInBounds && !isInsideWalls);
+            
+            _gameState.EnemyLocations.Add((enemyY, enemyX));
+        }
     }
 
     public void GenerateTreasure()
@@ -148,6 +171,12 @@ public class MazeGen
     {
         return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight &&
                _gameState.Maze[y, x] != _mazeIcons.Border;
+    }
+    
+    public bool IsInsideWalls(int x, int y)
+    {
+        return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight &&
+               _gameState.Maze[y, x] != _mazeIcons.Wall;
     }
 
     public int GenerateRandomMazeSize()

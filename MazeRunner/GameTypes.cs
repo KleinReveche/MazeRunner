@@ -18,7 +18,8 @@ public class MazeIcons
     public string Bomb => _gameState.IsUtf8 ? "💣" : "B";
     public string Candle => _gameState.IsUtf8 ? "🕯️" : "C";
     public string Treasure => _gameState.IsUtf8 ? "📦" : "T";
-    public string Darkness => _gameState.IsUtf8 ? "🟫" : "@";
+    public string Fog => _gameState.IsUtf8 ? "🟫" : "@";
+    public string RedSquare => _gameState.IsUtf8 ? "🟥" : "~";
 }
 
 public enum TreasureType

@@ -20,8 +20,6 @@ public partial class GameEngine
     private int BombY { get; set; }
     private int ExitX => _gameState.ExitX;
     private int ExitY => _gameState.ExitY;
-    private int EnemyX => _gameState.EnemyX;
-    private int EnemyY => _gameState.EnemyY;
     private string[,] Maze => _gameState.Maze;
     
     public GameEngine(GameState gameState)
@@ -53,7 +51,8 @@ public partial class GameEngine
                 _gameState.MazeWidth = _mazeGen.GenerateRandomMazeSize();
                 _mazeGen.InitializeMaze();
                 _mazeGen.GenerateMaze(1, 1); // Start generating maze from (1, 1)
-                _mazeGen.GenerateExitAndEnemy();
+                _mazeGen.GenerateExit();
+                _mazeGen.GenerateEnemy();
                 _mazeGen.GenerateTreasure();
                 levelIsCompleted = false;
             }
@@ -73,28 +72,23 @@ public partial class GameEngine
                     isInvincible = true;
                 }
 
-                if (
-                    _gameState.PlayerX == _gameState.EnemyX 
-                    && _gameState.PlayerY == _gameState.EnemyY 
-                    && !isInvincible
-                )
+                if (CheckEnemyCollision(PlayerX, PlayerY) && !isInvincible)
                 {
                     Console.WriteLine("You died!");
                     _gameState.PlayerLife--;
                 }
 
-                if (_gameState.CurrentLevel != 1) MoveEnemy();
+                if (_gameState.CurrentLevel != 1) MoveAllEnemies();
                 shouldRedraw = false;
             }
 
             if (_gameState.PlayerLife == 0)
             {
-                Console.SetCursorPosition(2, 1);
-                Console.WriteLine("🟥🟥🟥🟥🟥🟥🟥🟥");
-                Console.SetCursorPosition(2, 2);
-                Console.WriteLine("🟥 Game Over! 🟥");
-                Console.SetCursorPosition(2, 3);
-                Console.WriteLine("🟥🟥🟥🟥🟥🟥🟥🟥");
+                DrawMaze();
+                Console.Clear();
+                Console.Write(_buffer);
+                Console.SetCursorPosition(_gameState.MazeWidth / 2, _gameState.MazeHeight / 2);
+                Console.WriteLine("Game Over!");
                 break;
             }
 

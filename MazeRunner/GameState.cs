@@ -6,6 +6,8 @@ public class GameState
 
     public readonly List<(int treasureY, int treasureX, TreasureType treasureType, int count)>
         TreasureLocations = new();
+    
+    public readonly List<(int enemyY, int enemyX)> EnemyLocations = new();
 
     public string Player { get; set; } = "😀";
     public int PlayerX { get; set; } = 1;
@@ -21,8 +23,6 @@ public class GameState
     public bool AtAGlance { get; set; }
     public int CurrentLevel { get; set; } = 1; // Current level number
     public int MaxLevels { get; set; } = 5; // Set the maximum number of levels
-    public int EnemyX { get; set; }
-    public int EnemyY { get; set; }
     public int ExitX { get; set; } // Exit X-coordinate
     public int ExitY { get; set; } // Exit Y-coordinate
     public int MazeWidth { get; set; } = 7;

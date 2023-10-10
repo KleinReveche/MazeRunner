@@ -38,7 +38,7 @@ public partial class GameEngine
                         _buffer.Append(_gameState.Player); // Player
                     else if (x == ExitX && y == ExitY)
                         _buffer.Append(_mazeIcons.Exit); // Exit
-                    else if (x == EnemyX && y == EnemyY && _gameState.CurrentLevel != 1)
+                    else if (CheckEnemyCollision(x, y) && _gameState.CurrentLevel != 1)
                         _buffer.Append(_mazeIcons.Enemy); // Enemy
                     else if (isCandle)
                         _buffer.Append(_mazeIcons.Candle); // Candle
@@ -49,7 +49,7 @@ public partial class GameEngine
                 }
                 else
                 {
-                    _buffer.Append(_mazeIcons.Darkness);
+                    _buffer.Append(_gameState.PlayerLife == 0 ? _mazeIcons.RedSquare : _mazeIcons.Fog);
                 }
             }
 

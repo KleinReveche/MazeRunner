@@ -143,7 +143,7 @@ public partial class GameEngine
             return;
         }
 
-        if (_gameState.BombTimer != 0)
+        if (_gameState.BombTimer > 0)
             _gameState.BombTimer--;
 
         if (_gameState is not { BombIsUsed: true, BombTimer: 0 }) return;
@@ -159,10 +159,9 @@ public partial class GameEngine
                 Console.ReadKey();
             }
 
-            if (BombX + x == EnemyX && BombY + y == EnemyY)
+            if (CheckEnemyCollision(BombX + x, BombY + y, out (int EnemyX, int EnemyY) enemy))
             {
-                _gameState.EnemyX = -1;
-                _gameState.EnemyY = -1;
+                _gameState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
             }
 
             if (_mazeGen.IsInBounds(BombX + x, BombY + y))
