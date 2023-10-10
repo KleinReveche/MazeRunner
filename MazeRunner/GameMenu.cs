@@ -119,7 +119,7 @@ public static class GameMenu
                              Music
                              --------
                              8-bit Air Fight by moodmode from Pixabay
-                             Bit Beats 3 by by XtremeFreddy from Pixabay
+                             Bit Beats 3 by XtremeFreddy from Pixabay
 
                              © 2023 Klein Reveche. All rights reserved
                              """;
