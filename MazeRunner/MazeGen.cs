@@ -4,6 +4,7 @@ public class MazeGen
 {
     private readonly GameState _gameState;
     private readonly MazeIcons _mazeIcons = new(GameMenu.GameState);
+    private readonly Random _random = new();
 
     public MazeGen(GameState gameState)
     {
@@ -24,7 +25,7 @@ public class MazeGen
             for (var x = 0; x < mazeWidth; x++)
             {
                 var isBorder = x == 0 || x == mazeWidth - 1 || y == 0 || y == mazeHeight - 1;
-                _gameState.Maze[y, x] = (isBorder) ? _mazeIcons.Border : _mazeIcons.Wall; 
+                _gameState.Maze[y, x] = (isBorder) ? _mazeIcons.Border : _mazeIcons.Wall;
             }
         }
 
@@ -39,24 +40,7 @@ public class MazeGen
 
         foreach (var dir in directions)
         {
-            var newX = x;
-            var newY = y;
-
-            switch (dir)
-            {
-                case 0: // Up
-                    newY -= 2;
-                    break;
-                case 1: // Right
-                    newX += 2;
-                    break;
-                case 2: // Down
-                    newY += 2;
-                    break;
-                case 3: // Left
-                    newX -= 2;
-                    break;
-            }
+            var (newX, newY) = GetNewPosition(x, y, dir);
 
             if (!IsInBounds(newX, newY) || _gameState.Maze[newY, newX] != _mazeIcons.Wall) continue;
             _gameState.Maze[newY, newX] = _mazeIcons.Empty;
@@ -67,16 +51,12 @@ public class MazeGen
 
     public void GenerateExit()
     {
-        var random = new Random();
-        var mazeHeight = _gameState.MazeHeight;
-        var mazeWidth = _gameState.MazeWidth;
-
         var min = _gameState.CurrentLevel * 4 / 2;
 
         do
         {
-            _gameState.ExitX = random.Next(min, mazeWidth - 1);
-            _gameState.ExitY = random.Next(min, mazeHeight - 1);
+            _gameState.ExitX = _random.Next(min, _gameState.MazeWidth - 1);
+            _gameState.ExitY = _random.Next(min, _gameState.MazeHeight - 1);
         } while (
             (_gameState.ExitX == _gameState.PlayerX && _gameState.ExitY == _gameState.PlayerY)
             || _gameState.Maze[_gameState.ExitY, _gameState.ExitX] == _mazeIcons.Wall
@@ -84,85 +64,107 @@ public class MazeGen
 
         _gameState.Maze[_gameState.ExitY, _gameState.ExitX] = _mazeIcons.Empty;
     }
-    
+
     public void GenerateEnemy()
     {
-        var random = new Random();
-        var mazeHeight = _gameState.MazeHeight;
-        var mazeWidth = _gameState.MazeWidth;
         var min = _gameState.CurrentLevel * 4 / 2;
-        var maxEnemies = random.Next(1, _gameState.CurrentLevel);
-        
+        var difficultyMultiplier = _gameState.MazeDifficulty switch
+        {
+            MazeDifficulty.Easy => 1,
+            MazeDifficulty.Normal => 1,
+            MazeDifficulty.Hard => 2,
+            _ => 3,
+        };
+        var maxEnemies = _random.Next(1, _gameState.CurrentLevel * difficultyMultiplier);
+
         if (_gameState.CurrentLevel == 1) return;
 
         for (var i = 0; i < maxEnemies; i++)
         {
             int enemyX, enemyY;
-            bool isEnemyAlreadyThere, isInBounds, isInsideWalls;
-            
+
             do
             {
-                enemyX = random.Next(min, mazeWidth - 1);
-                enemyY = random.Next(min, mazeHeight - 1);
-                
-                isEnemyAlreadyThere = _gameState.EnemyLocations.Any(enemyLocation =>
-                    enemyLocation.enemyX == enemyX && enemyLocation.enemyY == enemyY);
-                isInBounds = IsInBounds(enemyX, enemyY);
-                isInsideWalls = IsInsideWalls(enemyX, enemyY);
-            } while (enemyX == _gameState.ExitX && enemyY == _gameState.ExitY && isEnemyAlreadyThere && isInBounds && !isInsideWalls);
-            
+                enemyX = _random.Next(min, _gameState.MazeWidth - 1);
+                enemyY = _random.Next(min, _gameState.MazeHeight - 1);
+            } while (IsInvalidEnemyPosition(enemyX, enemyY));
+
             _gameState.EnemyLocations.Add((enemyY, enemyX));
         }
     }
 
     public void GenerateTreasure()
     {
-        var random = new Random();
         if (_gameState.CurrentLevel <= 2) return;
-        var treasureCount = random.Next(1, _gameState.CurrentLevel - 1);
+        var treasureCount = _random.Next(1, _gameState.CurrentLevel - 1);
 
         for (var i = 0; i < treasureCount; i++)
         {
-            int treasureX, treasureY, treasureTypeRandom, treasureCountRandom;
+            int treasureX, treasureY;
             var random2 = new Random();
-            var random3 = new Random();
-            var random4 = new Random();
 
             do
             {
-                treasureX = random3.Next(2, _gameState.MazeWidth - 2);
-                treasureY = random4.Next(2, _gameState.MazeHeight - 2);
-                treasureTypeRandom = random3.Next(0, 100);
-                treasureCountRandom = random2.Next(1, _gameState.CurrentLevel);
-            } while (_gameState.Maze[treasureY, treasureX] != _mazeIcons.Empty);
+                treasureX = _random.Next(2, _gameState.MazeWidth - 2);
+                treasureY = _random.Next(2, _gameState.MazeHeight - 2);
+            } while (!IsCellEmpty(treasureX, treasureY));
 
-            var treasureType = treasureTypeRandom switch
-            {
-                <= 35 => TreasureType.Bomb,
-                <= 60 => TreasureType.Candle,
-                <= 75 => TreasureType.IncreasedVisibilityEffect,
-                <= 85 => TreasureType.TemporaryInvulnerabilityEffect,
-                <= 96 => TreasureType.Life,
-                <= 98 => TreasureType.AtAGlanceEffect,
-                _ => TreasureType.None
-            };
+            var treasureType = GetRandomTreasureType();
 
             if (treasureType == TreasureType.None) continue;
+
+            _gameState.Maze[treasureY, treasureX] = _mazeIcons.Empty;
             _gameState.TreasureLocations.Add((treasureY, treasureX, treasureType,
                 treasureType is TreasureType.Life
                     or TreasureType.IncreasedVisibilityEffect
                     or TreasureType.TemporaryInvulnerabilityEffect
-                    ? 1 : treasureCountRandom));
-            _gameState.Maze[treasureY, treasureX] = _mazeIcons.Empty;
+                    ? 1
+                    : random2.Next(1, _gameState.CurrentLevel)));
         }
     }
 
-    private static void Shuffle(IList<int> array)
+    private static (int newX, int newY) GetNewPosition(int x, int y, int dir)
     {
-        var rand = new Random();
+        return dir switch
+        {
+            0 => (x, y - 2), // Up
+            1 => (x + 2, y), // Right
+            2 => (x, y + 2), // Down
+            3 => (x - 2, y), // Left
+            _ => (x, y)
+        };
+    }
+
+    private bool IsInvalidEnemyPosition(int x, int y)
+    {
+        var isEnemyAlreadyThere = _gameState.EnemyLocations.Any(enemyLocation =>
+            enemyLocation.enemyX == x && enemyLocation.enemyY == y);
+
+        return x == _gameState.ExitX || y == _gameState.ExitY || isEnemyAlreadyThere || !IsInBounds(x, y) ||
+               IsInsideWalls(x, y);
+    }
+
+    private TreasureType GetRandomTreasureType()
+    {
+        var treasureTypeRandom = _random.Next(0, 100);
+
+        return treasureTypeRandom switch
+        {
+            <= 35 => TreasureType.Bomb,
+            <= 60 => TreasureType.Candle,
+            <= 75 => TreasureType.IncreasedVisibilityEffect,
+            <= 85 => TreasureType.TemporaryInvulnerabilityEffect,
+            <= 96 => TreasureType.Life,
+            <= 98 => TreasureType.AtAGlanceEffect,
+            _ => TreasureType.None
+        };
+    }
+
+    private void Shuffle(IList<int> array)
+    {
         for (var i = array.Count - 1; i > 0; i--)
         {
-            var j = rand.Next(0, i + 1);
+            var j = _random.Next(0, i + 1);
             (array[i], array[j]) = (array[j], array[i]);
         }
     }
@@ -172,13 +174,19 @@ public class MazeGen
         return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight &&
                _gameState.Maze[y, x] != _mazeIcons.Border;
     }
-    
-    public bool IsInsideWalls(int x, int y)
+
+    private bool IsInsideWalls(int x, int y)
     {
         return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight &&
                _gameState.Maze[y, x] != _mazeIcons.Wall;
     }
 
+    private bool IsCellEmpty(int x, int y)
+    {
+        return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight &&
+               _gameState.Maze[y, x] == _mazeIcons.Empty;
+    }
+    
     public int GenerateRandomMazeSize()
     {
         var random = new Random();

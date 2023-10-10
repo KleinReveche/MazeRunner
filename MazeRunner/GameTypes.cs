@@ -13,7 +13,6 @@ public class MazeIcons
     public string Border => _gameState.IsUtf8 ? "🟦" : "#";
     public string Exit => _gameState.IsUtf8 ? "🚪" : "E";
     public string Enemy => _gameState.IsUtf8 ? "👾" : "V";
-
     public string Empty => _gameState.IsUtf8 ? "  " : " ";
     public string Bomb => _gameState.IsUtf8 ? "💣" : "B";
     public string Candle => _gameState.IsUtf8 ? "🕯️" : "C";
@@ -31,4 +30,13 @@ public enum TreasureType
     TemporaryInvulnerabilityEffect,
     AtAGlanceEffect,
     None
+}
+
+public enum MazeDifficulty
+{
+    Easy,
+    Normal,
+    Hard,
+    Insanity,
+    AsciiInsanity
 }

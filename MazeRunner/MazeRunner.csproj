@@ -7,21 +7,25 @@
         <Nullable>enable</Nullable>
         <AssemblyName>MazeRunner</AssemblyName>
         <RootNamespace>Reveche.MazeRunner</RootNamespace>
+        <ApplicationIcon>Resources\maze-runner.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\WorcleQuest\WorcleQuest.csproj"/>
+        <ProjectReference Include="..\WorcleQuest\WorcleQuest.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Windows.Extensions" Version="7.0.0"/>
+        <PackageReference Include="System.Windows.Extensions" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Music\KLPeachGameOverII.wav"/>
-        <EmbeddedResource Include="Music\KLPeachGameOverII.wav"/>
-        <None Remove="Music\BitBeats3.wav"/>
-        <EmbeddedResource Include="Music\BitBeats3.wav"/>
+        <None Remove="Music\KLPeachGameOverII.wav" />
+        <None Remove="Music\BitBeats3.wav" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\Music\BitBeats3.wav" />
+      <EmbeddedResource Include="Resources\Music\KLPeachGameOverII.wav" />
     </ItemGroup>
 
 </Project>

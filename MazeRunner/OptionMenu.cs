@@ -5,27 +5,34 @@ namespace Reveche.MazeRunner;
 public class OptionMenu
 {
     private readonly GameState _gameState;
+    private readonly GameEngine _gameEngine;
+    private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
+    private readonly List<string> _soundValues = new() { "On", "Off" };
+    private readonly List<string>  _textStyleValues = new() { "Unicode", "ASCII" };
+    private readonly Dictionary<string, string> _options;
 
     public OptionMenu(GameState gameState)
     {
         _gameState = gameState;
+        _gameEngine = new GameEngine(_gameState);
+        _options = new Dictionary<string, string>
+        {
+            { "Play", "" },
+            { "Difficulty", "Normal" },
+            { "Text Style", _gameState.IsUtf8 ? "Unicode" : "ASCII" },
+            { "Sound", _gameState.IsSoundOn ? "On" : "Off" },
+            { "Back", "" }
+        };
     }
 
     public void DisplayOptions()
     {
         var buffer = new StringBuilder();
-        var options = new Dictionary<string, string>
-        {
-            { "Difficulty", "Normal" },
-            { "Sound", _gameState.IsSoundOn ? "On" : "Off" },
-            { "Text Style", _gameState.IsUtf8 ? "UTF-8" : "ASCII" },
-            { "Back", "" }
-        };
 
         // This ensures that sound will not be an option on non-Windows platforms.
         // As the System.Media.SoundPlayer class is only available on Windows.
         if (!OperatingSystem.IsWindows())
-            options.Remove("Sound");
+            _options.Remove("Sound");
 
         var selectedIndex = 0;
 
@@ -36,16 +43,19 @@ public class OptionMenu
 
             GameMenu.DisplayTitle();
 
-            for (var i = 0; i < options.Count; i++)
+            for (var i = 0; i < _options.Count; i++)
             {
-                var option = options.ElementAt(i);
-                var colon = option.Key == "Back" ? "" : ":";
+                var option = _options.ElementAt(i);
+                var colon = option.Key is "Back" or "Play" ? "" : ":";
                 buffer.Append(' ', GameMenu.CenterX + 18);
 
                 if (i == selectedIndex)
                     buffer.AppendLine("\u001b[93m>> " + option.Key + $"{colon} " + option.Value + " <<\u001b[0m");
                 else
                     buffer.AppendLine("   " + option.Key + $"{colon} " + option.Value);
+
+                if (i == 0)
+                    buffer.AppendLine();
             }
 
             Console.WriteLine(buffer);
@@ -55,11 +65,11 @@ public class OptionMenu
             switch (keyInfo.Key)
             {
                 case ConsoleKey.LeftArrow:
-                    ChangeOptionValue(options.ElementAt(selectedIndex).Key, options, -1);
+                    ChangeOptionValue(_options.ElementAt(selectedIndex).Key, _options, -1);
                     break;
 
                 case ConsoleKey.RightArrow:
-                    ChangeOptionValue(options.ElementAt(selectedIndex).Key, options, 1);
+                    ChangeOptionValue(_options.ElementAt(selectedIndex).Key, _options, 1);
                     break;
 
                 case ConsoleKey.UpArrow:
@@ -67,11 +77,14 @@ public class OptionMenu
                     break;
 
                 case ConsoleKey.DownArrow:
-                    selectedIndex = Math.Min(options.Count - 1, selectedIndex + 1);
+                    selectedIndex = Math.Min(_options.Count - 1, selectedIndex + 1);
                     break;
 
                 case ConsoleKey.Enter:
-                    if (selectedIndex == options.Count - 1)
+                    if (selectedIndex == 0)
+                        _gameEngine.Play();
+                        
+                    if (selectedIndex == _options.Count - 1)
                         GameMenu.StartMenu();
                     return;
             }
@@ -85,30 +98,50 @@ public class OptionMenu
         {
             case "Difficulty":
             {
-                var difficultyValues = new List<string> { "Easy", "Normal", "Hard", "Insanity" };
-                var currentIndex = difficultyValues.IndexOf(value);
-                var newIndex = (currentIndex + change + difficultyValues.Count) % difficultyValues.Count;
-                options[optionKey] = difficultyValues[newIndex];
+                var currentIndex = _difficultyValues.IndexOf(value);
+                var newIndex = (currentIndex + change + _difficultyValues.Count) % _difficultyValues.Count;
+                options[optionKey] = _difficultyValues[newIndex];
+                _gameState.MazeDifficulty = typeof(MazeDifficulty).GetEnumValues().Cast<MazeDifficulty>().ElementAt(newIndex);
+                
+                if (currentIndex == 4 && _gameState.MazeDifficulty != MazeDifficulty.AsciiInsanity)
+                    ChangeTextStyle(0);
+                
+                if (_gameState.MazeDifficulty == MazeDifficulty.AsciiInsanity)
+                    ChangeTextStyle(1);
                 break;
             }
             case "Sound":
             {
-                var soundValues = new List<string> { "On", "Off" };
-                var currentIndex = soundValues.IndexOf(value);
-                var newIndex = (currentIndex + change + soundValues.Count) % soundValues.Count;
-                options[optionKey] = soundValues[newIndex];
+                var currentIndex = _soundValues.IndexOf(value);
+                var newIndex = (currentIndex + change + _soundValues.Count) % _soundValues.Count;
+                options[optionKey] = _soundValues[newIndex];
                 _gameState.IsSoundOn = !_gameState.IsSoundOn;
+                
+                switch (_gameState.IsSoundOn)
+                {
+                    case false:
+                        MazeRunner.StopMusic();
+                        break;
+                    case true:
+                        MazeRunner.RestartMusic();
+                        break;
+                }
+
                 break;
             }
             case "Text Style":
             {
-                var textStyleValues = new List<string> { "UTF-8", "ASCII" };
-                var currentIndex = textStyleValues.IndexOf(value);
-                var newIndex = (currentIndex + change + textStyleValues.Count) % textStyleValues.Count;
-                options[optionKey] = textStyleValues[newIndex];
-                _gameState.IsUtf8 = !_gameState.IsUtf8;
+                var currentIndex = _textStyleValues.IndexOf(value);
+                var newIndex = (currentIndex + change + _textStyleValues.Count) % _textStyleValues.Count;
+                ChangeTextStyle(_gameState.MazeDifficulty == MazeDifficulty.AsciiInsanity ? 1 : newIndex);
                 break;
             }
         }
+    }
+    
+    private void ChangeTextStyle(int style) // 0 for unicode, 1 for ascii
+    {
+        _gameState.IsUtf8 = style == 0;
+        _options["Text Style"] = _gameState.IsUtf8 ? "Unicode" : "ASCII";
     }
 }

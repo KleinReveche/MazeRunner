@@ -25,7 +25,6 @@ public static class GameMenu
     public static readonly int CenterX = (Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
 
     public static readonly GameState GameState = new();
-    private static readonly GameEngine GameEngine = new(GameState);
     private static readonly OptionMenu OptionMenu = new(GameState);
 
     public static void DisplayTitle()
@@ -56,9 +55,8 @@ public static class GameMenu
         Dictionary<string, Action> menuOptions = new()
         {
             {
-                "Start", () => { GameEngine.Play(); }
+                "Start", () => { OptionMenu.DisplayOptions(); }
             },
-            { "Options", OptionMenu.DisplayOptions },
             { "Credits", ShowCreditsScreen },
             { "Quit", () => Environment.Exit(0) }
         };
@@ -83,6 +81,9 @@ public static class GameMenu
                     buffer.AppendLine("\u001b[93m>> " + option + " <<\u001b[0m");
                 else
                     buffer.AppendLine("   " + option);
+                
+                if (i == 0)
+                    buffer.AppendLine();
             }
 
             Console.WriteLine(buffer);

@@ -30,5 +30,6 @@ public class GameState
     public string[,] Maze { get; set; } = null!;
     public bool IsSoundOn { get; set; } = true;
     public bool IsUtf8 { get; set; } = true;
+    public MazeDifficulty MazeDifficulty { get; set; } = MazeDifficulty.Normal;
     public bool IsCurrentlyPlaying { get; set; }
 }

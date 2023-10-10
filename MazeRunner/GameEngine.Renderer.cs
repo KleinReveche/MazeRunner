@@ -20,8 +20,8 @@ public partial class GameEngine
             {
                 var distanceToPlayer = Math.Abs(x - PlayerX) + Math.Abs(y - PlayerY);
                 var isWithinCandleRadius = _gameState.CandleLocations
-                    .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= CandleVisibilityRadius
-                                           && Math.Abs(y - candleLocation.Item1) <= CandleVisibilityRadius);
+                    .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= _candleVisibilityRadius
+                                           && Math.Abs(y - candleLocation.Item1) <= _candleVisibilityRadius);
                 var isCandle = _gameState.CandleLocations
                     .Any(candleLocation => x == candleLocation.CandleX && y == candleLocation.candleY);
                 var isTreasure = _gameState.TreasureLocations
@@ -29,8 +29,8 @@ public partial class GameEngine
                 var isTemporaryVisible = _gameState is {PlayerHasIncreasedVisibility: true };
 
                 if (
-                    distanceToPlayer <= PlayerVisibilityRadius +
-                    (isTemporaryVisible ? IncreasedVisibilityEffectRadius : 0)
+                    distanceToPlayer <= _playerVisibilityRadius +
+                    (isTemporaryVisible ? _increasedVisibilityEffectRadius : 0)
                     || isWithinCandleRadius || _gameState.AtAGlance
                 )
                 {
