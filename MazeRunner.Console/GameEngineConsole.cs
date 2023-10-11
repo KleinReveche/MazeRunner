@@ -5,7 +5,9 @@ namespace Reveche.MazeRunner.Console;
 
 public partial class GameEngineConsole
 {
-    private readonly StringBuilder _buffer = new();
+    private readonly StringBuilder _mazeBuffer = new();
+    private readonly StringBuilder _inventoryBuffer = new();
+    private readonly StringBuilder _combinedBuffer = new();
     private readonly GameEngine _gameEngine;
     private readonly GameState _gameState;
     private readonly MazeIcons _mazeIcons = new(GameMenu.GameState);
@@ -42,8 +44,11 @@ public partial class GameEngineConsole
             {
                 _gameEngine.BombSequence(out _);
                 DrawMaze();
+                DrawInventory();
+                DrawCombinedBuffer();
                 Clear();
-                Write(_buffer);
+                Write(_combinedBuffer);
+                
                 _gameEngine.CheckPlayerEnemyCollision(out var isPlayerDead);
 
                 if (isPlayerDead) WriteLine("You died!");
@@ -121,7 +126,7 @@ public partial class GameEngineConsole
     {
         DrawMaze();
         Clear();
-        Write(_buffer);
+        Write(_mazeBuffer);
         SetCursorPosition(_gameState.MazeWidth / 2, _gameState.MazeHeight / 2);
         WriteLine("Game Over!");
         ReadKey();
