@@ -24,8 +24,8 @@ public static class GameMenu
 
     public static readonly int CenterX = (Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
 
-    public static readonly GameState GameState = new();
-    private static readonly OptionMenu OptionMenu = new(GameState);
+    internal static GameState GameState = new();
+    private static OptionMenu _optionMenu = new(GameState);
 
     public static void DisplayTitle()
     {
@@ -52,10 +52,15 @@ public static class GameMenu
 
     public static void StartMenu()
     {
+        if (GameState.CurrentLevel > GameState.MaxLevels)
+        {
+            GameState = new GameState();
+            _optionMenu = new OptionMenu(GameState);
+        }
         Dictionary<string, Action> menuOptions = new()
         {
             {
-                "Start", () => { OptionMenu.DisplayOptions(); }
+                "Start", () => { _optionMenu.DisplayOptions(); }
             },
             { "Credits", ShowCreditsScreen },
             { "Quit", () => Environment.Exit(0) }

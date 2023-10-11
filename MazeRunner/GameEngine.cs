@@ -137,6 +137,7 @@ public partial class GameEngine
         Console.Write(_buffer);
         Console.SetCursorPosition(_gameState.MazeWidth / 2, _gameState.MazeHeight / 2);
         Console.WriteLine("Game Over!");
+        Console.ReadKey();
     }
 
     private void InitializeNewLevel()
