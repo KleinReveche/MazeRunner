@@ -3,12 +3,13 @@
 public class MazeGen
 {
     private readonly GameState _gameState;
-    private readonly MazeIcons _mazeIcons = new(GameMenu.GameState);
+    private readonly MazeIcons _mazeIcons;
     private readonly Random _random = new();
 
     public MazeGen(GameState gameState)
     {
         _gameState = gameState;
+        _mazeIcons = new MazeIcons(_gameState);
     }
 
     public void InitializeMaze()
@@ -21,12 +22,10 @@ public class MazeGen
         _gameState.Maze = new string[mazeHeight, mazeWidth];
 
         for (var y = 0; y < mazeHeight; y++)
+        for (var x = 0; x < mazeWidth; x++)
         {
-            for (var x = 0; x < mazeWidth; x++)
-            {
-                var isBorder = x == 0 || x == mazeWidth - 1 || y == 0 || y == mazeHeight - 1;
-                _gameState.Maze[y, x] = (isBorder) ? _mazeIcons.Border : _mazeIcons.Wall;
-            }
+            var isBorder = x == 0 || x == mazeWidth - 1 || y == 0 || y == mazeHeight - 1;
+            _gameState.Maze[y, x] = isBorder ? _mazeIcons.Border : _mazeIcons.Wall;
         }
 
         _gameState.Maze[_gameState.PlayerY, _gameState.PlayerX] = _gameState.Player;
@@ -73,7 +72,7 @@ public class MazeGen
             MazeDifficulty.Easy => 1,
             MazeDifficulty.Normal => 1,
             MazeDifficulty.Hard => 2,
-            _ => 3,
+            _ => 3
         };
         var maxEnemies = _random.Next(1, _gameState.CurrentLevel * difficultyMultiplier);
 
@@ -186,7 +185,7 @@ public class MazeGen
         return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight &&
                _gameState.Maze[y, x] == _mazeIcons.Empty;
     }
-    
+
     public int GenerateRandomMazeSize()
     {
         var random = new Random();

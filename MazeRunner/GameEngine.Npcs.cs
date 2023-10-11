@@ -2,10 +2,10 @@
 
 public partial class GameEngine
 {
-    private void MoveAllEnemies()
+    public void MoveAllEnemies()
     {
         var random = new Random();
-        
+
         for (var i = 0; i < _gameState.EnemyLocations.Count; i++)
         {
             var enemyLocation = _gameState.EnemyLocations[i]; // Copy the struct
@@ -16,13 +16,13 @@ public partial class GameEngine
             var exitY = _gameState.ExitY;
 
             var tries = 5;
-            
+
             while (tries-- > 0)
             {
                 var direction = random.Next(4);
                 var newEnemyX = enemyX;
                 var newEnemyY = enemyY;
-                
+
                 switch (direction)
                 {
                     case 0:
@@ -39,15 +39,15 @@ public partial class GameEngine
                         break;
                 }
 
-                if (newEnemyX < 0 || 
-                    newEnemyX >= _gameState.MazeWidth || 
-                    newEnemyY < 0 || 
+                if (newEnemyX < 0 ||
+                    newEnemyX >= _gameState.MazeWidth ||
+                    newEnemyY < 0 ||
                     newEnemyY >= _gameState.MazeHeight ||
-                    newEnemyX == exitX && newEnemyY == exitY ||
+                    (newEnemyX == exitX && newEnemyY == exitY) ||
                     !IsCellEmpty(newEnemyX, newEnemyY) ||
-                    _gameState.EnemyLocations.Any(loc => loc.enemyX == newEnemyX && loc.enemyY == newEnemyY)) 
-                    continue; 
-                
+                    _gameState.EnemyLocations.Any(loc => loc.enemyX == newEnemyX && loc.enemyY == newEnemyY))
+                    continue;
+
                 enemyLocation.enemyX = newEnemyX;
                 enemyLocation.enemyY = newEnemyY;
                 _gameState.EnemyLocations[i] = enemyLocation;
@@ -55,17 +55,17 @@ public partial class GameEngine
             }
         }
     }
-    
-    private bool CheckEnemyCollision(int x, int y)
+
+    public bool CheckEnemyCollision(int x, int y)
     {
         return _gameState.EnemyLocations.Any(enemyLocation => x == enemyLocation.enemyX && y == enemyLocation.enemyY);
     }
-    
+
     private bool CheckEnemyCollision(int x, int y, out (int enemyX, int enemyY) enemy)
     {
         var enemyLocation = _gameState.EnemyLocations.FirstOrDefault(enemyLocation =>
             x == enemyLocation.enemyX && y == enemyLocation.enemyY);
-        
+
         enemy = enemyLocation != default ? (enemyLocation.enemyX, enemyLocation.enemyY) : (0, 0);
         return enemyLocation != default;
     }

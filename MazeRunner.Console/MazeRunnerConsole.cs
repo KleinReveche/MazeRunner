@@ -1,19 +1,19 @@
 ﻿using System.Text;
 
-namespace Reveche.MazeRunner;
+namespace Reveche.MazeRunner.Console;
 
-public static class MazeRunner
+public static class MazeRunnerConsole
 {
     private static Thread? _musicThread;
     private static CancellationTokenSource _cancellationTokenSource = new();
-    
+
     public static void Main(string[] args)
     {
-        Console.InputEncoding = Encoding.UTF8;
-        Console.OutputEncoding = Encoding.UTF8;
-        
-        Console.CursorVisible = false;
-        Console.Title = "Maze Runner";
+        System.Console.InputEncoding = Encoding.UTF8;
+        System.Console.OutputEncoding = Encoding.UTF8;
+
+        System.Console.CursorVisible = false;
+        System.Console.Title = "Maze Runner";
 
         // Start the background music thread
         if (OperatingSystem.IsWindows())
@@ -28,20 +28,20 @@ public static class MazeRunner
         }
 
         GameMenu.StartMenu();
-        Console.ReadKey();
+        System.Console.ReadKey();
 
         if (_musicThread == null) return;
         _cancellationTokenSource.Cancel();
         _musicThread.Join();
     }
-    
+
     public static void StopMusic()
     {
         if (_musicThread == null) return;
         _cancellationTokenSource.Cancel();
         _musicThread.Join();
     }
-    
+
     public static void RestartMusic()
     {
         if (_musicThread == null) return;

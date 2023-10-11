@@ -1,20 +1,20 @@
 ﻿using System.Text;
 
-namespace Reveche.MazeRunner;
+namespace Reveche.MazeRunner.Console;
 
 public class OptionMenu
 {
-    private readonly GameState _gameState;
-    private readonly GameEngine _gameEngine;
     private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
-    private readonly List<string> _soundValues = new() { "On", "Off" };
-    private readonly List<string>  _textStyleValues = new() { "Unicode", "ASCII" };
+    private readonly GameEngineConsole _gameEngineConsole;
+    private readonly GameState _gameState;
     private readonly Dictionary<string, string> _options;
+    private readonly List<string> _soundValues = new() { "On", "Off" };
+    private readonly List<string> _textStyleValues = new() { "Unicode", "ASCII" };
 
     public OptionMenu(GameState gameState)
     {
         _gameState = gameState;
-        _gameEngine = new GameEngine(_gameState);
+        _gameEngineConsole = new GameEngineConsole(_gameState);
         _options = new Dictionary<string, string>
         {
             { "Play", "" },
@@ -39,7 +39,7 @@ public class OptionMenu
         while (true)
         {
             buffer.Clear();
-            Console.Clear();
+            System.Console.Clear();
 
             GameMenu.DisplayTitle();
 
@@ -58,8 +58,8 @@ public class OptionMenu
                     buffer.AppendLine();
             }
 
-            Console.WriteLine(buffer);
-            var keyInfo = Console.ReadKey();
+            System.Console.WriteLine(buffer);
+            var keyInfo = System.Console.ReadKey();
 
             // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (keyInfo.Key)
@@ -82,8 +82,8 @@ public class OptionMenu
 
                 case ConsoleKey.Enter:
                     if (selectedIndex == 0)
-                        _gameEngine.Play();
-                        
+                        _gameEngineConsole.Play();
+
                     if (selectedIndex == _options.Count - 1)
                         GameMenu.StartMenu();
                     return;
@@ -101,11 +101,12 @@ public class OptionMenu
                 var currentIndex = _difficultyValues.IndexOf(value);
                 var newIndex = (currentIndex + change + _difficultyValues.Count) % _difficultyValues.Count;
                 options[optionKey] = _difficultyValues[newIndex];
-                _gameState.MazeDifficulty = typeof(MazeDifficulty).GetEnumValues().Cast<MazeDifficulty>().ElementAt(newIndex);
-                
+                _gameState.MazeDifficulty =
+                    typeof(MazeDifficulty).GetEnumValues().Cast<MazeDifficulty>().ElementAt(newIndex);
+
                 if (currentIndex == 4 && _gameState.MazeDifficulty != MazeDifficulty.AsciiInsanity)
                     ChangeTextStyle(0);
-                
+
                 if (_gameState.MazeDifficulty == MazeDifficulty.AsciiInsanity)
                     ChangeTextStyle(1);
                 break;
@@ -116,14 +117,14 @@ public class OptionMenu
                 var newIndex = (currentIndex + change + _soundValues.Count) % _soundValues.Count;
                 options[optionKey] = _soundValues[newIndex];
                 _gameState.IsSoundOn = !_gameState.IsSoundOn;
-                
+
                 switch (_gameState.IsSoundOn)
                 {
                     case false:
-                        MazeRunner.StopMusic();
+                        MazeRunnerConsole.StopMusic();
                         break;
                     case true:
-                        MazeRunner.RestartMusic();
+                        MazeRunnerConsole.RestartMusic();
                         break;
                 }
 
@@ -138,7 +139,7 @@ public class OptionMenu
             }
         }
     }
-    
+
     private void ChangeTextStyle(int style) // 0 for unicode, 1 for ascii
     {
         _gameState.IsUtf8 = style == 0;

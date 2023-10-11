@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Reveche.MazeRunner;
+namespace Reveche.MazeRunner.Console;
 
 public static class GameMenu
 {
@@ -22,7 +22,7 @@ public static class GameMenu
                                   ╚═╝░░╚═╝░╚═════╝░╚═╝░░╚══╝╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝
                                   """;
 
-    public static readonly int CenterX = (Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
+    public static readonly int CenterX = (System.Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
 
     internal static GameState GameState = new();
     private static OptionMenu _optionMenu = new(GameState);
@@ -30,7 +30,7 @@ public static class GameMenu
     public static void DisplayTitle()
     {
         var buffer = new StringBuilder();
-        Console.ForegroundColor = ConsoleColor.White;
+        System.Console.ForegroundColor = ConsoleColor.White;
         foreach (var line in Maze.Split('\n'))
         {
             buffer.Append(' ', CenterX + 8);
@@ -44,19 +44,20 @@ public static class GameMenu
         }
 
         // Clear the console and render the entire frame
-        Console.Clear();
-        Console.Write(buffer.ToString());
-        Console.WriteLine();
-        Console.ResetColor();
+        System.Console.Clear();
+        System.Console.Write(buffer.ToString());
+        System.Console.WriteLine();
+        System.Console.ResetColor();
     }
 
     public static void StartMenu()
     {
-        if (GameState.CurrentLevel > GameState.MaxLevels)
+        if (GameState.CurrentLevel > GameState.MaxLevels || GameState.PlayerLife <= 0)
         {
             GameState = new GameState();
             _optionMenu = new OptionMenu(GameState);
         }
+
         Dictionary<string, Action> menuOptions = new()
         {
             {
@@ -72,7 +73,7 @@ public static class GameMenu
         while (true)
         {
             buffer.Clear();
-            Console.Clear();
+            System.Console.Clear();
             DisplayTitle();
 
             var optionKeys = menuOptions.Keys.ToList();
@@ -86,13 +87,13 @@ public static class GameMenu
                     buffer.AppendLine("\u001b[93m>> " + option + " <<\u001b[0m");
                 else
                     buffer.AppendLine("   " + option);
-                
+
                 if (i == 0)
                     buffer.AppendLine();
             }
 
-            Console.WriteLine(buffer);
-            var keyInfo = Console.ReadKey();
+            System.Console.WriteLine(buffer);
+            var keyInfo = System.Console.ReadKey();
 
             // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (keyInfo.Key)
@@ -129,16 +130,16 @@ public static class GameMenu
                              © 2023 Klein Reveche. All rights reserved
                              """;
 
-        Console.Clear();
+        System.Console.Clear();
         DisplayTitle();
 
         foreach (var line in about.Split('\n'))
         {
-            Console.SetCursorPosition(CenterX + 8, Console.CursorTop);
-            Console.WriteLine(line);
+            System.Console.SetCursorPosition(CenterX + 8, System.Console.CursorTop);
+            System.Console.WriteLine(line);
         }
 
-        Console.ReadKey();
+        System.Console.ReadKey();
         StartMenu();
     }
 }

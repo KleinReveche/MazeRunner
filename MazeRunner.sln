@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeRunner", "MazeRunner\MazeRunner.csproj", "{3CDB77B6-9C56-4198-8322-64C935D687DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeRunner.Console", "MazeRunner.Console\MazeRunner.Console.csproj", "{3CDB77B6-9C56-4198-8322-64C935D687DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorcleQuest", "WorcleQuest\WorcleQuest.csproj", "{DFC55946-E09B-4785-AEA2-D1FB59950DF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeRunner", "MazeRunner\MazeRunner.csproj", "{5A79F1FE-F4FD-4F5C-8DE3-62E730839189}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{DFC55946-E09B-4785-AEA2-D1FB59950DF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFC55946-E09B-4785-AEA2-D1FB59950DF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFC55946-E09B-4785-AEA2-D1FB59950DF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A79F1FE-F4FD-4F5C-8DE3-62E730839189}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A79F1FE-F4FD-4F5C-8DE3-62E730839189}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A79F1FE-F4FD-4F5C-8DE3-62E730839189}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A79F1FE-F4FD-4F5C-8DE3-62E730839189}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

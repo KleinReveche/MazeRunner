@@ -2,8 +2,9 @@
 
 public partial class GameEngine
 {
-    private bool PlayerAction(ConsoleKey key)
+    public bool PlayerAction(ConsoleKey key, out bool isPlayerDead)
     {
+        isPlayerDead = false;
         var placeBomb = false;
         var placeCandle = false;
         var newPlayerX = _gameState.PlayerX;
@@ -47,7 +48,7 @@ public partial class GameEngine
             BombX = LastPlayerX;
             BombY = LastPlayerY;
 
-            BombSequence(true);
+            BombSequence(out isPlayerDead, true);
             return true;
         }
 
@@ -68,38 +69,34 @@ public partial class GameEngine
         if (_gameState.AtAGlance)
             _gameState.AtAGlance = false;
 
-        var treasure = _gameState.TreasureLocations.FirstOrDefault(treasureLocation =>
-            treasureLocation.treasureX == PlayerX && treasureLocation.treasureY == PlayerY);
-
-        if (treasure != default)
-        {
-            AcquireTreasure(treasure);
-            switch (treasure.treasureType)
-            {
-                case TreasureType.IncreasedVisibilityEffect:
-                    Console.WriteLine("You have increased visibility for the current level.");
-                    break;
-                case TreasureType.TemporaryInvulnerabilityEffect:
-                    Console.WriteLine($"You have temporarily invulnerable for {_gameState.PlayerInvincibilityEffectDuration} turns.");
-                    break;
-                case TreasureType.AtAGlanceEffect:
-                    Console.WriteLine("Glance at the maze after pressing a key. At your next turn, it'll be hidden again.");
-                    break;
-                case TreasureType.Bomb:
-                case TreasureType.Candle:
-                case TreasureType.Life:
-                case TreasureType.None:
-                default:
-                    Console.WriteLine($"You found {treasure.count} {treasure.treasureType}!");
-                    break;
-            }
-
-            Console.ReadKey();
-        }
-
         // Set player in the maze
         Maze[PlayerY, PlayerX] = _gameState.Player;
         return true; // Player has moved, indicate that screen should be redrawn
+    }
+
+    public void CheckPlayerEnemyCollision(out bool playerIsDead)
+    {
+        playerIsDead = false;
+
+        if (_gameState.IsPlayerInvulnerable)
+        {
+            _gameState.PlayerInvincibilityEffectDuration--;
+            return;
+        }
+
+        if (!CheckEnemyCollision(PlayerX, PlayerY)) return;
+        _gameState.PlayerLife--;
+        playerIsDead = true;
+    }
+
+    public bool CheckForTreasure(out (int treasureY, int treasureX, TreasureType treasureType, int count) treasure)
+    {
+        treasure = _gameState.TreasureLocations.FirstOrDefault(treasureLocation =>
+            treasureLocation.treasureX == PlayerX && treasureLocation.treasureY == PlayerY);
+
+        if (treasure == default) return false;
+        AcquireTreasure(treasure);
+        return true;
     }
 
     private void AcquireTreasure((int treasureY, int treasureX, TreasureType treasureType, int count) treasure)
@@ -134,8 +131,9 @@ public partial class GameEngine
         _gameState.TreasureLocations.Remove(treasure);
     }
 
-    private void BombSequence(bool startBomb = false)
+    public void BombSequence(out bool isPlayerDead, bool startBomb = false)
     {
+        isPlayerDead = false;
         if (startBomb)
         {
             _gameState.BombIsUsed = true;
@@ -154,15 +152,11 @@ public partial class GameEngine
             if (BombX + x == PlayerX && BombY + y == PlayerY && !playerIsInvulnerable)
             {
                 _gameState.PlayerLife--;
-                Console.SetCursorPosition(0, Console.CursorTop);
-                Console.WriteLine("You died!");
-                Console.ReadKey();
+                isPlayerDead = true;
             }
 
             if (CheckEnemyCollision(BombX + x, BombY + y, out (int EnemyX, int EnemyY) enemy))
-            {
                 _gameState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
-            }
 
             if (_mazeGen.IsInBounds(BombX + x, BombY + y))
                 Maze[BombY + y, BombX + x] = _mazeIcons.Empty;

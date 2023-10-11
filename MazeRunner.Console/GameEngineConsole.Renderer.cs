@@ -1,6 +1,6 @@
-﻿namespace Reveche.MazeRunner;
+﻿namespace Reveche.MazeRunner.Console;
 
-public partial class GameEngine
+public partial class GameEngineConsole
 {
     private void DrawMaze()
     {
@@ -20,17 +20,17 @@ public partial class GameEngine
             {
                 var distanceToPlayer = Math.Abs(x - PlayerX) + Math.Abs(y - PlayerY);
                 var isWithinCandleRadius = _gameState.CandleLocations
-                    .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= _candleVisibilityRadius
-                                           && Math.Abs(y - candleLocation.Item1) <= _candleVisibilityRadius);
+                    .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= _gameState.CandleVisibilityRadius
+                                           && Math.Abs(y - candleLocation.Item1) <= _gameState.CandleVisibilityRadius);
                 var isCandle = _gameState.CandleLocations
                     .Any(candleLocation => x == candleLocation.CandleX && y == candleLocation.candleY);
                 var isTreasure = _gameState.TreasureLocations
                     .Any(treasureLocation => x == treasureLocation.treasureX && y == treasureLocation.treasureY);
-                var isTemporaryVisible = _gameState is {PlayerHasIncreasedVisibility: true };
+                var isTemporaryVisible = _gameState is { PlayerHasIncreasedVisibility: true };
 
                 if (
-                    distanceToPlayer <= _playerVisibilityRadius +
-                    (isTemporaryVisible ? _increasedVisibilityEffectRadius : 0)
+                    distanceToPlayer <= _gameState.PlayerVisibilityRadius +
+                    (isTemporaryVisible ? _gameState.IncreasedVisibilityEffectRadius : 0)
                     || isWithinCandleRadius || _gameState.AtAGlance
                 )
                 {
@@ -38,7 +38,7 @@ public partial class GameEngine
                         _buffer.Append(_gameState.Player); // Player
                     else if (x == ExitX && y == ExitY)
                         _buffer.Append(_mazeIcons.Exit); // Exit
-                    else if (CheckEnemyCollision(x, y) && _gameState.CurrentLevel != 1)
+                    else if (_gameEngine.CheckEnemyCollision(x, y) && _gameState.CurrentLevel != 1)
                         _buffer.Append(_mazeIcons.Enemy); // Enemy
                     else if (isCandle)
                         _buffer.Append(_mazeIcons.Candle); // Candle

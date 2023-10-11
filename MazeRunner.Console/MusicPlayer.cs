@@ -2,7 +2,7 @@
 using System.Media;
 using System.Reflection;
 
-namespace Reveche.MazeRunner;
+namespace Reveche.MazeRunner.Console;
 
 public class MusicPlayer
 {
@@ -12,14 +12,14 @@ public class MusicPlayer
     public MusicPlayer(GameState gameState)
     {
         _gameState = gameState;
-        this._player = null;
+        _player = null;
     }
 
     // This method is only available on Windows and is checked before calling it.
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
     public void PlayBackgroundMusic(CancellationToken cancellationToken)
     {
-        const string resLoc = "Reveche.MazeRunner.Resources.Music.";
+        const string resLoc = "Reveche.MazeRunner.Console.Resources.Music.";
         var wavResources = new Dictionary<string, int>
         {
             { $"{resLoc}BitBeats3.wav", 82_155 },
@@ -38,9 +38,9 @@ public class MusicPlayer
             using var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(selectedResource);
             _player = new SoundPlayer(resourceStream);
             _player.Play();
-            
+
             if (_gameState.IsCurrentlyPlaying) Thread.Sleep(wavResourceLength[randomIndex]);
-            
+
             // This ensures that unnecessary checks are not done when the game is not playing.
             var millisecondsPassed = 0;
             while (!cancellationToken.IsCancellationRequested
@@ -51,6 +51,7 @@ public class MusicPlayer
                 Thread.Sleep(500);
             }
         }
+
         _player?.Stop();
         _player?.Dispose();
     }
