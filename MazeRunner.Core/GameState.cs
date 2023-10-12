@@ -28,12 +28,22 @@ public class GameState
     public int MazeWidth { get; set; } = 7;
     public int MazeHeight { get; set; } = 9;
     public string[,] Maze { get; set; } = null!;
-    public bool IsSoundOn { get; set; } = true;
-    public bool IsUtf8 { get; set; } = true;
-    public MazeDifficulty MazeDifficulty { get; set; } = MazeDifficulty.Normal;
+    public bool IsSoundOn { get; set; }
+    public bool IsUtf8 { get; set; }
+    public MazeDifficulty MazeDifficulty { get; set; }
     public bool IsCurrentlyPlaying { get; set; }
     public int PlayerVisibilityRadius { get; set; }
     public int CandleVisibilityRadius { get; set; }
     public int IncreasedVisibilityEffectRadius { get; set; }
     public int Score { get; set; }
+    
+    public GameState()
+    {
+        var optionsManager = new OptionsManager();
+        var options = OptionsManager.LoadOptions();
+        
+        IsSoundOn = options.IsSoundOn;
+        IsUtf8 = options.IsUtf8;
+        MazeDifficulty = options.MazeDifficulty;
+    }
 }
