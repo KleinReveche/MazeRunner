@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeRunner.Console", "MazeR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorcleQuest", "WorcleQuest\WorcleQuest.csproj", "{DFC55946-E09B-4785-AEA2-D1FB59950DF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeRunner", "MazeRunner\MazeRunner.csproj", "{5A79F1FE-F4FD-4F5C-8DE3-62E730839189}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeRunner.Core", "MazeRunner.Core\MazeRunner.Core.csproj", "{5A79F1FE-F4FD-4F5C-8DE3-62E730839189}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
