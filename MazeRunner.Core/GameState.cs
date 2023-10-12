@@ -36,7 +36,8 @@ public class GameState
     public int CandleVisibilityRadius { get; set; }
     public int IncreasedVisibilityEffectRadius { get; set; }
     public int Score { get; set; }
-    
+    public string PlayerName { get; set; } = "Anonymous";
+
     public GameState()
     {
         var optionsManager = new OptionsManager();

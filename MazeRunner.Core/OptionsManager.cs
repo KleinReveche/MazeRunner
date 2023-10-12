@@ -8,26 +8,38 @@ public class OptionsManager
 
     public static GameOptions LoadOptions()
     {
-        if (File.Exists(OptionsFilePath))
-        {
-            var json = File.ReadAllText(OptionsFilePath);
-            return JsonSerializer.Deserialize<GameOptions>(json)!;
-        }
-
-        // Create a default instance of MyOptions
         var defaultOptions = new GameOptions
         {
             IsSoundOn = true,
             IsUtf8 = true,
             MazeDifficulty = MazeDifficulty.Normal
         };
-        SaveOptions(defaultOptions); // Save default options to a file
+        
+        if (File.Exists(OptionsFilePath))
+        {
+            var sourceGenOptions = new JsonSerializerOptions
+            {
+                TypeInfoResolver = GameOptionsJsonContext.Default
+            };
+            
+            var json = File.ReadAllText(OptionsFilePath);
+            return (JsonSerializer.Deserialize(
+                    json, typeof(GameOptions), sourceGenOptions)
+                as GameOptions) ?? defaultOptions;
+        }
+
+        SaveOptions(defaultOptions); 
         return defaultOptions;
     }
 
     public static void SaveOptions(GameOptions options)
     {
-        var json = JsonSerializer.Serialize(options);
+        var sourceGenOptions = new JsonSerializerOptions
+        {
+            TypeInfoResolver = GameOptionsJsonContext.Default
+        };
+        
+        var json = JsonSerializer.Serialize(options, typeof(GameOptions), sourceGenOptions);
         File.WriteAllText(OptionsFilePath, json);
     }
 }
