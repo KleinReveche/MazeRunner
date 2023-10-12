@@ -10,12 +10,15 @@ public partial class GameEngineConsole
     private readonly StringBuilder _combinedBuffer = new();
     private readonly GameEngine _gameEngine;
     private readonly GameState _gameState;
+    private readonly ScoreManager _scoreManager;
     private readonly MazeIcons _mazeIcons = new(GameMenu.GameState);
+    private readonly ScoreList _scoreList = ScoreManager.LoadScores();
 
     public GameEngineConsole(GameState gameState)
     {
         _gameState = gameState;
         _gameEngine = new GameEngine(_gameState);
+        _scoreManager = new ScoreManager(_scoreList);
     }
 
     private int PlayerX => _gameState.PlayerX;
@@ -69,10 +72,10 @@ public partial class GameEngineConsole
             {
                 WriteLine($"Congratulations! You completed level {_gameState.CurrentLevel}.");
                 _gameState.CurrentLevel++;
-                if (!(_gameState.CurrentLevel <= _gameState.MaxLevels))
+                
+                if (_gameState.CurrentLevel > _gameState.MaxLevels)
                 {
-                    WriteLine("You have completed all levels. Press Any Key to exit.");
-                    ReadKey();
+                    DisplayGameOver();
                     break;
                 }
 
@@ -120,21 +123,34 @@ public partial class GameEngineConsole
 
             shouldRedraw = true;
         }
-
-        GameMenu.StartMenu(); // TODO: Create a proper game over screen
     }
 
 
     private void DisplayGameOver()
     {
+        // TODO: Create a proper game over screen
         DrawMaze();
         DrawInventory();
         DrawCombinedBuffer();
         Clear();
         Write(_combinedBuffer);
-        SetCursorPosition(_gameState.MazeWidth / 2, _gameState.MazeHeight / 2);
-        WriteLine("Game Over!");
+        
+        Write("Enter your name: ");
+        _gameState.PlayerName = ReadLine() ?? "Anonymous";
+        if (_gameState.CurrentLevel > _gameState.MaxLevels && _gameState.PlayerLife > 0)
+        {
+            WriteLine("Congratulations! You have completed all levels. Press Any Key to exit.");
+            _scoreManager.AddScore(_gameState.PlayerName, _gameState.Score, _gameState.MazeDifficulty, true);
+            ScoreManager.SaveScores(_scoreList);
+        }
+        else
+        {
+            _scoreManager.AddScore(_gameState.PlayerName, _gameState.Score, _gameState.MazeDifficulty, false);
+            SetCursorPosition(_gameState.MazeWidth / 2, _gameState.MazeHeight / 2);
+            WriteLine("Game Over!");
+        }
+        
         ReadKey();
-        ReadKey();
+        GameMenu.StartMenu();
     }
 }

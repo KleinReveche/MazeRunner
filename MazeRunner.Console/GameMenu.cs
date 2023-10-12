@@ -61,6 +61,12 @@ public static class GameMenu
         Dictionary<string, Action> menuOptions = new()
         {
             { "Start", () => _optionMenu.DisplayOptions() },
+            { "Leaderboard", () => 
+                {
+                    var leaderboardScreen = new LeaderboardScreen();
+                    leaderboardScreen.ShowScreen();
+                } 
+            },
             { "Credits", ShowCreditsScreen },
             { "Quit", () => Environment.Exit(0) }
         };
