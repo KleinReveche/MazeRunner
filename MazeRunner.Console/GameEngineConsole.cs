@@ -29,12 +29,15 @@ public partial class GameEngineConsole
         CursorVisible = false;
         var levelIsCompleted = true;
         var shouldRedraw = true;
+        var levelStartTime = new DateTime();
         _gameEngine.AdjustToDifficulty();
 
         while (true)
         {
             if (levelIsCompleted)
             {
+                _gameEngine.CalculateLevelScore(levelStartTime);
+                levelStartTime = DateTime.Now;
                 _gameState.IsCurrentlyPlaying = _gameState.CurrentLevel <= _gameState.MaxLevels;
                 _gameEngine.InitializeNewLevel();
                 levelIsCompleted = false;

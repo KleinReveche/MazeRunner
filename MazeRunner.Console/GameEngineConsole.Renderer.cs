@@ -89,6 +89,7 @@ public partial class GameEngineConsole
         var horizontalSide = _gameState.IsUtf8 ? '▬' : '-';
         var middle = inventoryWidth / 2;
         var currentLevel = $"Level {_gameState.CurrentLevel} of {_gameState.MaxLevels}";
+        var currentScore = $"Score: {_gameState.Score}";
         var playerLife = $"{_gameState.PlayerLife} {(_gameState.PlayerLife == 1 ? "Life" : "Lives")} Left";
 
         AppendCorner();
@@ -97,6 +98,7 @@ public partial class GameEngineConsole
         AppendHorizontalLine();
         AppendEmptyLine();
         AppendLine(currentLevel);
+        AppendLine(currentScore);
         AppendLine(playerLife);
         AppendEmptyLine();
 
