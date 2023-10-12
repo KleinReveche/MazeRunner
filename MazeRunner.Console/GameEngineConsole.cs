@@ -128,10 +128,13 @@ public partial class GameEngineConsole
     private void DisplayGameOver()
     {
         DrawMaze();
+        DrawInventory();
+        DrawCombinedBuffer();
         Clear();
-        Write(_mazeBuffer);
+        Write(_combinedBuffer);
         SetCursorPosition(_gameState.MazeWidth / 2, _gameState.MazeHeight / 2);
         WriteLine("Game Over!");
+        ReadKey();
         ReadKey();
     }
 }

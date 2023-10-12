@@ -60,9 +60,7 @@ public static class GameMenu
 
         Dictionary<string, Action> menuOptions = new()
         {
-            {
-                "Start", () => { _optionMenu.DisplayOptions(); }
-            },
+            { "Start", () => _optionMenu.DisplayOptions() },
             { "Credits", ShowCreditsScreen },
             { "Quit", () => Environment.Exit(0) }
         };
