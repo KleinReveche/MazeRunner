@@ -35,4 +35,5 @@ public class GameState
     public int PlayerVisibilityRadius { get; set; }
     public int CandleVisibilityRadius { get; set; }
     public int IncreasedVisibilityEffectRadius { get; set; }
+    public int Score { get; set; }
 }

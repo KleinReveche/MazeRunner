@@ -122,6 +122,9 @@ public partial class GameEngine
                 break;
         }
 
+        _gameState.Score += treasure.count *
+                            ((int) treasure.treasureType +
+                             (treasure.treasureType == TreasureType.Bomb ? 1 : 0));
         _gameState.TreasureLocations.Remove(treasure);
     }
 
@@ -150,7 +153,10 @@ public partial class GameEngine
             }
 
             if (CheckEnemyCollision(BombX + x, BombY + y, out (int EnemyX, int EnemyY) enemy))
+            {
                 _gameState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
+                _gameState.Score += 20;
+            }
 
             if (_mazeGen.IsInBounds(BombX + x, BombY + y))
                 Maze[BombY + y, BombX + x] = _mazeIcons.Empty;
