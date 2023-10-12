@@ -78,7 +78,7 @@ public partial class GameEngine
     {
         playerIsDead = false;
         
-        if (!CheckEnemyCollision(PlayerX, PlayerY) && _gameState.IsPlayerInvulnerable) return;
+        if (!CheckEnemyCollision(PlayerX, PlayerY) && !_gameState.IsPlayerInvulnerable) return;
         _gameState.PlayerLife--;
         playerIsDead = true;
     }
