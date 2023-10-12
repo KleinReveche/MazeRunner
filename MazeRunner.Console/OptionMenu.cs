@@ -7,6 +7,7 @@ public class OptionMenu
     private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
     private readonly GameEngineConsole _gameEngineConsole;
     private readonly GameState _gameState;
+    private readonly GameOptions _gameOptions = OptionsManager.LoadOptions();
     private readonly Dictionary<string, string> _options;
     private readonly List<string> _soundValues = new() { "On", "Off" };
     private readonly List<string> _textStyleValues = new() { "Unicode", "ASCII" };
@@ -81,6 +82,11 @@ public class OptionMenu
                     break;
 
                 case ConsoleKey.Enter:
+                    _gameOptions.MazeDifficulty = _gameState.MazeDifficulty;
+                    _gameOptions.IsSoundOn = _gameState.IsSoundOn;
+                    _gameOptions.IsUtf8 = _gameState.IsUtf8;
+                    OptionsManager.SaveOptions(_gameOptions);
+                    
                     if (selectedIndex == 0)
                         _gameEngineConsole.Play();
 
