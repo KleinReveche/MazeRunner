@@ -27,11 +27,12 @@ public partial class GameEngineConsole
                 var isTreasure = _gameState.TreasureLocations
                     .Any(treasureLocation => x == treasureLocation.treasureX && y == treasureLocation.treasureY);
                 var isTemporaryVisible = _gameState is { PlayerHasIncreasedVisibility: true };
+                var isGameDone = _gameState.CurrentLevel > _gameState.MaxLevels;
 
                 if (
                     distanceToPlayer <= _gameState.PlayerVisibilityRadius +
                     (isTemporaryVisible ? _gameState.IncreasedVisibilityEffectRadius : 0)
-                    || isWithinCandleRadius || _gameState.AtAGlance
+                    || isWithinCandleRadius || _gameState.AtAGlance || isGameDone
                 )
                 {
                     if (x == PlayerX && y == PlayerY)
@@ -84,17 +85,16 @@ public partial class GameEngineConsole
         _inventoryBuffer.Clear();
         var inventoryHeight = height - 2;
 
-        var corner =  _gameState.IsUtf8 ? '▩' : '+';
-        var verticalSide = _gameState.IsUtf8 ? '▮' : '|';
-        var horizontalSide = _gameState.IsUtf8 ? '▬' : '-';
+        const char verticalSide = '│';
+        const char horizontalSide = '─';
         var middle = inventoryWidth / 2;
-        var currentLevel = $"Level {_gameState.CurrentLevel} of {_gameState.MaxLevels}";
+        var currentLevel = $"Level {Math.Min(_gameState.CurrentLevel, _gameState.MaxLevels)} of {_gameState.MaxLevels}";
         var currentScore = $"Score: {_gameState.Score}";
         var playerLife = $"{_gameState.PlayerLife} {(_gameState.PlayerLife == 1 ? "Life" : "Lives")} Left";
 
-        AppendCorner();
-        _inventoryBuffer.AppendLine($"{verticalSide}".PadRight(middle - 6) +
-                                    "Player Stats".PadRight(middle + 6) + verticalSide);
+        AppendCorner(true);
+        _inventoryBuffer.AppendLine("│".PadRight(middle - 6) +
+                                    "Player Stats".PadRight(middle + 6) + "│");
         AppendHorizontalLine();
         AppendEmptyLine();
         AppendLine(currentLevel);
@@ -125,7 +125,7 @@ public partial class GameEngineConsole
 
         for (var i = inventory.Count; i < inventoryHeight - 4; i++)
             AppendEmptyLine();
-        AppendCorner();
+        AppendCorner(false);
 
         return;
 
@@ -135,11 +135,11 @@ public partial class GameEngineConsole
         void AppendLine(string text) =>
             _inventoryBuffer.AppendLine($"{verticalSide} {text}".PadRight(inventoryWidth) + verticalSide);
 
-        void AppendCorner() =>
-            _inventoryBuffer.AppendLine($"{corner}".PadRight(inventoryWidth, horizontalSide) + corner);
+        void AppendCorner(bool isTop) =>
+            _inventoryBuffer.AppendLine((isTop ? "┌" : "└").PadRight(inventoryWidth, horizontalSide) + (isTop ? "┐" : "┘"));
 
         void AppendHorizontalLine() =>
-            _inventoryBuffer.AppendLine($"{horizontalSide}".PadRight(inventoryWidth, horizontalSide) + horizontalSide);
+            _inventoryBuffer.AppendLine("├".PadRight(inventoryWidth, horizontalSide) + "┤");
     }
 
     private void DrawCombinedBuffer()
