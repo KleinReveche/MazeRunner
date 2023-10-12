@@ -154,7 +154,7 @@ public partial class GameEngineConsole
             if (i < mazeBufferLines.Length - 1)
                 _combinedBuffer.Append(mazeBufferLines[i]);
             else
-                _combinedBuffer.Append(' ', _gameState.MazeWidth * 2);
+                _combinedBuffer.Append(' ', _gameState.MazeWidth * (_gameState.IsUtf8 ? 2 : 1));
                     
             _combinedBuffer.Append(' ', 2);
                     
