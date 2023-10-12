@@ -101,18 +101,26 @@ public class MazeGen
         {
             int treasureX, treasureY;
             var random2 = new Random();
+            bool isTreasureAlreadyThere, isTreasureOnPlayer, isTreasureOnExit, isTreasureOnEnemy;
 
             do
             {
                 treasureX = _random.Next(2, _gameState.MazeWidth - 2);
                 treasureY = _random.Next(2, _gameState.MazeHeight - 2);
-            } while (!IsCellEmpty(treasureX, treasureY));
+
+                isTreasureAlreadyThere = _gameState.TreasureLocations.Any(treasureLocation =>
+                    treasureLocation.treasureX == treasureX && treasureLocation.treasureY == treasureY);
+                isTreasureOnPlayer = treasureX == _gameState.PlayerX && treasureY == _gameState.PlayerY;
+                isTreasureOnExit = treasureX == _gameState.ExitX && treasureY == _gameState.ExitY;
+                isTreasureOnEnemy = _gameState.EnemyLocations.Any(enemyLocation =>
+                    enemyLocation.enemyX == treasureX && enemyLocation.enemyY == treasureY);
+            } while (!IsCellEmpty(treasureX, treasureY) || isTreasureAlreadyThere || isTreasureOnPlayer ||
+                     isTreasureOnExit || isTreasureOnEnemy);
 
             var treasureType = GetRandomTreasureType();
 
             if (treasureType == TreasureType.None) continue;
 
-            _gameState.Maze[treasureY, treasureX] = _mazeIcons.Empty;
             _gameState.TreasureLocations.Add((treasureY, treasureX, treasureType,
                 treasureType is TreasureType.Life
                     or TreasureType.IncreasedVisibilityEffect
@@ -120,6 +128,9 @@ public class MazeGen
                     ? 1
                     : random2.Next(1, _gameState.CurrentLevel)));
         }
+
+        foreach (var treasureLocation in _gameState.TreasureLocations)
+            _gameState.Maze[treasureLocation.treasureY, treasureLocation.treasureX] = _mazeIcons.Empty;
     }
 
     private static (int newX, int newY) GetNewPosition(int x, int y, int dir)
