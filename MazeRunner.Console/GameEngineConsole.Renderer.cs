@@ -27,7 +27,7 @@ public partial class GameEngineConsole
                 var isTreasure = _gameState.TreasureLocations
                     .Any(treasureLocation => x == treasureLocation.treasureX && y == treasureLocation.treasureY);
                 var isTemporaryVisible = _gameState is { PlayerHasIncreasedVisibility: true };
-                var isGameDone = _gameState.CurrentLevel > _gameState.MaxLevels;
+                var isGameDone = _gameState.CurrentLevel > _gameState.MaxLevels && !_gameState.IsGameEndless;
 
                 if (
                     distanceToPlayer <= _gameState.PlayerVisibilityRadius +
@@ -63,7 +63,7 @@ public partial class GameEngineConsole
     {
         var height = 9;
         var inventoryWidth = 16;
-        
+
         var inventory = new List<(string, int)>
         {
             ("Bombs", _gameState.BombCount),
@@ -89,6 +89,7 @@ public partial class GameEngineConsole
         const char horizontalSide = '─';
         var middle = inventoryWidth / 2;
         var currentLevel = $"Level {Math.Min(_gameState.CurrentLevel, _gameState.MaxLevels)} of {_gameState.MaxLevels}";
+        var currentLevelEndless = $"Level {_gameState.CurrentLevel} of ∞";
         var currentScore = $"Score: {_gameState.Score}";
         var playerLife = $"{_gameState.PlayerLife} {(_gameState.PlayerLife == 1 ? "Life" : "Lives")} Left";
 
@@ -97,7 +98,7 @@ public partial class GameEngineConsole
                                     "Player Stats".PadRight(middle + 6) + "│");
         AppendHorizontalLine();
         AppendEmptyLine();
-        AppendLine(currentLevel);
+        AppendLine(_gameState.IsGameEndless ? currentLevelEndless : currentLevel);
         AppendLine(currentScore);
         AppendLine(playerLife);
         AppendEmptyLine();
@@ -148,19 +149,19 @@ public partial class GameEngineConsole
         var mazeBufferLines = _mazeBuffer.ToString().Split("\r\n");
         var inventoryBufferLines = _inventoryBuffer.ToString().Split("\r\n");
         var len = Math.Max(inventoryBufferLines.Length, mazeBufferLines.Length);
-                
+
         for (var i = 0; i < len; i++)
         {
             if (i < mazeBufferLines.Length - 1)
                 _combinedBuffer.Append(mazeBufferLines[i]);
             else
                 _combinedBuffer.Append(' ', _gameState.MazeWidth * (_gameState.IsUtf8 ? 2 : 1));
-                    
+
             _combinedBuffer.Append(' ', 2);
-                    
+
             if (i < inventoryBufferLines.Length)
                 _combinedBuffer.Append(inventoryBufferLines[i]);
-                    
+
             _combinedBuffer.AppendLine();
         }
     }

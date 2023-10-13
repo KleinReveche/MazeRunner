@@ -4,10 +4,11 @@ namespace Reveche.MazeRunner.Console;
 
 public class OptionMenu
 {
+    private readonly List<string> _gameModeValues = new() { "Campaign", "Endless" };
     private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
     private readonly GameEngineConsole _gameEngineConsole;
-    private readonly GameState _gameState;
     private readonly GameOptions _gameOptions = OptionsManager.LoadOptions();
+    private readonly GameState _gameState;
     private readonly Dictionary<string, string> _options;
     private readonly List<string> _soundValues = new() { "On", "Off" };
     private readonly List<string> _textStyleValues = new() { "Unicode", "ASCII" };
@@ -19,9 +20,10 @@ public class OptionMenu
         _options = new Dictionary<string, string>
         {
             { "Play", "" },
-            { "Difficulty", "Normal" },
-            { "Text Style", _gameState.IsUtf8 ? "Unicode" : "ASCII" },
-            { "Sound", _gameState.IsSoundOn ? "On" : "Off" },
+            { "Game Mode", _gameState.IsGameEndless ? _gameModeValues[1] : _gameModeValues[0] },
+            { "Difficulty", _difficultyValues.ElementAt((int) _gameState.MazeDifficulty) },
+            { "Text Style", _gameState.IsUtf8 ? _textStyleValues[0] : _textStyleValues[1] },
+            { "Sound", _gameState.IsSoundOn ? _soundValues[0] : _soundValues[1] },
             { "Back", "" }
         };
     }
@@ -86,7 +88,7 @@ public class OptionMenu
                     _gameOptions.IsSoundOn = _gameState.IsSoundOn;
                     _gameOptions.IsUtf8 = _gameState.IsUtf8;
                     OptionsManager.SaveOptions(_gameOptions);
-                    
+
                     if (selectedIndex == 0)
                         _gameEngineConsole.Play();
 
@@ -102,6 +104,14 @@ public class OptionMenu
         if (!options.TryGetValue(optionKey, out var value)) return;
         switch (optionKey)
         {
+            case "Game Mode":
+            {
+                var currentIndex = _gameModeValues.IndexOf(value);
+                var newIndex = (currentIndex + change + _gameModeValues.Count) % _gameModeValues.Count;
+                options[optionKey] = _gameModeValues[newIndex];
+                _gameState.IsGameEndless = newIndex == 1;
+                break;
+            }
             case "Difficulty":
             {
                 var currentIndex = _difficultyValues.IndexOf(value);

@@ -5,14 +5,14 @@ namespace Reveche.MazeRunner.Console;
 
 public partial class GameEngineConsole
 {
-    private readonly StringBuilder _mazeBuffer = new();
-    private readonly StringBuilder _inventoryBuffer = new();
     private readonly StringBuilder _combinedBuffer = new();
     private readonly GameEngine _gameEngine;
     private readonly GameState _gameState;
-    private readonly ScoreManager _scoreManager;
+    private readonly StringBuilder _inventoryBuffer = new();
+    private readonly StringBuilder _mazeBuffer = new();
     private readonly MazeIcons _mazeIcons = new(GameMenu.GameState);
     private readonly ScoreList _scoreList = ScoreManager.LoadScores();
+    private readonly ScoreManager _scoreManager;
 
     public GameEngineConsole(GameState gameState)
     {
@@ -54,7 +54,7 @@ public partial class GameEngineConsole
                 DrawCombinedBuffer();
                 Clear();
                 Write(_combinedBuffer);
-                
+
                 _gameEngine.CheckPlayerEnemyCollision(out var isPlayerDead);
 
                 if (isPlayerDead) WriteLine("You died!");
@@ -72,13 +72,17 @@ public partial class GameEngineConsole
             {
                 WriteLine($"Congratulations! You completed level {_gameState.CurrentLevel}.");
                 _gameState.CurrentLevel++;
-                
+
                 if (_gameState.CurrentLevel > _gameState.MaxLevels)
                 {
-                    DisplayGameOver();
-                    break;
+                    if (!_gameState.IsGameEndless)
+                    {
+                        DisplayGameOver();
+                        break;
+                    }
+                    _gameState.Score += 15 * _gameState.CurrentLevel;
                 }
-
+                
                 shouldRedraw = true;
                 levelIsCompleted = true;
             }
@@ -134,22 +138,25 @@ public partial class GameEngineConsole
         DrawCombinedBuffer();
         Clear();
         Write(_combinedBuffer);
-        
+
         Write("Enter your name: ");
         _gameState.PlayerName = ReadLine() ?? "Anonymous";
-        if (_gameState.CurrentLevel > _gameState.MaxLevels && _gameState.PlayerLife > 0)
+        if (_gameState.CurrentLevel > _gameState.MaxLevels && _gameState is { PlayerLife: > 0, IsGameEndless: false })
         {
             WriteLine("Congratulations! You have completed all levels. Press Any Key to exit.");
-            _scoreManager.AddScore(_gameState.PlayerName, _gameState.Score, _gameState.MazeDifficulty, true);
+            _gameState.Score += 100;
+            _scoreManager.AddScore(_gameState.PlayerName, _gameState.Score, 
+                _gameState.MazeDifficulty, false, _gameState.MaxLevels);
             ScoreManager.SaveScores(_scoreList);
         }
         else
         {
-            _scoreManager.AddScore(_gameState.PlayerName, _gameState.Score, _gameState.MazeDifficulty, false);
+            _scoreManager.AddScore(_gameState.PlayerName, _gameState.Score, 
+                _gameState.MazeDifficulty, _gameState.IsGameEndless, _gameState.CurrentLevel - 1);
             SetCursorPosition(_gameState.MazeWidth / 2, _gameState.MazeHeight / 2);
             WriteLine("Game Over!");
         }
-        
+
         ReadKey();
         GameMenu.StartMenu();
     }
