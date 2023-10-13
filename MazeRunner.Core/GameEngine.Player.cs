@@ -63,7 +63,7 @@ public partial class GameEngine
 
         if (_gameState is { IsPlayerInvulnerable: true, PlayerInvincibilityEffectDuration: > 0 })
             _gameState.PlayerInvincibilityEffectDuration--;
-        else if (_gameState.IsPlayerInvulnerable) 
+        else if (_gameState.IsPlayerInvulnerable)
             _gameState.IsPlayerInvulnerable = false;
 
         if (_gameState.AtAGlance)
@@ -77,7 +77,7 @@ public partial class GameEngine
     public void CheckPlayerEnemyCollision(out bool playerIsDead)
     {
         playerIsDead = false;
-        
+
         if (!CheckEnemyCollision(PlayerX, PlayerY) && !_gameState.IsPlayerInvulnerable) return;
         _gameState.PlayerLife--;
         playerIsDead = true;
@@ -123,7 +123,7 @@ public partial class GameEngine
         }
 
         _gameState.Score += treasure.count *
-                            ((int) treasure.treasureType +
+                            ((int)treasure.treasureType +
                              (treasure.treasureType == TreasureType.Bomb ? 1 : 0));
         _gameState.TreasureLocations.Remove(treasure);
     }

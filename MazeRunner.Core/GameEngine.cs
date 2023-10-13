@@ -78,7 +78,6 @@ public partial class GameEngine
 
     public void CalculateLevelScore(DateTime levelStartTime)
     {
-        
         var mazeArea = _gameState.MazeWidth * _gameState.MazeHeight;
         var maxTime = mazeArea switch
         {
@@ -87,9 +86,9 @@ public partial class GameEngine
             <= 400 => 150,
             _ => 210
         };
-        
-        var timeScore = maxTime - (int) (DateTime.Now - levelStartTime).TotalSeconds;
-        
+
+        var timeScore = maxTime - (int)(DateTime.Now - levelStartTime).TotalSeconds;
+
         _gameState.Score += timeScore < 0 ? 0 : timeScore;
     }
 }

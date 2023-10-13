@@ -37,10 +37,10 @@ public class GameState
     public int IncreasedVisibilityEffectRadius { get; set; }
     public int Score { get; set; }
     public string PlayerName { get; set; } = "Anonymous";
+    public bool IsGameEndless { get; set; }
 
     public GameState()
     {
-        var optionsManager = new OptionsManager();
         var options = OptionsManager.LoadOptions();
         
         IsSoundOn = options.IsSoundOn;

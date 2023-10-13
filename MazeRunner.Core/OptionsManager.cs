@@ -2,7 +2,7 @@
 
 namespace Reveche.MazeRunner;
 
-public class OptionsManager
+public static class OptionsManager
 {
     private const string OptionsFilePath = "MazeRunner.Options.json";
 
@@ -14,21 +14,21 @@ public class OptionsManager
             IsUtf8 = true,
             MazeDifficulty = MazeDifficulty.Normal
         };
-        
+
         if (File.Exists(OptionsFilePath))
         {
             var sourceGenOptions = new JsonSerializerOptions
             {
                 TypeInfoResolver = GameOptionsJsonContext.Default
             };
-            
+
             var json = File.ReadAllText(OptionsFilePath);
-            return (JsonSerializer.Deserialize(
+            return JsonSerializer.Deserialize(
                     json, typeof(GameOptions), sourceGenOptions)
-                as GameOptions) ?? defaultOptions;
+                as GameOptions ?? defaultOptions;
         }
 
-        SaveOptions(defaultOptions); 
+        SaveOptions(defaultOptions);
         return defaultOptions;
     }
 
@@ -38,7 +38,7 @@ public class OptionsManager
         {
             TypeInfoResolver = GameOptionsJsonContext.Default
         };
-        
+
         var json = JsonSerializer.Serialize(options, typeof(GameOptions), sourceGenOptions);
         File.WriteAllText(OptionsFilePath, json);
     }

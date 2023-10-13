@@ -14,7 +14,6 @@ public class GameOptions
 public class ScoreList
 {
     public List<ScoreEntry> Scores { get; set; } = new();
-    
 }
 
 [JsonSerializable(typeof(ScoreEntry))]
@@ -23,14 +22,16 @@ public class ScoreEntry
     public string Name { get; }
     public int Score { get; }
     public MazeDifficulty MazeDifficulty { get; }
-    public bool Completed { get; }
+    public bool IsEndless { get; }
+    public int CompletedLevels { get; }
 
-    public ScoreEntry(string name, int score, MazeDifficulty mazeDifficulty, bool completed)
+    public ScoreEntry(string name, int score, MazeDifficulty mazeDifficulty, bool isEndless, int completedLevels)
     {
         Name = name;
         Score = score;
         MazeDifficulty = mazeDifficulty;
-        Completed = completed;
+        IsEndless = isEndless;
+        CompletedLevels = completedLevels;
     }
 }
 
