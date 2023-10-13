@@ -2,7 +2,7 @@
 using System.Media;
 using System.Reflection;
 
-namespace Reveche.MazeRunner.Console;
+namespace Reveche.MazeRunner.Console.Sound;
 
 public class MusicPlayer
 {

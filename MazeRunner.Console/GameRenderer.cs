@@ -1,9 +1,29 @@
-﻿namespace Reveche.MazeRunner.Console;
+﻿using System.Text;
+using Reveche.MazeRunner.Console.Screens;
 
-public partial class GameEngineConsole
+namespace Reveche.MazeRunner.Console;
+
+public class GameRenderer
 {
-    private void DrawMaze()
+    private readonly GameEngine _gameEngine;
+    private readonly GameState _gameState;
+    private readonly MazeIcons _mazeIcons = new(MainScreen.GameState);
+
+    private int PlayerX => _gameState.PlayerX;
+    private int PlayerY => _gameState.PlayerY;
+    private int ExitX => _gameState.ExitX;
+    private int ExitY => _gameState.ExitY;
+    private string[,] Maze => _gameState.Maze;
+    
+    public GameRenderer(GameEngine gameEngine, GameState gameState)
     {
+        _gameEngine = gameEngine;
+        _gameState = gameState;
+    }
+
+    private StringBuilder DrawMaze()
+    {
+        var mazeBuffer = new StringBuilder();
         _gameState.Player = _gameState.PlayerLife switch
         {
             2 => _gameState.IsUtf8 ? "😐" : "P",
@@ -12,7 +32,7 @@ public partial class GameEngineConsole
             _ => _gameState.IsUtf8 ? "😀" : "P"
         };
 
-        _mazeBuffer.Clear();
+        mazeBuffer.Clear();
 
         for (var y = 0; y < Maze.GetLength(0); y++)
         {
@@ -36,31 +56,33 @@ public partial class GameEngineConsole
                 )
                 {
                     if (x == PlayerX && y == PlayerY)
-                        _mazeBuffer.Append(_gameState.Player); // Player
+                        mazeBuffer.Append(_gameState.Player); // Player
                     else if (x == ExitX && y == ExitY)
-                        _mazeBuffer.Append(_mazeIcons.Exit); // Exit
+                        mazeBuffer.Append(_mazeIcons.Exit); // Exit
                     else if (_gameEngine.CheckEnemyCollision(x, y) && _gameState.CurrentLevel != 1)
-                        _mazeBuffer.Append(_mazeIcons.Enemy); // Enemy
+                        mazeBuffer.Append(_mazeIcons.Enemy); // Enemy
                     else if (isCandle)
-                        _mazeBuffer.Append(_mazeIcons.Candle); // Candle
+                        mazeBuffer.Append(_mazeIcons.Candle); // Candle
                     else if (isTreasure)
-                        _mazeBuffer.Append(_mazeIcons.Treasure); // Treasure
+                        mazeBuffer.Append(_mazeIcons.Treasure); // Treasure
                     else
-                        _mazeBuffer.Append(Maze[y, x]);
+                        mazeBuffer.Append(Maze[y, x]);
                 }
                 else
                 {
-                    _mazeBuffer.Append(_gameState.PlayerLife == 0 ? _mazeIcons.RedSquare : _mazeIcons.Fog);
+                    mazeBuffer.Append(_gameState.PlayerLife == 0 ? _mazeIcons.RedSquare : _mazeIcons.Fog);
                 }
             }
 
-            _mazeBuffer.AppendLine(); // Move to the next row in the buffer
+            mazeBuffer.AppendLine(); // Move to the next row in the buffer
         }
+
+        return mazeBuffer;
     }
-
-
-    private void DrawInventory()
+    
+    private StringBuilder DrawInventory()
     {
+        var inventoryBuffer = new StringBuilder();
         var height = 9;
         var inventoryWidth = 16;
 
@@ -82,7 +104,7 @@ public partial class GameEngineConsole
             height++;
         }
 
-        _inventoryBuffer.Clear();
+        inventoryBuffer.Clear();
         var inventoryHeight = height - 2;
 
         const char verticalSide = '│';
@@ -92,7 +114,7 @@ public partial class GameEngineConsole
         var playerLife = $"{_gameState.PlayerLife} {(_gameState.PlayerLife == 1 ? "Life" : "Lives")} Left";
 
         AppendCorner(true);
-        _inventoryBuffer.AppendLine("│".PadRight(middle - 6) +
+        inventoryBuffer.AppendLine("│".PadRight(middle - 6) +
                                     "Player Stats".PadRight(middle + 6) + "│");
         AppendHorizontalLine();
         AppendEmptyLine();
@@ -141,41 +163,47 @@ public partial class GameEngineConsole
             AppendEmptyLine();
         AppendCorner(false);
 
-        return;
+        return inventoryBuffer;
 
         void AppendEmptyLine() =>
-            _inventoryBuffer.AppendLine($"{verticalSide}".PadRight(inventoryWidth, ' ') + verticalSide);
+            inventoryBuffer.AppendLine($"{verticalSide}".PadRight(inventoryWidth, ' ') + verticalSide);
 
         void AppendLine(string text) =>
-            _inventoryBuffer.AppendLine($"{verticalSide} {text}".PadRight(inventoryWidth) + verticalSide);
+            inventoryBuffer.AppendLine($"{verticalSide} {text}".PadRight(inventoryWidth) + verticalSide);
 
         void AppendCorner(bool isTop) =>
-            _inventoryBuffer.AppendLine((isTop ? "┌" : "└").PadRight(inventoryWidth, horizontalSide) + (isTop ? "┐" : "┘"));
+            inventoryBuffer.AppendLine((isTop ? "┌" : "└").PadRight(inventoryWidth, horizontalSide) + (isTop ? "┐" : "┘"));
 
         void AppendHorizontalLine() =>
-            _inventoryBuffer.AppendLine("├".PadRight(inventoryWidth, horizontalSide) + "┤");
+            inventoryBuffer.AppendLine("├".PadRight(inventoryWidth, horizontalSide) + "┤");
     }
 
-    private void DrawCombinedBuffer()
+    public StringBuilder DrawCombinedBuffer()
     {
-        _combinedBuffer.Clear();
-        var mazeBufferLines = _mazeBuffer.ToString().Split("\r\n");
-        var inventoryBufferLines = _inventoryBuffer.ToString().Split("\r\n");
+        var mazeBuffer = DrawMaze();
+        var inventoryBuffer= DrawInventory();
+        var combinedBuffer = new StringBuilder();
+        
+        combinedBuffer.Clear();
+        var mazeBufferLines = mazeBuffer.ToString().Split("\r\n");
+        var inventoryBufferLines = inventoryBuffer.ToString().Split("\r\n");
         var len = Math.Max(inventoryBufferLines.Length, mazeBufferLines.Length);
 
         for (var i = 0; i < len; i++)
         {
             if (i < mazeBufferLines.Length - 1)
-                _combinedBuffer.Append(mazeBufferLines[i]);
+                combinedBuffer.Append(mazeBufferLines[i]);
             else
-                _combinedBuffer.Append(' ', _gameState.MazeWidth * (_gameState.IsUtf8 ? 2 : 1));
+                combinedBuffer.Append(' ', _gameState.MazeWidth * (_gameState.IsUtf8 ? 2 : 1));
 
-            _combinedBuffer.Append(' ', 2);
+            combinedBuffer.Append(' ', 2);
 
             if (i < inventoryBufferLines.Length)
-                _combinedBuffer.Append(inventoryBufferLines[i]);
+                combinedBuffer.Append(inventoryBufferLines[i]);
 
-            _combinedBuffer.AppendLine();
+            combinedBuffer.AppendLine();
         }
+
+        return combinedBuffer;
     }
 }

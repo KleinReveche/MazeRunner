@@ -1,12 +1,13 @@
 ﻿using System.Text;
+using Reveche.MazeRunner.Console.Screens;
+using Reveche.MazeRunner.Console.Sound;
 
 namespace Reveche.MazeRunner.Console;
 
 public static class MazeRunnerConsole
 {
-    private static Thread? _musicThread;
-    private static CancellationTokenSource _cancellationTokenSource = new();
-
+    public static BackgroundSoundManager BackgroundSoundManager { get; private set; } = null!;
+    
     public static void Main(string[] args)
     {
         System.Console.InputEncoding = Encoding.UTF8;
@@ -18,43 +19,13 @@ public static class MazeRunnerConsole
         // Start the background music thread
         if (OperatingSystem.IsWindows())
         {
-            _musicThread = new Thread(() =>
-            {
-                var musicPlayer = new MusicPlayer(GameMenu.GameState);
-                musicPlayer.PlayBackgroundMusic(_cancellationTokenSource.Token);
-            });
-
-            _musicThread.Start();
+            BackgroundSoundManager = new BackgroundSoundManager();
+            BackgroundSoundManager.StartBackgroundMusic();
         }
 
-        GameMenu.StartMenu();
+        MainScreen.StartMenu();
         System.Console.ReadKey();
 
-        if (_musicThread == null) return;
-        _cancellationTokenSource.Cancel();
-        _musicThread.Join();
-    }
-
-    public static void StopMusic()
-    {
-        if (_musicThread == null) return;
-        _cancellationTokenSource.Cancel();
-        _musicThread.Join();
-    }
-
-    public static void RestartMusic()
-    {
-        if (_musicThread == null) return;
-        _cancellationTokenSource.Cancel();
-        _musicThread.Join();
-        _cancellationTokenSource.Dispose();
-        _cancellationTokenSource = new CancellationTokenSource();
-        _musicThread = new Thread(() =>
-        {
-            var musicPlayer = new MusicPlayer(GameMenu.GameState);
-            musicPlayer.PlayBackgroundMusic(_cancellationTokenSource.Token);
-        });
-
-        _musicThread.Start();
+        BackgroundSoundManager.StopBackgroundMusic();
     }
 }

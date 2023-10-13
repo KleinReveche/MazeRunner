@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace Reveche.MazeRunner.Console;
+namespace Reveche.MazeRunner.Console.Screens;
 
-public class OptionMenu
+public class OptionsScreen
 {
     private readonly List<string> _gameModeValues = new() { "Classic", "Campaign", "Endless" };
     private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
@@ -13,7 +13,7 @@ public class OptionMenu
     private readonly List<string> _soundValues = new() { "On", "Off" };
     private readonly List<string> _textStyleValues = new() { "Unicode", "ASCII" };
 
-    public OptionMenu(GameState gameState)
+    public OptionsScreen(GameState gameState)
     {
         _gameState = gameState;
         _gameEngineConsole = new GameEngineConsole(_gameState);
@@ -44,13 +44,13 @@ public class OptionMenu
             buffer.Clear();
             System.Console.Clear();
 
-            GameMenu.DisplayTitle();
+            MainScreen.DisplayTitle();
 
             for (var i = 0; i < _options.Count; i++)
             {
                 var option = _options.ElementAt(i);
                 var colon = option.Key is "Back" or "Play" ? "" : ":";
-                buffer.Append(' ', GameMenu.CenterX + 18);
+                buffer.Append(' ', MainScreen.CenterX + 18);
 
                 if (i == selectedIndex)
                     buffer.AppendLine("\u001b[93m>> " + option.Key + $"{colon} " + option.Value + " <<\u001b[0m");
@@ -93,7 +93,7 @@ public class OptionMenu
                         _gameEngineConsole.Play();
 
                     if (selectedIndex == _options.Count - 1)
-                        GameMenu.StartMenu();
+                        MainScreen.StartMenu();
                     return;
             }
         }
@@ -138,10 +138,10 @@ public class OptionMenu
                 switch (_gameState.IsSoundOn)
                 {
                     case false:
-                        MazeRunnerConsole.StopMusic();
+                        MazeRunnerConsole.BackgroundSoundManager.StopBackgroundMusic();
                         break;
                     case true:
-                        MazeRunnerConsole.RestartMusic();
+                        MazeRunnerConsole.BackgroundSoundManager.RestartBackgroundMusic();
                         break;
                 }
 

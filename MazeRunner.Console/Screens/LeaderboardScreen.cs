@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using static System.Console;
 
-namespace Reveche.MazeRunner.Console;
+namespace Reveche.MazeRunner.Console.Screens;
 
 public class LeaderboardScreen
 {
@@ -23,7 +23,7 @@ public class LeaderboardScreen
 
             if (_leaderboard.Count == 0)
             {
-                SetCursorPosition(GameMenu.CenterX, CursorTop);
+                SetCursorPosition(MainScreen.CenterX, CursorTop);
                 WriteLine("No scores yet!");
                 ReadKey(true);
                 break;
@@ -35,7 +35,7 @@ public class LeaderboardScreen
 
             foreach (var line in LeaderboardBuffer.ToString().Split("\r\n"))
             {
-                SetCursorPosition(GameMenu.CenterX - 5, CursorTop);
+                SetCursorPosition(MainScreen.CenterX - 5, CursorTop);
                 WriteLine(line);
             }
 
@@ -51,19 +51,19 @@ public class LeaderboardScreen
             if (keyInfo.Key is ConsoleKey.Escape or ConsoleKey.Spacebar or ConsoleKey.Enter) break;
         }
 
-        GameMenu.StartMenu();
+        MainScreen.StartMenu();
     }
 
     private static void DisplayCategory()
     {
         Clear();
-        GameMenu.DisplayTitle();
+        MainScreen.DisplayTitle();
 
         ForegroundColor = ConsoleColor.White;
-        SetCursorPosition(GameMenu.CenterX + 20, CursorTop);
+        SetCursorPosition(MainScreen.CenterX + 20, CursorTop);
         WriteLine("Leaderboard: \n");
 
-        SetCursorPosition(GameMenu.CenterX + 10, CursorTop);
+        SetCursorPosition(MainScreen.CenterX + 10, CursorTop);
         Write(_selectedCategoryIndex == 0 ? "[Score]" : "Score");
         Write(" | ");
         Write(_selectedCategoryIndex == 1 ? "[Difficulty]" : "Difficulty");

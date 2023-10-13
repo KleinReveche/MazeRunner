@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace Reveche.MazeRunner.Console;
+namespace Reveche.MazeRunner.Console.Screens;
 
-public static class GameMenu
+public static class MainScreen
 {
     private const string Maze = """
                                 ███╗░░░███╗░█████╗░███████╗███████╗
@@ -25,7 +25,7 @@ public static class GameMenu
     public static readonly int CenterX = (System.Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
 
     internal static GameState GameState = new();
-    private static OptionMenu _optionMenu = new(GameState);
+    private static OptionsScreen _optionsScreen = new(GameState);
 
     public static void DisplayTitle()
     {
@@ -55,12 +55,12 @@ public static class GameMenu
         if (GameState.CurrentLevel > GameState.MaxLevels || GameState.PlayerLife <= 0)
         {
             GameState = new GameState();
-            _optionMenu = new OptionMenu(GameState);
+            _optionsScreen = new OptionsScreen(GameState);
         }
 
         Dictionary<string, Action> menuOptions = new()
         {
-            { "Start", () => _optionMenu.DisplayOptions() },
+            { "Start", () => _optionsScreen.DisplayOptions() },
             {
                 "Leaderboard", () =>
                 {
@@ -132,7 +132,7 @@ public static class GameMenu
                              8-bit Air Fight by moodmode from Pixabay
                              Bit Beats 3 by XtremeFreddy from Pixabay
 
-                             © 2023 Klein Reveche. All rights reserved
+                             © 2023 Klein Reveche. All rights reserved.
                              """;
 
         System.Console.Clear();
