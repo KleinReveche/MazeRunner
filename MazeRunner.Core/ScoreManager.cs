@@ -31,7 +31,8 @@ public class ScoreManager
     {
         var sourceGenOptions = new JsonSerializerOptions
         {
-            TypeInfoResolver = ScoreListJsonContext.Default
+            TypeInfoResolver = ScoreListJsonContext.Default,
+            WriteIndented = true
         };
 
         var json = JsonSerializer.Serialize(scoreList, typeof(ScoreList), sourceGenOptions);

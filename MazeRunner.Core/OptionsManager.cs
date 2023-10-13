@@ -10,6 +10,7 @@ public static class OptionsManager
     {
         var defaultOptions = new GameOptions
         {
+            GameMode = GameMode.Classic,
             IsSoundOn = true,
             IsUtf8 = true,
             MazeDifficulty = MazeDifficulty.Normal
@@ -36,7 +37,8 @@ public static class OptionsManager
     {
         var sourceGenOptions = new JsonSerializerOptions
         {
-            TypeInfoResolver = GameOptionsJsonContext.Default
+            TypeInfoResolver = GameOptionsJsonContext.Default,
+            WriteIndented = true
         };
 
         var json = JsonSerializer.Serialize(options, typeof(GameOptions), sourceGenOptions);

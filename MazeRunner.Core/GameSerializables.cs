@@ -5,6 +5,7 @@ namespace Reveche.MazeRunner;
 [JsonSerializable(typeof(GameOptions))]
 public class GameOptions
 {
+    public GameMode GameMode { get; set; } = GameMode.Classic;
     public bool IsSoundOn { get; set; } = true;
     public bool IsUtf8 { get; set; } = true;
     public MazeDifficulty MazeDifficulty { get; set; } = MazeDifficulty.Normal;
