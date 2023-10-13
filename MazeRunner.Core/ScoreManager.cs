@@ -38,9 +38,9 @@ public class ScoreManager
         File.WriteAllText(FilePath, json);
     }
 
-    public void AddScore(string name, int score, MazeDifficulty mazeDifficulty, bool isEndless, int completedLevels)
+    public void AddScore(string name, int score, MazeDifficulty mazeDifficulty, GameMode gameMode, int completedLevels)
     {
-        _scoreList.Scores.Add(new ScoreEntry(name, score, mazeDifficulty, isEndless, completedLevels));
+        _scoreList.Scores.Add(new ScoreEntry(name, score, mazeDifficulty, gameMode, completedLevels));
         SaveScores(_scoreList);
     }
 }

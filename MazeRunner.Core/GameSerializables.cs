@@ -22,15 +22,15 @@ public class ScoreEntry
     public string Name { get; }
     public int Score { get; }
     public MazeDifficulty MazeDifficulty { get; }
-    public bool IsEndless { get; }
+    public GameMode GameMode { get; }
     public int CompletedLevels { get; }
 
-    public ScoreEntry(string name, int score, MazeDifficulty mazeDifficulty, bool isEndless, int completedLevels)
+    public ScoreEntry(string name, int score, MazeDifficulty mazeDifficulty, GameMode gameMode, int completedLevels)
     {
         Name = name;
         Score = score;
         MazeDifficulty = mazeDifficulty;
-        IsEndless = isEndless;
+        GameMode = gameMode;
         CompletedLevels = completedLevels;
     }
 }

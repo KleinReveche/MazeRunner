@@ -37,7 +37,7 @@ public class GameState
     public int IncreasedVisibilityEffectRadius { get; set; }
     public int Score { get; set; }
     public string PlayerName { get; set; } = "Anonymous";
-    public bool IsGameEndless { get; set; }
+    public GameMode GameMode { get; set; }
 
     public GameState()
     {

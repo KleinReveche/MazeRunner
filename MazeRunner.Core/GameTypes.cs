@@ -40,3 +40,10 @@ public enum MazeDifficulty
     Insanity,
     AsciiInsanity
 }
+
+public enum GameMode
+{
+    Classic,
+    Campaign,
+    Endless
+}
