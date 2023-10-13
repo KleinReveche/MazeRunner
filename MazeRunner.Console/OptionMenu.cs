@@ -4,7 +4,7 @@ namespace Reveche.MazeRunner.Console;
 
 public class OptionMenu
 {
-    private readonly List<string> _gameModeValues = new() { "Campaign", "Endless" };
+    private readonly List<string> _gameModeValues = new() { "Classic", "Campaign", "Endless" };
     private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
     private readonly GameEngineConsole _gameEngineConsole;
     private readonly GameOptions _gameOptions = OptionsManager.LoadOptions();
@@ -20,7 +20,7 @@ public class OptionMenu
         _options = new Dictionary<string, string>
         {
             { "Play", "" },
-            { "Game Mode", _gameState.IsGameEndless ? _gameModeValues[1] : _gameModeValues[0] },
+            { "Game Mode", _gameModeValues.ElementAt((int) _gameState.GameMode)  },
             { "Difficulty", _difficultyValues.ElementAt((int) _gameState.MazeDifficulty) },
             { "Text Style", _gameState.IsUtf8 ? _textStyleValues[0] : _textStyleValues[1] },
             { "Sound", _gameState.IsSoundOn ? _soundValues[0] : _soundValues[1] },
@@ -109,7 +109,8 @@ public class OptionMenu
                 var currentIndex = _gameModeValues.IndexOf(value);
                 var newIndex = (currentIndex + change + _gameModeValues.Count) % _gameModeValues.Count;
                 options[optionKey] = _gameModeValues[newIndex];
-                _gameState.IsGameEndless = newIndex == 1;
+                _gameState.GameMode =
+                    typeof(GameMode).GetEnumValues().Cast<GameMode>().ElementAt(newIndex);
                 break;
             }
             case "Difficulty":

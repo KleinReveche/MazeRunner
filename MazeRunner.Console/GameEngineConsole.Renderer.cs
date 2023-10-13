@@ -27,7 +27,7 @@ public partial class GameEngineConsole
                 var isTreasure = _gameState.TreasureLocations
                     .Any(treasureLocation => x == treasureLocation.treasureX && y == treasureLocation.treasureY);
                 var isTemporaryVisible = _gameState is { PlayerHasIncreasedVisibility: true };
-                var isGameDone = _gameState.CurrentLevel > _gameState.MaxLevels && !_gameState.IsGameEndless;
+                var isGameDone = _gameState.CurrentLevel > _gameState.MaxLevels && _gameState.GameMode == GameMode.Classic;
 
                 if (
                     distanceToPlayer <= _gameState.PlayerVisibilityRadius +
@@ -88,8 +88,6 @@ public partial class GameEngineConsole
         const char verticalSide = '│';
         const char horizontalSide = '─';
         var middle = inventoryWidth / 2;
-        var currentLevel = $"Level {Math.Min(_gameState.CurrentLevel, _gameState.MaxLevels)} of {_gameState.MaxLevels}";
-        var currentLevelEndless = $"Level {_gameState.CurrentLevel} of ∞";
         var currentScore = $"Score: {_gameState.Score}";
         var playerLife = $"{_gameState.PlayerLife} {(_gameState.PlayerLife == 1 ? "Life" : "Lives")} Left";
 
@@ -98,7 +96,22 @@ public partial class GameEngineConsole
                                     "Player Stats".PadRight(middle + 6) + "│");
         AppendHorizontalLine();
         AppendEmptyLine();
-        AppendLine(_gameState.IsGameEndless ? currentLevelEndless : currentLevel);
+        
+        switch (_gameState.GameMode)
+        { 
+            case GameMode.Classic:
+                AppendLine($"Level {Math.Min(_gameState.CurrentLevel, _gameState.MaxLevels)} of {_gameState.MaxLevels}");
+                break;
+            case GameMode.Campaign:
+                AppendLine("Campaign");
+                break;
+            case GameMode.Endless:
+                AppendLine($"Level {_gameState.CurrentLevel} of ∞");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
         AppendLine(currentScore);
         AppendLine(playerLife);
         AppendEmptyLine();

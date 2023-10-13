@@ -75,7 +75,7 @@ public partial class GameEngineConsole
 
                 if (_gameState.CurrentLevel > _gameState.MaxLevels)
                 {
-                    if (!_gameState.IsGameEndless)
+                    if (_gameState.GameMode == GameMode.Classic)
                     {
                         DisplayGameOver();
                         break;
@@ -141,18 +141,18 @@ public partial class GameEngineConsole
 
         Write("Enter your name: ");
         _gameState.PlayerName = ReadLine() ?? "Anonymous";
-        if (_gameState.CurrentLevel > _gameState.MaxLevels && _gameState is { PlayerLife: > 0, IsGameEndless: false })
+        if (_gameState.CurrentLevel > _gameState.MaxLevels && _gameState is { PlayerLife: > 0, GameMode: GameMode.Classic })
         {
             WriteLine("Congratulations! You have completed all levels. Press Any Key to exit.");
             _gameState.Score += 100;
             _scoreManager.AddScore(_gameState.PlayerName, _gameState.Score, 
-                _gameState.MazeDifficulty, false, _gameState.MaxLevels);
+                _gameState.MazeDifficulty, _gameState.GameMode, _gameState.MaxLevels);
             ScoreManager.SaveScores(_scoreList);
         }
         else
         {
             _scoreManager.AddScore(_gameState.PlayerName, _gameState.Score, 
-                _gameState.MazeDifficulty, _gameState.IsGameEndless, _gameState.CurrentLevel - 1);
+                _gameState.MazeDifficulty, _gameState.GameMode, _gameState.CurrentLevel - 1);
             SetCursorPosition(_gameState.MazeWidth / 2, _gameState.MazeHeight / 2);
             WriteLine("Game Over!");
         }

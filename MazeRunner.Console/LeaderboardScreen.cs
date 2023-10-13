@@ -80,7 +80,7 @@ public class LeaderboardScreen
         var maxNameLength = Math.Max(_leaderboard.Max(p => p.Name.Length), 6);
         var maxScoreLength = Math.Max(_leaderboard.Max(p => p.Score.ToString().Length), 5);
         var maxDifficultyLength = Math.Max(_leaderboard.Max(p => p.MazeDifficulty.ToString().Length), 10);
-        var maxCompletionLength = Math.Max(_leaderboard.Max(p => p.IsEndless.ToString().Length), 9);
+        var maxCompletionLength = Math.Max(_leaderboard.Max(p => p.GameMode.ToString().Length), 9);
         var maxLevelLength = Math.Max(_leaderboard.Max(p => p.CompletedLevels.ToString().Length), 5);
 
         _namePadding = maxNameLength + 2;
@@ -107,7 +107,7 @@ public class LeaderboardScreen
             case 2: // Sort by Completion
                 _leaderboard.Sort((a, b) =>
                 {
-                    var completed = b.IsEndless.CompareTo(a.IsEndless);
+                    var completed = b.GameMode.CompareTo(a.GameMode);
                     return completed != 0 ? completed : b.Score.CompareTo(a.Score);
                 });
                 break;
@@ -142,9 +142,8 @@ public class LeaderboardScreen
         
         foreach (var score in _leaderboard)
         {
-            var completed = score.IsEndless ? "Endless" : "Campaign";
             LeaderboardBuffer.AppendLine(string.Format(rowFormat, score.Name, score.Score, score.MazeDifficulty,
-                completed, score.CompletedLevels));
+                score.GameMode, score.CompletedLevels));
         }
         
         LeaderboardBuffer.AppendLine(string.Format(lineFormat, "└", "┴", "┴", "┴", "┴", "┘"));
