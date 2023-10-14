@@ -63,7 +63,7 @@ public partial class GameEngine
 
         if (_gameState is { IsPlayerInvulnerable: true, PlayerInvincibilityEffectDuration: > 0 })
             _gameState.PlayerInvincibilityEffectDuration--;
-        else if (_gameState.IsPlayerInvulnerable)
+        else
             _gameState.IsPlayerInvulnerable = false;
 
         if (_gameState.AtAGlance)
@@ -78,7 +78,7 @@ public partial class GameEngine
     {
         playerIsDead = false;
 
-        if (!CheckEnemyCollision(PlayerX, PlayerY) && !_gameState.IsPlayerInvulnerable) return;
+        if (!CheckEnemyCollision(PlayerX, PlayerY) || _gameState.IsPlayerInvulnerable) return;
         _gameState.PlayerLife--;
         playerIsDead = true;
     }
