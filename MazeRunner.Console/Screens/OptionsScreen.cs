@@ -84,10 +84,7 @@ public class OptionsScreen
                     break;
 
                 case ConsoleKey.Enter:
-                    _gameOptions.MazeDifficulty = _gameState.MazeDifficulty;
-                    _gameOptions.IsSoundOn = _gameState.IsSoundOn;
-                    _gameOptions.IsUtf8 = _gameState.IsUtf8;
-                    OptionsManager.SaveOptions(_gameOptions);
+                    OptionsManager.SaveCurrentOptions(_gameState, _gameOptions);
 
                     if (selectedIndex == 0)
                         _gameEngineConsole.Play();
