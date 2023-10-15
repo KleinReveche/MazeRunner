@@ -33,7 +33,7 @@ public static class OptionsManager
         return defaultOptions;
     }
 
-    public static void SaveOptions(GameOptions options)
+    private static void SaveOptions(GameOptions options)
     {
         var sourceGenOptions = new JsonSerializerOptions
         {
@@ -43,5 +43,14 @@ public static class OptionsManager
 
         var json = JsonSerializer.Serialize(options, typeof(GameOptions), sourceGenOptions);
         File.WriteAllText(OptionsFilePath, json);
+    }
+
+    public static void SaveCurrentOptions(GameState gameState, GameOptions gameOptions)
+    {
+        gameOptions.GameMode = gameState.GameMode;
+        gameOptions.IsSoundOn = gameState.IsSoundOn;
+        gameOptions.IsUtf8 = gameState.IsUtf8;
+        gameOptions.MazeDifficulty = gameState.MazeDifficulty;
+        SaveOptions(gameOptions);
     }
 }
