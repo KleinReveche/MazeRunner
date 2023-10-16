@@ -1,19 +1,11 @@
 ﻿using System.Text;
-using Reveche.MazeRunner.Console.Screens;
 
 namespace Reveche.MazeRunner.Console;
 
-public class GameRenderer
+public partial class GameRenderer
 {
     private readonly GameEngine _gameEngine;
     private readonly GameState _gameState;
-    private readonly MazeIcons _mazeIcons = new(MainScreen.GameState);
-
-    private int PlayerX => _gameState.PlayerX;
-    private int PlayerY => _gameState.PlayerY;
-    private int ExitX => _gameState.ExitX;
-    private int ExitY => _gameState.ExitY;
-    private string[,] Maze => _gameState.Maze;
     
     public GameRenderer(GameEngine gameEngine, GameState gameState)
     {
@@ -21,65 +13,6 @@ public class GameRenderer
         _gameState = gameState;
     }
 
-    private StringBuilder DrawMaze()
-    {
-        var mazeBuffer = new StringBuilder();
-        _gameState.Player = _gameState.PlayerLife switch
-        {
-            2 => _gameState.IsUtf8 ? "😐" : "P",
-            1 => _gameState.IsUtf8 ? "🤕" : "P",
-            0 => _gameState.IsUtf8 ? "👻" : "X",
-            _ => _gameState.IsUtf8 ? "😀" : "P"
-        };
-
-        mazeBuffer.Clear();
-
-        for (var y = 0; y < Maze.GetLength(0); y++)
-        {
-            for (var x = 0; x < Maze.GetLength(1); x++)
-            {
-                var distanceToPlayer = Math.Abs(x - PlayerX) + Math.Abs(y - PlayerY);
-                var isWithinCandleRadius = _gameState.CandleLocations
-                    .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= _gameState.CandleVisibilityRadius
-                                           && Math.Abs(y - candleLocation.Item1) <= _gameState.CandleVisibilityRadius);
-                var isCandle = _gameState.CandleLocations
-                    .Any(candleLocation => x == candleLocation.CandleX && y == candleLocation.candleY);
-                var isTreasure = _gameState.TreasureLocations
-                    .Any(treasureLocation => x == treasureLocation.treasureX && y == treasureLocation.treasureY);
-                var isTemporaryVisible = _gameState is { PlayerHasIncreasedVisibility: true };
-                var isGameDone = _gameState.CurrentLevel > _gameState.MaxLevels && _gameState.GameMode == GameMode.Classic;
-
-                if (
-                    distanceToPlayer <= _gameState.PlayerVisibilityRadius +
-                    (isTemporaryVisible ? _gameState.IncreasedVisibilityEffectRadius : 0)
-                    || isWithinCandleRadius || _gameState.AtAGlance || isGameDone
-                )
-                {
-                    if (x == PlayerX && y == PlayerY)
-                        mazeBuffer.Append(_gameState.Player); // Player
-                    else if (x == ExitX && y == ExitY)
-                        mazeBuffer.Append(_mazeIcons.Exit); // Exit
-                    else if (_gameEngine.CheckEnemyCollision(x, y) && _gameState.CurrentLevel != 1)
-                        mazeBuffer.Append(_mazeIcons.Enemy); // Enemy
-                    else if (isCandle)
-                        mazeBuffer.Append(_mazeIcons.Candle); // Candle
-                    else if (isTreasure)
-                        mazeBuffer.Append(_mazeIcons.Treasure); // Treasure
-                    else
-                        mazeBuffer.Append(Maze[y, x]);
-                }
-                else
-                {
-                    mazeBuffer.Append(_gameState.PlayerLife == 0 ? _mazeIcons.RedSquare : _mazeIcons.Fog);
-                }
-            }
-
-            mazeBuffer.AppendLine(); // Move to the next row in the buffer
-        }
-
-        return mazeBuffer;
-    }
-    
     private StringBuilder DrawInventory()
     {
         var inventoryBuffer = new StringBuilder();
