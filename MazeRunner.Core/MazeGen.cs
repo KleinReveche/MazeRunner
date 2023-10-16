@@ -3,13 +3,11 @@
 public class MazeGen
 {
     private readonly GameState _gameState;
-    private readonly MazeIcons _mazeIcons;
     private readonly Random _random = new();
 
     public MazeGen(GameState gameState)
     {
         _gameState = gameState;
-        _mazeIcons = new MazeIcons(_gameState);
     }
 
     public void InitializeMaze()
@@ -19,21 +17,19 @@ public class MazeGen
 
         _gameState.PlayerX = 1;
         _gameState.PlayerY = 1;
-        _gameState.Maze = new string[mazeHeight, mazeWidth];
+        _gameState.Maze = new char[mazeHeight, mazeWidth];
 
         for (var y = 0; y < mazeHeight; y++)
         for (var x = 0; x < mazeWidth; x++)
         {
             var isBorder = x == 0 || x == mazeWidth - 1 || y == 0 || y == mazeHeight - 1;
-            _gameState.Maze[y, x] = isBorder ? _mazeIcons.Border : _mazeIcons.Wall;
+            _gameState.Maze[y, x] = isBorder ? MazeIcons.Border : MazeIcons.Wall;
         }
-
-        _gameState.Maze[_gameState.PlayerY, _gameState.PlayerX] = _gameState.Player;
     }
 
     public void GenerateMaze(int x, int y)
     {
-        _gameState.Maze[y, x] = _mazeIcons.Empty;
+        _gameState.Maze[y, x] = MazeIcons.Empty;
         int[] directions = { 0, 1, 2, 3 };
         Shuffle(directions);
 
@@ -41,9 +37,9 @@ public class MazeGen
         {
             var (newX, newY) = GetNewPosition(x, y, dir);
 
-            if (!IsInBounds(newX, newY) || _gameState.Maze[newY, newX] != _mazeIcons.Wall) continue;
-            _gameState.Maze[newY, newX] = _mazeIcons.Empty;
-            _gameState.Maze[y + (newY - y) / 2, x + (newX - x) / 2] = _mazeIcons.Empty;
+            if (!IsInBounds(newX, newY) || _gameState.Maze[newY, newX] != MazeIcons.Wall) continue;
+            _gameState.Maze[newY, newX] = MazeIcons.Empty;
+            _gameState.Maze[y + (newY - y) / 2, x + (newX - x) / 2] = MazeIcons.Empty;
             GenerateMaze(newX, newY);
         }
     }
@@ -58,10 +54,10 @@ public class MazeGen
             _gameState.ExitY = _random.Next(min, _gameState.MazeHeight - 1);
         } while (
             (_gameState.ExitX == _gameState.PlayerX && _gameState.ExitY == _gameState.PlayerY)
-            || _gameState.Maze[_gameState.ExitY, _gameState.ExitX] == _mazeIcons.Wall
+            || _gameState.Maze[_gameState.ExitY, _gameState.ExitX] == MazeIcons.Wall
         );
 
-        _gameState.Maze[_gameState.ExitY, _gameState.ExitX] = _mazeIcons.Empty;
+        _gameState.Maze[_gameState.ExitY, _gameState.ExitX] = MazeIcons.Empty;
     }
 
     public void GenerateEnemy()
@@ -130,7 +126,7 @@ public class MazeGen
         }
 
         foreach (var treasureLocation in _gameState.TreasureLocations)
-            _gameState.Maze[treasureLocation.treasureY, treasureLocation.treasureX] = _mazeIcons.Empty;
+            _gameState.Maze[treasureLocation.treasureY, treasureLocation.treasureX] = MazeIcons.Empty;
     }
 
     private static (int newX, int newY) GetNewPosition(int x, int y, int dir)
@@ -182,19 +178,19 @@ public class MazeGen
     public bool IsInBounds(int x, int y)
     {
         return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight &&
-               _gameState.Maze[y, x] != _mazeIcons.Border;
+               _gameState.Maze[y, x] != MazeIcons.Border;
     }
 
     private bool IsInsideWalls(int x, int y)
     {
         return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight &&
-               _gameState.Maze[y, x] != _mazeIcons.Wall;
+               _gameState.Maze[y, x] != MazeIcons.Wall;
     }
 
     private bool IsCellEmpty(int x, int y)
     {
         return x >= 0 && x < _gameState.MazeWidth && y >= 0 && y < _gameState.MazeHeight &&
-               _gameState.Maze[y, x] == _mazeIcons.Empty;
+               _gameState.Maze[y, x] == MazeIcons.Empty;
     }
 
     public int GenerateRandomMazeSize()

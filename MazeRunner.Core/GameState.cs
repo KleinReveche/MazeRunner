@@ -27,7 +27,7 @@ public class GameState
     public int ExitY { get; set; } // Exit Y-coordinate
     public int MazeWidth { get; set; } = 7;
     public int MazeHeight { get; set; } = 9;
-    public string[,] Maze { get; set; } = null!;
+    public char[,] Maze { get; set; } = null!;
     public bool IsSoundOn { get; set; }
     public bool IsUtf8 { get; set; }
     public MazeDifficulty MazeDifficulty { get; set; }

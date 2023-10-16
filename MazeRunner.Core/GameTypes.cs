@@ -1,24 +1,17 @@
 namespace Reveche.MazeRunner;
 
-public class MazeIcons
+public static class MazeIcons
 {
-    private readonly GameState _gameState;
-
-    public MazeIcons(GameState gameState)
-    {
-        _gameState = gameState;
-    }
-
-    public string Wall => _gameState.IsUtf8 ? "🟪" : "*";
-    public string Border => _gameState.IsUtf8 ? "🟦" : "#";
-    public string Exit => _gameState.IsUtf8 ? "🚪" : "E";
-    public string Enemy => _gameState.IsUtf8 ? "👾" : "V";
-    public string Empty => _gameState.IsUtf8 ? "  " : " ";
-    public string Bomb => _gameState.IsUtf8 ? "💣" : "B";
-    public string Candle => _gameState.IsUtf8 ? "🕯️" : "C";
-    public string Treasure => _gameState.IsUtf8 ? "📦" : "T";
-    public string Fog => _gameState.IsUtf8 ? "🟫" : "@";
-    public string RedSquare => _gameState.IsUtf8 ? "🟥" : "~";
+    public const char Wall = '*';
+    public const char Border = '#';
+    public const char Exit = 'E';
+    public const char Enemy = 'V';
+    public const char Empty = ' ';
+    public const char Bomb = 'B';
+    public const char Candle = 'C';
+    public const char Treasure = 'T';
+    public const char Fog = '@';
+    public const char LostFog = '~';
 }
 
 public enum TreasureType

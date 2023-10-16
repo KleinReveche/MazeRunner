@@ -44,7 +44,7 @@ public partial class GameEngine
         if (placeBomb && _gameState is { BombCount: > 0, BombIsUsed: false })
         {
             _gameState.BombCount--;
-            _gameState.Maze[LastPlayerY, LastPlayerX] = _mazeIcons.Bomb;
+            _gameState.Maze[LastPlayerY, LastPlayerX] = MazeIcons.Bomb;
             BombX = LastPlayerX;
             BombY = LastPlayerY;
 
@@ -56,7 +56,7 @@ public partial class GameEngine
         LastPlayerX = _gameState.PlayerX;
         LastPlayerY = _gameState.PlayerY;
         // Clear previous player position
-        Maze[PlayerY, PlayerX] = _mazeIcons.Empty;
+        Maze[PlayerY, PlayerX] = MazeIcons.Empty;
         // Set new player position
         _gameState.PlayerX = newPlayerX;
         _gameState.PlayerY = newPlayerY;
@@ -69,8 +69,6 @@ public partial class GameEngine
         if (_gameState.AtAGlance)
             _gameState.AtAGlance = false;
 
-        // Set player in the maze
-        Maze[PlayerY, PlayerX] = _gameState.Player;
         return true; // Player has moved, indicate that screen should be redrawn
     }
 
@@ -159,7 +157,7 @@ public partial class GameEngine
             }
 
             if (_mazeGen.IsInBounds(BombX + x, BombY + y))
-                Maze[BombY + y, BombX + x] = _mazeIcons.Empty;
+                Maze[BombY + y, BombX + x] = MazeIcons.Empty;
         }
 
         _gameState.BombIsUsed = false;

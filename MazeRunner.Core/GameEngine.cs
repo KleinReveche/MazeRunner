@@ -5,20 +5,18 @@ public partial class GameEngine
     private const int BlastRadius = 1;
     private readonly GameState _gameState;
     private readonly MazeGen _mazeGen;
-    private readonly MazeIcons _mazeIcons;
     private int PlayerX => _gameState.PlayerX;
     private int PlayerY => _gameState.PlayerY;
     private int LastPlayerX { get; set; }
     private int LastPlayerY { get; set; }
     private int BombX { get; set; }
     private int BombY { get; set; }
-    private string[,] Maze => _gameState.Maze;
+    private char[,] Maze => _gameState.Maze;
     
     public GameEngine(GameState gameState)
     {
         _gameState = gameState;
         _mazeGen = new MazeGen(_gameState);
-        _mazeIcons = new MazeIcons(_gameState);
     }
     
     public void InitializeNewLevel()
@@ -71,7 +69,7 @@ public partial class GameEngine
     {
         var maze = _gameState.Maze;
         if (x >= 0 && x < maze.GetLength(1) && y >= 0 && y < maze.GetLength(0))
-            return maze[y, x] == _mazeIcons.Empty;
+            return maze[y, x] == MazeIcons.Empty;
 
         return false;
     }
