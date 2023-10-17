@@ -12,7 +12,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\MazeRunner.Core\MazeRunner.Core.csproj"/>
-        <ProjectReference Include="..\WorcleQuest\WorcleQuest.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

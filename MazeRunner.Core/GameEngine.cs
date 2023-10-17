@@ -63,6 +63,20 @@ public partial class GameEngine
             MazeDifficulty.Normal => 2,
             _ => 1
         };
+        _gameState.BombCount = _gameState.MazeDifficulty switch
+        {
+            MazeDifficulty.Easy => 4,
+            MazeDifficulty.Normal => 3,
+            MazeDifficulty.Hard => 2,
+            _ => 1
+        };
+        _gameState.CandleCount = _gameState.MazeDifficulty switch
+        {
+            MazeDifficulty.Easy => 6,
+            MazeDifficulty.Normal => 5,
+            MazeDifficulty.Hard => 4,
+            _ => 3
+        };
     }
 
     private bool IsCellEmpty(int x, int y)
