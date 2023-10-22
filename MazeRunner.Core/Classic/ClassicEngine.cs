@@ -1,26 +1,26 @@
-﻿namespace Reveche.MazeRunner;
+﻿namespace Reveche.MazeRunner.Classic;
 
-public partial class GameEngine(GameState gameState)
+public partial class ClassicEngine(GameState gameState, ClassicState classicState)
 {
     private const int BlastRadius = 1;
-    private readonly MazeGen _mazeGen = new(gameState);
+    private readonly MazeGen _mazeGen = new(gameState, classicState);
 
-    private int PlayerX => gameState.PlayerX;
-    private int PlayerY => gameState.PlayerY;
+    private int PlayerX => classicState.PlayerX;
+    private int PlayerY => classicState.PlayerY;
     private int LastPlayerX { get; set; }
     private int LastPlayerY { get; set; }
     private int BombX { get; set; }
     private int BombY { get; set; }
-    private char[,] Maze => gameState.Maze;
+    private char[,] Maze => classicState.Maze;
 
     public void InitializeNewLevel()
     {
-        if (gameState.PlayerHasIncreasedVisibility)
-            gameState.PlayerHasIncreasedVisibility = false;
-        gameState.CandleLocations.Clear();
-        gameState.BombIsUsed = false;
-        gameState.MazeHeight = _mazeGen.GenerateRandomMazeSize();
-        gameState.MazeWidth = _mazeGen.GenerateRandomMazeSize();
+        if (classicState.PlayerHasIncreasedVisibility)
+            classicState.PlayerHasIncreasedVisibility = false;
+        classicState.CandleLocations.Clear();
+        classicState.BombIsUsed = false;
+        classicState.MazeHeight = _mazeGen.GenerateRandomMazeSize();
+        classicState.MazeWidth = _mazeGen.GenerateRandomMazeSize();
         _mazeGen.InitializeMaze();
         _mazeGen.GenerateMaze(1, 1); // Start generating maze from (1, 1)
         _mazeGen.GenerateExit();
@@ -30,7 +30,7 @@ public partial class GameEngine(GameState gameState)
 
     public void AdjustToDifficulty()
     {
-        gameState.MaxLevels = gameState.MazeDifficulty switch
+        classicState.MaxLevels = gameState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 4,
             MazeDifficulty.Normal => 5,
@@ -38,33 +38,33 @@ public partial class GameEngine(GameState gameState)
             MazeDifficulty.Insanity => 6,
             _ => 6
         };
-        gameState.PlayerVisibilityRadius = gameState.MazeDifficulty switch
+        classicState.PlayerVisibilityRadius = gameState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 4,
             MazeDifficulty.Normal => 3,
             MazeDifficulty.Hard => 2,
             _ => 1
         };
-        gameState.CandleVisibilityRadius = gameState.MazeDifficulty switch
+        classicState.CandleVisibilityRadius = gameState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 2,
             MazeDifficulty.Normal => 2,
             _ => 1
         };
-        gameState.IncreasedVisibilityEffectRadius = gameState.MazeDifficulty switch
+        classicState.IncreasedVisibilityEffectRadius = gameState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 3,
             MazeDifficulty.Normal => 2,
             _ => 1
         };
-        gameState.BombCount = gameState.MazeDifficulty switch
+        classicState.BombCount = gameState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 4,
             MazeDifficulty.Normal => 3,
             MazeDifficulty.Hard => 2,
             _ => 1
         };
-        gameState.CandleCount = gameState.MazeDifficulty switch
+        classicState.CandleCount = gameState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 6,
             MazeDifficulty.Normal => 5,
@@ -75,7 +75,7 @@ public partial class GameEngine(GameState gameState)
 
     private bool IsCellEmpty(int x, int y)
     {
-        var maze = gameState.Maze;
+        var maze = classicState.Maze;
         if (x >= 0 && x < maze.GetLength(1) && y >= 0 && y < maze.GetLength(0))
             return maze[y, x] == MazeIcons.Empty;
 
@@ -84,7 +84,7 @@ public partial class GameEngine(GameState gameState)
 
     public void CalculateLevelScore(DateTime levelStartTime)
     {
-        var mazeArea = gameState.MazeWidth * gameState.MazeHeight;
+        var mazeArea = classicState.MazeWidth * classicState.MazeHeight;
         var maxTime = mazeArea switch
         {
             <= 50 => 45,
@@ -95,6 +95,6 @@ public partial class GameEngine(GameState gameState)
 
         var timeScore = maxTime - (int)(DateTime.Now - levelStartTime).TotalSeconds;
 
-        gameState.Score += timeScore < 0 ? 0 : timeScore;
+        classicState.Score += timeScore < 0 ? 0 : timeScore;
     }
 }
