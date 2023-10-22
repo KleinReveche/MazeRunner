@@ -6,6 +6,14 @@ public static class OptionsManager
 {
     private const string OptionsFilePath = "MazeRunner.Options.json";
 
+    private static readonly JsonSerializerOptions SourceGenOptions = new()
+    {
+        TypeInfoResolver = GameOptionsJsonContext.Default,
+        WriteIndented = true
+    };
+
+    private static readonly GameOptionsJsonContext Context = new(SourceGenOptions);
+    
     public static GameOptions LoadOptions()
     {
         var defaultOptions = new GameOptions
@@ -18,15 +26,9 @@ public static class OptionsManager
 
         if (File.Exists(OptionsFilePath))
         {
-            var sourceGenOptions = new JsonSerializerOptions
-            {
-                TypeInfoResolver = GameOptionsJsonContext.Default
-            };
-
             var json = File.ReadAllText(OptionsFilePath);
             return JsonSerializer.Deserialize(
-                    json, typeof(GameOptions), sourceGenOptions)
-                as GameOptions ?? defaultOptions;
+                json, Context.GameOptions) ?? defaultOptions;
         }
 
         SaveOptions(defaultOptions);
@@ -35,13 +37,7 @@ public static class OptionsManager
 
     private static void SaveOptions(GameOptions options)
     {
-        var sourceGenOptions = new JsonSerializerOptions
-        {
-            TypeInfoResolver = GameOptionsJsonContext.Default,
-            WriteIndented = true
-        };
-
-        var json = JsonSerializer.Serialize(options, typeof(GameOptions), sourceGenOptions);
+        var json = JsonSerializer.Serialize(options, Context.GameOptions);
         File.WriteAllText(OptionsFilePath, json);
     }
 
