@@ -2,17 +2,8 @@
 
 namespace Reveche.MazeRunner.Console;
 
-public partial class GameRenderer
+public partial class GameRenderer(GameEngine gameEngine, GameState gameState)
 {
-    private readonly GameEngine _gameEngine;
-    private readonly GameState _gameState;
-    
-    public GameRenderer(GameEngine gameEngine, GameState gameState)
-    {
-        _gameEngine = gameEngine;
-        _gameState = gameState;
-    }
-
     private StringBuilder DrawInventory()
     {
         var inventoryBuffer = new StringBuilder();
@@ -21,16 +12,16 @@ public partial class GameRenderer
 
         var inventory = new List<(string, int)>
         {
-            ("Bombs", _gameState.BombCount),
-            ("Candles", _gameState.CandleCount)
+            ("Bombs", gameState.BombCount),
+            ("Candles", gameState.CandleCount)
         };
 
-        if (_gameState.IsPlayerInvulnerable || _gameState.PlayerHasIncreasedVisibility)
+        if (gameState.IsPlayerInvulnerable || gameState.PlayerHasIncreasedVisibility)
         {
-            if (_gameState.IsPlayerInvulnerable)
-                inventory.Add(("Invulnerability", _gameState.PlayerInvincibilityEffectDuration));
+            if (gameState.IsPlayerInvulnerable)
+                inventory.Add(("Invulnerability", gameState.PlayerInvincibilityEffectDuration));
 
-            if (_gameState.PlayerHasIncreasedVisibility)
+            if (gameState.PlayerHasIncreasedVisibility)
                 inventory.Add(("Increased Visibility", 1));
 
             inventoryWidth = 24;
@@ -43,30 +34,30 @@ public partial class GameRenderer
         const char verticalSide = '│';
         const char horizontalSide = '─';
         var middle = inventoryWidth / 2;
-        var currentScore = $"Score: {_gameState.Score}";
-        var playerLife = $"{_gameState.PlayerLife} {(_gameState.PlayerLife == 1 ? "Life" : "Lives")} Left";
+        var currentScore = $"Score: {gameState.Score}";
+        var playerLife = $"{gameState.PlayerLife} {(gameState.PlayerLife == 1 ? "Life" : "Lives")} Left";
 
         AppendCorner(true);
         inventoryBuffer.AppendLine("│".PadRight(middle - 6) +
-                                    "Player Stats".PadRight(middle + 6) + "│");
+                                   "Player Stats".PadRight(middle + 6) + "│");
         AppendHorizontalLine();
         AppendEmptyLine();
-        
-        switch (_gameState.GameMode)
-        { 
+
+        switch (gameState.GameMode)
+        {
             case GameMode.Classic:
-                AppendLine($"Level {Math.Min(_gameState.CurrentLevel, _gameState.MaxLevels)} of {_gameState.MaxLevels}");
+                AppendLine($"Level {Math.Min(gameState.CurrentLevel, gameState.MaxLevels)} of {gameState.MaxLevels}");
                 break;
             case GameMode.Campaign:
                 AppendLine("Campaign");
                 break;
             case GameMode.Endless:
-                AppendLine($"Level {_gameState.CurrentLevel} of ∞");
+                AppendLine($"Level {gameState.CurrentLevel} of ∞");
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
+
         AppendLine(currentScore);
         AppendLine(playerLife);
         AppendEmptyLine();
@@ -114,9 +105,9 @@ public partial class GameRenderer
     public StringBuilder DrawCombinedBuffer()
     {
         var mazeBuffer = DrawMaze();
-        var inventoryBuffer= DrawInventory();
+        var inventoryBuffer = DrawInventory();
         var combinedBuffer = new StringBuilder();
-        
+
         combinedBuffer.Clear();
         var mazeBufferLines = mazeBuffer.ToString().Split("\r\n");
         var inventoryBufferLines = inventoryBuffer.ToString().Split("\r\n");
@@ -127,7 +118,7 @@ public partial class GameRenderer
             if (i < mazeBufferLines.Length - 1)
                 combinedBuffer.Append(mazeBufferLines[i]);
             else
-                combinedBuffer.Append(' ', _gameState.MazeWidth * (_gameState.IsUtf8 ? 2 : 1));
+                combinedBuffer.Append(' ', gameState.MazeWidth * (gameState.IsUtf8 ? 2 : 1));
 
             combinedBuffer.Append(' ', 2);
 

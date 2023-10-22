@@ -10,9 +10,9 @@ public class LeaderboardScreen
     private static List<ScoreEntry> _leaderboard = ScoreManager.LoadScores().Scores;
     private int _completionPadding = 2;
     private int _difficultyPadding = 2;
+    private int _levelPadding = 2;
     private int _namePadding = 2;
     private int _scorePadding = 2;
-    private int _levelPadding = 2;
 
     public void ShowScreen()
     {
@@ -129,8 +129,8 @@ public class LeaderboardScreen
                         + _difficultyPadding + "} │ {3,-"
                         + _completionPadding + "} │ {4,-"
                         + _levelPadding + "} │";
-        
-        var lineFormat = "{0}" +  new string('─', _namePadding + 2) + "{1}"
+
+        var lineFormat = "{0}" + new string('─', _namePadding + 2) + "{1}"
                          + new string('─', _scorePadding + 2) + "{2}"
                          + new string('─', _difficultyPadding + 2) + "{3}"
                          + new string('─', _completionPadding + 2) + "{4}"
@@ -139,13 +139,11 @@ public class LeaderboardScreen
         LeaderboardBuffer.AppendLine(string.Format(lineFormat, "┌", "┬", "┬", "┬", "┬", "┐"));
         LeaderboardBuffer.AppendLine(string.Format(rowFormat, "Player", "Score", "Difficulty", "Game Mode", "Level"));
         LeaderboardBuffer.AppendLine(string.Format(lineFormat, "├", "┼", "┼", "┼", "┼", "┤"));
-        
+
         foreach (var score in _leaderboard)
-        {
             LeaderboardBuffer.AppendLine(string.Format(rowFormat, score.Name, score.Score, score.MazeDifficulty,
                 score.GameMode, score.CompletedLevels));
-        }
-        
+
         LeaderboardBuffer.AppendLine(string.Format(lineFormat, "└", "┴", "┴", "┴", "┴", "┘"));
     }
 }

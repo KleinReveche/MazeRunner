@@ -9,7 +9,15 @@ public class GameState
     public readonly List<(int treasureY, int treasureX, TreasureType treasureType, int count)>
         TreasureLocations = new();
 
-    public string Player { get; set; } = "😀";
+    public GameState()
+    {
+        var options = OptionsManager.LoadOptions();
+
+        IsSoundOn = options.IsSoundOn;
+        IsUtf8 = options.IsUtf8;
+        MazeDifficulty = options.MazeDifficulty;
+    }
+
     public int PlayerX { get; set; } = 1;
     public int PlayerY { get; set; } = 1;
     public int PlayerLife { get; set; } = 3;
@@ -38,13 +46,4 @@ public class GameState
     public int Score { get; set; }
     public string PlayerName { get; set; } = "Anonymous";
     public GameMode GameMode { get; set; }
-
-    public GameState()
-    {
-        var options = OptionsManager.LoadOptions();
-        
-        IsSoundOn = options.IsSoundOn;
-        IsUtf8 = options.IsUtf8;
-        MazeDifficulty = options.MazeDifficulty;
-    }
 }

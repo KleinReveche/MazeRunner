@@ -2,15 +2,9 @@
 
 namespace Reveche.MazeRunner;
 
-public class ScoreManager
+public class ScoreManager(ScoreList scoreList)
 {
     private const string FilePath = "MazeRunner.Scores.json";
-    private readonly ScoreList _scoreList;
-
-    public ScoreManager(ScoreList scoreList)
-    {
-        _scoreList = scoreList;
-    }
 
     private static readonly JsonSerializerOptions SourceGenOptions = new()
     {
@@ -38,7 +32,7 @@ public class ScoreManager
 
     public void AddScore(string name, int score, MazeDifficulty mazeDifficulty, GameMode gameMode, int completedLevels)
     {
-        _scoreList.Scores.Add(new ScoreEntry(name, score, mazeDifficulty, gameMode, completedLevels));
-        SaveScores(_scoreList);
+        scoreList.Scores.Add(new ScoreEntry(name, score, mazeDifficulty, gameMode, completedLevels));
+        SaveScores(scoreList);
     }
 }

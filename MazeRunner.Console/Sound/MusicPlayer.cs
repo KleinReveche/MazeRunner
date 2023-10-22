@@ -4,16 +4,9 @@ using System.Reflection;
 
 namespace Reveche.MazeRunner.Console.Sound;
 
-public class MusicPlayer
+public class MusicPlayer(GameState gameState)
 {
-    private readonly GameState _gameState;
     private SoundPlayer? _player;
-
-    public MusicPlayer(GameState gameState)
-    {
-        _gameState = gameState;
-        _player = null;
-    }
 
     // This method is only available on Windows and is checked before calling it.
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
@@ -28,7 +21,7 @@ public class MusicPlayer
 
         var random = new Random();
 
-        while (!cancellationToken.IsCancellationRequested && _gameState.IsSoundOn)
+        while (!cancellationToken.IsCancellationRequested && gameState.IsSoundOn)
         {
             var randomIndex = random.Next(wavResources.Count);
             var wavResourceKeys = wavResources.Keys.ToArray();
@@ -39,12 +32,12 @@ public class MusicPlayer
             _player = new SoundPlayer(resourceStream);
             _player.Play();
 
-            if (_gameState.IsCurrentlyPlaying) Thread.Sleep(wavResourceLength[randomIndex]);
+            if (gameState.IsCurrentlyPlaying) Thread.Sleep(wavResourceLength[randomIndex]);
 
             // This ensures that unnecessary checks are not done when the game is not playing.
             var millisecondsPassed = 0;
             while (!cancellationToken.IsCancellationRequested
-                   && _gameState is { IsSoundOn: true, IsCurrentlyPlaying: false }
+                   && gameState is { IsSoundOn: true, IsCurrentlyPlaying: false }
                    && millisecondsPassed < wavResourceLength[randomIndex])
             {
                 millisecondsPassed += 500;

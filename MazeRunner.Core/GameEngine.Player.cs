@@ -7,8 +7,8 @@ public partial class GameEngine
         isPlayerDead = false;
         var placeBomb = false;
         var placeCandle = false;
-        var newPlayerX = _gameState.PlayerX;
-        var newPlayerY = _gameState.PlayerY;
+        var newPlayerX = gameState.PlayerX;
+        var newPlayerY = gameState.PlayerY;
 
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (key)
@@ -35,16 +35,16 @@ public partial class GameEngine
 
         if (placeCandle)
         {
-            if (_gameState.CandleCount == 0) return false;
-            _gameState.CandleCount--;
-            _gameState.CandleLocations.Add((LastPlayerY, LastPlayerX));
+            if (gameState.CandleCount == 0) return false;
+            gameState.CandleCount--;
+            gameState.CandleLocations.Add((LastPlayerY, LastPlayerX));
             return true;
         }
 
-        if (placeBomb && _gameState is { BombCount: > 0, BombIsUsed: false })
+        if (placeBomb && gameState is { BombCount: > 0, BombIsUsed: false })
         {
-            _gameState.BombCount--;
-            _gameState.Maze[LastPlayerY, LastPlayerX] = MazeIcons.Bomb;
+            gameState.BombCount--;
+            gameState.Maze[LastPlayerY, LastPlayerX] = MazeIcons.Bomb;
             BombX = LastPlayerX;
             BombY = LastPlayerY;
 
@@ -53,21 +53,21 @@ public partial class GameEngine
         }
 
         if (!IsCellEmpty(newPlayerX, newPlayerY)) return false;
-        LastPlayerX = _gameState.PlayerX;
-        LastPlayerY = _gameState.PlayerY;
+        LastPlayerX = gameState.PlayerX;
+        LastPlayerY = gameState.PlayerY;
         // Clear previous player position
         Maze[PlayerY, PlayerX] = MazeIcons.Empty;
         // Set new player position
-        _gameState.PlayerX = newPlayerX;
-        _gameState.PlayerY = newPlayerY;
+        gameState.PlayerX = newPlayerX;
+        gameState.PlayerY = newPlayerY;
 
-        if (_gameState is { IsPlayerInvulnerable: true, PlayerInvincibilityEffectDuration: > 0 })
-            _gameState.PlayerInvincibilityEffectDuration--;
+        if (gameState is { IsPlayerInvulnerable: true, PlayerInvincibilityEffectDuration: > 0 })
+            gameState.PlayerInvincibilityEffectDuration--;
         else
-            _gameState.IsPlayerInvulnerable = false;
+            gameState.IsPlayerInvulnerable = false;
 
-        if (_gameState.AtAGlance)
-            _gameState.AtAGlance = false;
+        if (gameState.AtAGlance)
+            gameState.AtAGlance = false;
 
         return true; // Player has moved, indicate that screen should be redrawn
     }
@@ -76,14 +76,14 @@ public partial class GameEngine
     {
         playerIsDead = false;
 
-        if (!CheckEnemyCollision(PlayerX, PlayerY) || _gameState.IsPlayerInvulnerable) return;
-        _gameState.PlayerLife--;
+        if (!CheckEnemyCollision(PlayerX, PlayerY) || gameState.IsPlayerInvulnerable) return;
+        gameState.PlayerLife--;
         playerIsDead = true;
     }
 
     public bool CheckForTreasure(out (int treasureY, int treasureX, TreasureType treasureType, int count) treasure)
     {
-        treasure = _gameState.TreasureLocations.FirstOrDefault(treasureLocation =>
+        treasure = gameState.TreasureLocations.FirstOrDefault(treasureLocation =>
             treasureLocation.treasureX == PlayerX && treasureLocation.treasureY == PlayerY);
 
         if (treasure == default) return false;
@@ -97,33 +97,33 @@ public partial class GameEngine
         switch (treasure.treasureType)
         {
             case TreasureType.Bomb:
-                _gameState.BombCount += treasure.count;
+                gameState.BombCount += treasure.count;
                 break;
             case TreasureType.Candle:
-                _gameState.CandleCount += treasure.count;
+                gameState.CandleCount += treasure.count;
                 break;
             case TreasureType.Life:
-                _gameState.PlayerLife += treasure.count;
+                gameState.PlayerLife += treasure.count;
                 break;
             case TreasureType.IncreasedVisibilityEffect:
-                _gameState.PlayerHasIncreasedVisibility = true;
+                gameState.PlayerHasIncreasedVisibility = true;
                 break;
             case TreasureType.TemporaryInvulnerabilityEffect:
-                _gameState.IsPlayerInvulnerable = true;
-                _gameState.PlayerInvincibilityEffectDuration = 10;
+                gameState.IsPlayerInvulnerable = true;
+                gameState.PlayerInvincibilityEffectDuration = 10;
                 break;
             case TreasureType.AtAGlanceEffect:
-                _gameState.AtAGlance = true;
+                gameState.AtAGlance = true;
                 break;
             case TreasureType.None:
             default:
                 break;
         }
 
-        _gameState.Score += treasure.count *
+        gameState.Score += treasure.count *
                             ((int)treasure.treasureType +
                              (treasure.treasureType == TreasureType.Bomb ? 1 : 0));
-        _gameState.TreasureLocations.Remove(treasure);
+        gameState.TreasureLocations.Remove(treasure);
     }
 
     public void BombSequence(out bool isPlayerDead, bool startBomb = false)
@@ -131,35 +131,35 @@ public partial class GameEngine
         isPlayerDead = false;
         if (startBomb)
         {
-            _gameState.BombIsUsed = true;
-            _gameState.BombTimer = 3;
+            gameState.BombIsUsed = true;
+            gameState.BombTimer = 3;
             return;
         }
 
-        if (_gameState.BombTimer > 0)
-            _gameState.BombTimer--;
+        if (gameState.BombTimer > 0)
+            gameState.BombTimer--;
 
-        if (_gameState is not { BombIsUsed: true, BombTimer: 0 }) return;
+        if (gameState is not { BombIsUsed: true, BombTimer: 0 }) return;
         for (var y = -BlastRadius; y <= BlastRadius; y++)
         for (var x = -BlastRadius; x <= BlastRadius; x++)
         {
-            var playerIsInvulnerable = _gameState.IsPlayerInvulnerable;
+            var playerIsInvulnerable = gameState.IsPlayerInvulnerable;
             if (BombX + x == PlayerX && BombY + y == PlayerY && !playerIsInvulnerable)
             {
-                _gameState.PlayerLife--;
+                gameState.PlayerLife--;
                 isPlayerDead = true;
             }
 
             if (CheckEnemyCollision(BombX + x, BombY + y, out (int EnemyX, int EnemyY) enemy))
             {
-                _gameState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
-                _gameState.Score += 20;
+                gameState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
+                gameState.Score += 20;
             }
 
             if (_mazeGen.IsInBounds(BombX + x, BombY + y))
                 Maze[BombY + y, BombX + x] = MazeIcons.Empty;
         }
 
-        _gameState.BombIsUsed = false;
+        gameState.BombIsUsed = false;
     }
 }
