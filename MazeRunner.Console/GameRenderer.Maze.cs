@@ -10,7 +10,7 @@ public partial class GameRenderer
     private int ExitX => gameState.ExitX;
     private int ExitY => gameState.ExitY;
 
-    private StringBuilder DrawMaze()
+    public StringBuilder DrawMaze()
     {
         var mazeBuffer = new StringBuilder();
         var playerCharacter = GetPlayerCharacter();

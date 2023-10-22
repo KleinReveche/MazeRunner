@@ -96,6 +96,7 @@ public class OptionsScreen
         }
     }
 
+    // ReSharper disable once SuggestBaseTypeForParameter
     private void ChangeOptionValue(string optionKey, Dictionary<string, string> options, int change)
     {
         if (!options.TryGetValue(optionKey, out var value)) return;

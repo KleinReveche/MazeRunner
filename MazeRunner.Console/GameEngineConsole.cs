@@ -2,21 +2,14 @@
 
 namespace Reveche.MazeRunner.Console;
 
-public class GameEngineConsole
+public class GameEngineConsole(GameState gameState)
 {
-    private readonly GameEngine _gameEngine;
-    private readonly GameState _gameState;
-
-    public GameEngineConsole(GameState gameState)
-    {
-        _gameState = gameState;
-        _gameEngine = new GameEngine(_gameState);
-    }
+    private readonly GameEngine _gameEngine = new (gameState);
 
     public void Play()
     {
-        var classicEndless = new ConsoleClassicGame(_gameEngine, _gameState);
-        switch (_gameState.GameMode)
+        var classicEndless = new ConsoleClassicGame(_gameEngine, gameState);
+        switch (gameState.GameMode)
         {
             case GameMode.Classic:
                 classicEndless.Play();
