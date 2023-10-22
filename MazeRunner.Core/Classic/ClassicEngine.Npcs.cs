@@ -1,20 +1,20 @@
-﻿namespace Reveche.MazeRunner;
+﻿namespace Reveche.MazeRunner.Classic;
 
-public partial class GameEngine
+public partial class ClassicEngine
 {
     public void MoveAllEnemies()
     {
         var random = new Random();
-        var enemyCount = gameState.EnemyLocations.Count;
+        var enemyCount = classicState.EnemyLocations.Count;
 
         for (var i = 0; i < enemyCount; i++)
         {
-            var enemyLocation = gameState.EnemyLocations[i];
+            var enemyLocation = classicState.EnemyLocations[i];
 
             var enemyX = enemyLocation.enemyX;
             var enemyY = enemyLocation.enemyY;
-            var exitX = gameState.ExitX;
-            var exitY = gameState.ExitY;
+            var exitX = classicState.ExitX;
+            var exitY = classicState.ExitY;
 
             var tries = 5;
 
@@ -41,17 +41,17 @@ public partial class GameEngine
                 }
 
                 if (newEnemyX < 0 ||
-                    newEnemyX >= gameState.MazeWidth ||
+                    newEnemyX >= classicState.MazeWidth ||
                     newEnemyY < 0 ||
-                    newEnemyY >= gameState.MazeHeight ||
+                    newEnemyY >= classicState.MazeHeight ||
                     (newEnemyX == exitX && newEnemyY == exitY) ||
                     !IsCellEmpty(newEnemyX, newEnemyY) ||
-                    gameState.EnemyLocations.Any(loc => loc.enemyX == newEnemyX && loc.enemyY == newEnemyY))
+                    classicState.EnemyLocations.Any(loc => loc.enemyX == newEnemyX && loc.enemyY == newEnemyY))
                     continue;
 
                 enemyLocation.enemyX = newEnemyX;
                 enemyLocation.enemyY = newEnemyY;
-                gameState.EnemyLocations[i] = enemyLocation;
+                classicState.EnemyLocations[i] = enemyLocation;
                 break;
             }
         }
@@ -59,12 +59,12 @@ public partial class GameEngine
 
     public bool CheckEnemyCollision(int x, int y)
     {
-        return gameState.EnemyLocations.Any(enemyLocation => x == enemyLocation.enemyX && y == enemyLocation.enemyY);
+        return classicState.EnemyLocations.Any(enemyLocation => x == enemyLocation.enemyX && y == enemyLocation.enemyY);
     }
 
     private bool CheckEnemyCollision(int x, int y, out (int enemyX, int enemyY) enemy)
     {
-        var enemyLocation = gameState.EnemyLocations.FirstOrDefault(enemyLocation =>
+        var enemyLocation = classicState.EnemyLocations.FirstOrDefault(enemyLocation =>
             x == enemyLocation.enemyX && y == enemyLocation.enemyY);
 
         enemy = enemyLocation != default ? (enemyLocation.enemyX, enemyLocation.enemyY) : (0, 0);

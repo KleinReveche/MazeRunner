@@ -1,11 +1,13 @@
-﻿using Reveche.MazeRunner.Console.Screens;
+﻿using Reveche.MazeRunner.Classic;
+using Reveche.MazeRunner.Console.Screens;
 using static System.Console;
 
-namespace Reveche.MazeRunner.Console;
+namespace Reveche.MazeRunner.Console.Classic;
 
 public class ConsoleClassicGame
 {
-    private readonly GameEngine _gameEngine;
+    private readonly ClassicEngine _classicEngine;
+    private readonly ClassicState _classicState;
     private readonly GameRenderer _gameRenderer;
     private readonly GameState _gameState;
     private readonly ScoreList _scoreList = ScoreManager.LoadScores();
@@ -13,11 +15,12 @@ public class ConsoleClassicGame
     private bool _levelIsCompleted = true;
     private bool _shouldRedraw = true;
 
-    public ConsoleClassicGame(GameEngine gameEngine, GameState gameState)
+    public ConsoleClassicGame(GameState gameState, ClassicEngine classicEngine, ClassicState classicState)
     {
-        _gameEngine = gameEngine;
         _gameState = gameState;
-        _gameRenderer = new GameRenderer(gameEngine, gameState);
+        _classicEngine = classicEngine;
+        _classicState = classicState;
+        _gameRenderer = new GameRenderer(gameState, classicEngine, classicState);
         _scoreManager = new ScoreManager(_scoreList);
     }
 
@@ -27,33 +30,33 @@ public class ConsoleClassicGame
 
         _levelIsCompleted = true;
         _shouldRedraw = true;
-        _gameEngine.AdjustToDifficulty();
+        _classicEngine.AdjustToDifficulty();
 
         while (true)
         {
             if (_levelIsCompleted)
             {
-                _gameEngine.CalculateLevelScore(levelStartTime);
+                _classicEngine.CalculateLevelScore(levelStartTime);
                 levelStartTime = DateTime.Now;
-                _gameState.IsCurrentlyPlaying = _gameState.CurrentLevel <= _gameState.MaxLevels;
-                _gameEngine.InitializeNewLevel();
+                _gameState.IsCurrentlyPlaying = _classicState.CurrentLevel <= _classicState.MaxLevels;
+                _classicEngine.InitializeNewLevel();
                 _levelIsCompleted = false;
             }
 
             if (_shouldRedraw) Draw();
 
-            if (_gameState.PlayerLife == 0)
+            if (_classicState.PlayerLife == 0)
             {
                 DisplayGameDone();
                 break;
             }
 
-            if (_gameState.PlayerX == _gameState.ExitX && _gameState.PlayerY == _gameState.ExitY)
+            if (_classicState.PlayerX == _classicState.ExitX && _classicState.PlayerY == _classicState.ExitY)
                 PlayerExit();
 
             var key = ReadKey().Key;
 
-            if (!_gameEngine.PlayerAction(key, out var didPlayerDie)) continue;
+            if (!_classicEngine.PlayerAction(key, out var didPlayerDie)) continue;
 
             if (didPlayerDie)
             {
@@ -62,7 +65,7 @@ public class ConsoleClassicGame
                 ReadKey();
             }
 
-            if (_gameEngine.CheckForTreasure(out var treasure))
+            if (_classicEngine.CheckForTreasure(out var treasure))
                 PlayerAcquireTreasure(treasure);
 
             _shouldRedraw = true;
@@ -73,14 +76,14 @@ public class ConsoleClassicGame
 
     private void Draw()
     {
-        _gameEngine.BombSequence(out _);
+        _classicEngine.BombSequence(out _);
         Clear();
         Write(_gameRenderer.DrawCombinedBuffer());
 
-        _gameEngine.CheckPlayerEnemyCollision(out var isPlayerDead);
+        _classicEngine.CheckPlayerEnemyCollision(out var isPlayerDead);
 
         if (isPlayerDead) WriteLine("You died!");
-        if (_gameState.CurrentLevel != 1) _gameEngine.MoveAllEnemies();
+        if (_classicState.CurrentLevel != 1) _classicEngine.MoveAllEnemies();
         _shouldRedraw = false;
     }
 
@@ -92,21 +95,21 @@ public class ConsoleClassicGame
         Write(combinedBuffer);
 
         Write("Enter your name: ");
-        _gameState.PlayerName = ReadLine() ?? "Anonymous";
-        if (_gameState.CurrentLevel > _gameState.MaxLevels &&
-            _gameState is { PlayerLife: > 0, GameMode: GameMode.Classic })
+        _classicState.PlayerName = ReadLine() ?? "Anonymous";
+        if (_classicState.CurrentLevel > _classicState.MaxLevels &&
+            _classicState.PlayerLife > 0  && _gameState.GameMode == GameMode.Classic)
         {
             WriteLine("Congratulations! You have completed all levels. Press Any Key to exit.");
-            _gameState.Score += 100;
-            _scoreManager.AddScore(_gameState.PlayerName, _gameState.Score,
-                _gameState.MazeDifficulty, _gameState.GameMode, _gameState.MaxLevels);
+            _classicState.Score += 100;
+            _scoreManager.AddScore(_classicState.PlayerName, _classicState.Score,
+                _gameState.MazeDifficulty, _gameState.GameMode, _classicState.MaxLevels);
             ScoreManager.SaveScores(_scoreList);
         }
         else
         {
-            _scoreManager.AddScore(_gameState.PlayerName, _gameState.Score,
-                _gameState.MazeDifficulty, _gameState.GameMode, _gameState.CurrentLevel - 1);
-            SetCursorPosition(_gameState.MazeWidth / 2, _gameState.MazeHeight / 2);
+            _scoreManager.AddScore(_classicState.PlayerName, _classicState.Score,
+                _gameState.MazeDifficulty, _gameState.GameMode, _classicState.CurrentLevel - 1);
+            SetCursorPosition(_classicState.MazeWidth / 2, _classicState.MazeHeight / 2);
             WriteLine("Game Over!");
         }
 
@@ -116,10 +119,10 @@ public class ConsoleClassicGame
 
     private void PlayerExit()
     {
-        WriteLine($"Congratulations! You completed level {_gameState.CurrentLevel}.");
-        _gameState.CurrentLevel++;
+        WriteLine($"Congratulations! You completed level {_classicState.CurrentLevel}.");
+        _classicState.CurrentLevel++;
 
-        if (_gameState.CurrentLevel > _gameState.MaxLevels)
+        if (_classicState.CurrentLevel > _classicState.MaxLevels)
         {
             if (_gameState.GameMode == GameMode.Classic)
             {
@@ -127,7 +130,7 @@ public class ConsoleClassicGame
                 return;
             }
 
-            _gameState.Score += 15 * _gameState.CurrentLevel;
+            _classicState.Score += 15 * _classicState.CurrentLevel;
         }
 
         _shouldRedraw = true;
@@ -143,7 +146,7 @@ public class ConsoleClassicGame
                 break;
             case TreasureType.TemporaryInvulnerabilityEffect:
                 WriteLine(
-                    $"You have temporarily invulnerable for {_gameState.PlayerInvincibilityEffectDuration} turns.");
+                    $"You have temporarily invulnerable for {_classicState.PlayerInvincibilityEffectDuration} turns.");
                 break;
             case TreasureType.AtAGlanceEffect:
                 WriteLine(

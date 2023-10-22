@@ -1,14 +1,16 @@
-﻿using Reveche.MazeRunner.Console.Screens;
+﻿using Reveche.MazeRunner.Classic;
+using Reveche.MazeRunner.Console.Classic;
+using Reveche.MazeRunner.Console.Screens;
 
 namespace Reveche.MazeRunner.Console;
 
-public class GameEngineConsole(GameState gameState)
+public class GameEngineConsole(GameState gameState, ClassicState classicState)
 {
-    private readonly GameEngine _gameEngine = new (gameState);
+    private readonly ClassicEngine _classicEngine = new(gameState, classicState);
 
     public void Play()
     {
-        var classicEndless = new ConsoleClassicGame(_gameEngine, gameState);
+        var classicEndless = new ConsoleClassicGame(gameState, _classicEngine, classicState);
         switch (gameState.GameMode)
         {
             case GameMode.Classic:

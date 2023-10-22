@@ -18,7 +18,7 @@ public class ScoreManager(ScoreList scoreList)
     public static ScoreList LoadScores()
     {
         var defaultScoreList = new ScoreList();
-        
+
         // This ensures backwards compatibility with the old JSON format.
         if (File.Exists(OldScoreJsonPath))
         {
@@ -29,7 +29,7 @@ public class ScoreManager(ScoreList scoreList)
             File.Delete(OldScoreJsonPath);
             return scoreList;
         }
-        
+
         if (!File.Exists(NewScoreJsonPath)) return defaultScoreList;
 
         var json = File.ReadAllText(NewScoreJsonPath);
