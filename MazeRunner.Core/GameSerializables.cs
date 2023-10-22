@@ -2,7 +2,6 @@
 
 namespace Reveche.MazeRunner;
 
-[JsonSerializable(typeof(GameOptions))]
 public class GameOptions
 {
     public GameMode GameMode { get; set; } = GameMode.Classic;
@@ -11,13 +10,11 @@ public class GameOptions
     public MazeDifficulty MazeDifficulty { get; set; } = MazeDifficulty.Normal;
 }
 
-[JsonSerializable(typeof(ScoreList))]
 public class ScoreList
 {
     public List<ScoreEntry> Scores { get; set; } = new();
 }
 
-[JsonSerializable(typeof(ScoreEntry))]
 public class ScoreEntry
 {
     public string Name { get; }

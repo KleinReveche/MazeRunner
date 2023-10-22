@@ -12,30 +12,27 @@ public class ScoreManager
         _scoreList = scoreList;
     }
 
+    private static readonly JsonSerializerOptions SourceGenOptions = new()
+    {
+        TypeInfoResolver = ScoreListJsonContext.Default,
+        WriteIndented = true
+    };
+
+    private static readonly ScoreListJsonContext Context = new(SourceGenOptions);
+
     public static ScoreList LoadScores()
     {
         var defaultScoreList = new ScoreList();
         if (!File.Exists(FilePath)) return defaultScoreList;
-        var sourceGenOptions = new JsonSerializerOptions
-        {
-            TypeInfoResolver = ScoreListJsonContext.Default
-        };
 
         var json = File.ReadAllText(FilePath);
         return JsonSerializer.Deserialize(
-                json, typeof(ScoreList), sourceGenOptions)
-            as ScoreList ?? defaultScoreList;
+            json, Context.ScoreList) ?? defaultScoreList;
     }
 
     public static void SaveScores(ScoreList scoreList)
     {
-        var sourceGenOptions = new JsonSerializerOptions
-        {
-            TypeInfoResolver = ScoreListJsonContext.Default,
-            WriteIndented = true
-        };
-
-        var json = JsonSerializer.Serialize(scoreList, typeof(ScoreList), sourceGenOptions);
+        var json = JsonSerializer.Serialize(scoreList, Context.ScoreList);
         File.WriteAllText(FilePath, json);
     }
 
