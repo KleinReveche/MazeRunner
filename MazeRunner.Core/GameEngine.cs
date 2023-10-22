@@ -5,6 +5,13 @@ public partial class GameEngine
     private const int BlastRadius = 1;
     private readonly GameState _gameState;
     private readonly MazeGen _mazeGen;
+
+    public GameEngine(GameState gameState)
+    {
+        _gameState = gameState;
+        _mazeGen = new MazeGen(_gameState);
+    }
+
     private int PlayerX => _gameState.PlayerX;
     private int PlayerY => _gameState.PlayerY;
     private int LastPlayerX { get; set; }
@@ -12,13 +19,7 @@ public partial class GameEngine
     private int BombX { get; set; }
     private int BombY { get; set; }
     private char[,] Maze => _gameState.Maze;
-    
-    public GameEngine(GameState gameState)
-    {
-        _gameState = gameState;
-        _mazeGen = new MazeGen(_gameState);
-    }
-    
+
     public void InitializeNewLevel()
     {
         if (_gameState.PlayerHasIncreasedVisibility)

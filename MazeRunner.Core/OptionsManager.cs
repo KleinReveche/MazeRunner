@@ -13,7 +13,7 @@ public static class OptionsManager
     };
 
     private static readonly GameOptionsJsonContext Context = new(SourceGenOptions);
-    
+
     public static GameOptions LoadOptions()
     {
         var defaultOptions = new GameOptions

@@ -15,28 +15,19 @@ public class ScoreList
     public List<ScoreEntry> Scores { get; set; } = new();
 }
 
-public class ScoreEntry
+public class ScoreEntry(string name, int score, MazeDifficulty mazeDifficulty, GameMode gameMode, int completedLevels)
 {
-    public string Name { get; }
-    public int Score { get; }
-    public MazeDifficulty MazeDifficulty { get; }
-    public GameMode GameMode { get; }
-    public int CompletedLevels { get; }
-
-    public ScoreEntry(string name, int score, MazeDifficulty mazeDifficulty, GameMode gameMode, int completedLevels)
-    {
-        Name = name;
-        Score = score;
-        MazeDifficulty = mazeDifficulty;
-        GameMode = gameMode;
-        CompletedLevels = completedLevels;
-    }
+    public string Name { get; } = name;
+    public int Score { get; } = score;
+    public MazeDifficulty MazeDifficulty { get; } = mazeDifficulty;
+    public GameMode GameMode { get; } = gameMode;
+    public int CompletedLevels { get; } = completedLevels;
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(GameOptions))]
-internal partial class GameOptionsJsonContext : JsonSerializerContext {}
+internal partial class GameOptionsJsonContext : JsonSerializerContext;
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(ScoreList))]
-internal partial class ScoreListJsonContext : JsonSerializerContext {}
+internal partial class ScoreListJsonContext : JsonSerializerContext;

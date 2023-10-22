@@ -4,8 +4,8 @@ namespace Reveche.MazeRunner.Console.Sound;
 
 public class BackgroundSoundManager
 {
-    private Thread? _musicThread;
     private CancellationTokenSource _cancellationTokenSource = new();
+    private Thread? _musicThread;
 
     public void StartBackgroundMusic()
     {

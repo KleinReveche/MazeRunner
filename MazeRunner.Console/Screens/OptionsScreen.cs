@@ -4,9 +4,9 @@ namespace Reveche.MazeRunner.Console.Screens;
 
 public class OptionsScreen
 {
-    private readonly List<string> _gameModeValues = new() { "Classic", "Campaign", "Endless" };
     private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
     private readonly GameEngineConsole _gameEngineConsole;
+    private readonly List<string> _gameModeValues = new() { "Classic", "Campaign", "Endless" };
     private readonly GameOptions _gameOptions = OptionsManager.LoadOptions();
     private readonly GameState _gameState;
     private readonly Dictionary<string, string> _options;
@@ -20,8 +20,8 @@ public class OptionsScreen
         _options = new Dictionary<string, string>
         {
             { "Play", "" },
-            { "Game Mode", _gameModeValues.ElementAt((int) _gameState.GameMode)  },
-            { "Difficulty", _difficultyValues.ElementAt((int) _gameState.MazeDifficulty) },
+            { "Game Mode", _gameModeValues.ElementAt((int)_gameState.GameMode) },
+            { "Difficulty", _difficultyValues.ElementAt((int)_gameState.MazeDifficulty) },
             { "Text Style", _gameState.IsUtf8 ? _textStyleValues[0] : _textStyleValues[1] },
             { "Sound", _gameState.IsSoundOn ? _soundValues[0] : _soundValues[1] },
             { "Back", "" }
@@ -96,7 +96,7 @@ public class OptionsScreen
         }
     }
 
-    private void ChangeOptionValue(string optionKey, IDictionary<string, string> options, int change)
+    private void ChangeOptionValue(string optionKey, Dictionary<string, string> options, int change)
     {
         if (!options.TryGetValue(optionKey, out var value)) return;
         switch (optionKey)

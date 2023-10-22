@@ -7,8 +7,8 @@ namespace Reveche.MazeRunner.Console;
 public static class MazeRunnerConsole
 {
     public static BackgroundSoundManager BackgroundSoundManager { get; private set; } = null!;
-    
-    public static void Main(string[] args)
+
+    public static void Main()
     {
         System.Console.InputEncoding = Encoding.UTF8;
         System.Console.OutputEncoding = Encoding.UTF8;

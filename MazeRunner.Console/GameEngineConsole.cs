@@ -4,8 +4,8 @@ namespace Reveche.MazeRunner.Console;
 
 public class GameEngineConsole
 {
-    private readonly GameState _gameState;
     private readonly GameEngine _gameEngine;
+    private readonly GameState _gameState;
 
     public GameEngineConsole(GameState gameState)
     {
