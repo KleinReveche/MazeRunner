@@ -1,8 +1,9 @@
 ﻿using System.Text;
+using Reveche.MazeRunner.Classic;
 
-namespace Reveche.MazeRunner.Console;
+namespace Reveche.MazeRunner.Console.Classic;
 
-public partial class GameRenderer(GameEngine gameEngine, GameState gameState)
+public partial class GameRenderer(GameState gameState, ClassicEngine classicEngine, ClassicState classicState)
 {
     private StringBuilder DrawInventory()
     {
@@ -12,16 +13,16 @@ public partial class GameRenderer(GameEngine gameEngine, GameState gameState)
 
         var inventory = new List<(string, int)>
         {
-            ("Bombs", gameState.BombCount),
-            ("Candles", gameState.CandleCount)
+            ("Bombs", classicState.BombCount),
+            ("Candles", classicState.CandleCount)
         };
 
-        if (gameState.IsPlayerInvulnerable || gameState.PlayerHasIncreasedVisibility)
+        if (classicState.IsPlayerInvulnerable || classicState.PlayerHasIncreasedVisibility)
         {
-            if (gameState.IsPlayerInvulnerable)
-                inventory.Add(("Invulnerability", gameState.PlayerInvincibilityEffectDuration));
+            if (classicState.IsPlayerInvulnerable)
+                inventory.Add(("Invulnerability", classicState.PlayerInvincibilityEffectDuration));
 
-            if (gameState.PlayerHasIncreasedVisibility)
+            if (classicState.PlayerHasIncreasedVisibility)
                 inventory.Add(("Increased Visibility", 1));
 
             inventoryWidth = 24;
@@ -34,8 +35,8 @@ public partial class GameRenderer(GameEngine gameEngine, GameState gameState)
         const char verticalSide = '│';
         const char horizontalSide = '─';
         var middle = inventoryWidth / 2;
-        var currentScore = $"Score: {gameState.Score}";
-        var playerLife = $"{gameState.PlayerLife} {(gameState.PlayerLife == 1 ? "Life" : "Lives")} Left";
+        var currentScore = $"Score: {classicState.Score}";
+        var playerLife = $"{classicState.PlayerLife} {(classicState.PlayerLife == 1 ? "Life" : "Lives")} Left";
 
         AppendCorner(true);
         inventoryBuffer.AppendLine("│".PadRight(middle - 6) +
@@ -46,13 +47,13 @@ public partial class GameRenderer(GameEngine gameEngine, GameState gameState)
         switch (gameState.GameMode)
         {
             case GameMode.Classic:
-                AppendLine($"Level {Math.Min(gameState.CurrentLevel, gameState.MaxLevels)} of {gameState.MaxLevels}");
+                AppendLine($"Level {Math.Min(classicState.CurrentLevel, classicState.MaxLevels)} of {classicState.MaxLevels}");
                 break;
             case GameMode.Campaign:
                 AppendLine("Campaign");
                 break;
             case GameMode.Endless:
-                AppendLine($"Level {gameState.CurrentLevel} of ∞");
+                AppendLine($"Level {classicState.CurrentLevel} of ∞");
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -111,14 +112,14 @@ public partial class GameRenderer(GameEngine gameEngine, GameState gameState)
         combinedBuffer.Clear();
         var mazeBufferLines = mazeBuffer.ToString().Split("\r\n");
         var inventoryBufferLines = inventoryBuffer.ToString().Split("\r\n");
-        var len = Math.Max(inventoryBufferLines.Length, mazeBufferLines.Length);
+        var len = Math.Max(inventoryBufferLines.Length, (int)mazeBufferLines.Length);
 
         for (var i = 0; i < len; i++)
         {
             if (i < mazeBufferLines.Length - 1)
-                combinedBuffer.Append(mazeBufferLines[i]);
+                combinedBuffer.Append((string?)mazeBufferLines[i]);
             else
-                combinedBuffer.Append(' ', gameState.MazeWidth * (gameState.IsUtf8 ? 2 : 1));
+                combinedBuffer.Append(' ', classicState.MazeWidth * (gameState.IsUtf8 ? 2 : 1));
 
             combinedBuffer.Append(' ', 2);
 

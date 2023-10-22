@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Reveche.MazeRunner.Classic;
 
 namespace Reveche.MazeRunner.Console.Screens;
 
@@ -24,8 +25,9 @@ public static class MainScreen
 
     public static readonly int CenterX = (System.Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
 
-    internal static GameState GameState = new();
-    private static OptionsScreen _optionsScreen = new(GameState);
+    internal static readonly GameState GameState = new();
+    private static ClassicState _classicState = new();
+    private static OptionsScreen _optionsScreen = new(GameState, _classicState);
 
     public static void DisplayTitle()
     {
@@ -52,14 +54,15 @@ public static class MainScreen
 
     public static void StartMenu()
     {
-        if (GameState.CurrentLevel > GameState.MaxLevels || GameState.PlayerLife <= 0)
+        if (_classicState.CurrentLevel > _classicState.MaxLevels || _classicState.PlayerLife <= 0)
         {
-            GameState = new GameState();
-            _optionsScreen = new OptionsScreen(GameState);
+            _classicState = new ClassicState();
+            _optionsScreen = new OptionsScreen(GameState, _classicState);
         }
 
         Dictionary<string, Action> menuOptions = new()
         {
+            { "Continue", () => { } },
             { "Start", () => _optionsScreen.DisplayOptions() },
             {
                 "Leaderboard", () =>
@@ -72,6 +75,9 @@ public static class MainScreen
             { "Quit", () => Environment.Exit(0) }
         };
 
+        if (!GameState.IsCampaignOngoing)
+            menuOptions.Remove("Continue");
+        
         var selectedIndex = 0;
         var buffer = new StringBuilder();
 
@@ -86,6 +92,10 @@ public static class MainScreen
             for (var i = 0; i < menuOptions.Count; i++)
             {
                 var option = optionKeys[i];
+
+                if (GameState.IsCampaignOngoing && option == "Start")
+                    option = "New Game";
+                
                 buffer.Append(' ', CenterX + 20);
 
                 if (i == selectedIndex)

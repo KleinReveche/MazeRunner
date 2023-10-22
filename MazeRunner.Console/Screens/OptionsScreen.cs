@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Reveche.MazeRunner.Classic;
 
 namespace Reveche.MazeRunner.Console.Screens;
 
@@ -13,10 +14,10 @@ public class OptionsScreen
     private readonly List<string> _soundValues = new() { "On", "Off" };
     private readonly List<string> _textStyleValues = new() { "Unicode", "ASCII" };
 
-    public OptionsScreen(GameState gameState)
+    public OptionsScreen(GameState gameState, ClassicState classicState)
     {
         _gameState = gameState;
-        _gameEngineConsole = new GameEngineConsole(_gameState);
+        _gameEngineConsole = new GameEngineConsole(gameState, classicState);
         _options = new Dictionary<string, string>
         {
             { "Play", "" },
