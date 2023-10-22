@@ -4,7 +4,8 @@ namespace Reveche.MazeRunner;
 
 public static class OptionsManager
 {
-    private const string OptionsFilePath = "MazeRunner.Options.json";
+    private const string OldOptionsJson = "MazeRunner.Options.json";
+    private const string NewOptionsJson = "MazeRunner.Options.dat";
 
     private static readonly JsonSerializerOptions SourceGenOptions = new()
     {
@@ -24,21 +25,27 @@ public static class OptionsManager
             MazeDifficulty = MazeDifficulty.Normal
         };
 
-        if (File.Exists(OptionsFilePath))
+        if (File.Exists(OldOptionsJson))
         {
-            var json = File.ReadAllText(OptionsFilePath);
-            return JsonSerializer.Deserialize(
-                json, Context.GameOptions) ?? defaultOptions;
+            var oldJson = File.ReadAllText(OldOptionsJson);
+            var options = JsonSerializer.Deserialize(
+                oldJson, Context.GameOptions) ?? defaultOptions;
+            SaveOptions(options);
+            File.Delete(OldOptionsJson);
+            return options;
         }
 
-        SaveOptions(defaultOptions);
-        return defaultOptions;
+        if (!File.Exists(NewOptionsJson)) return defaultOptions;
+
+        var json = File.ReadAllText(NewOptionsJson);
+        return JsonSerializer.Deserialize(
+            JsonScrambler.Decode(json), Context.GameOptions) ?? defaultOptions;
     }
 
     private static void SaveOptions(GameOptions options)
     {
         var json = JsonSerializer.Serialize(options, Context.GameOptions);
-        File.WriteAllText(OptionsFilePath, json);
+        File.WriteAllText(NewOptionsJson, JsonScrambler.Encode(json));
     }
 
     public static void SaveCurrentOptions(GameState gameState, GameOptions gameOptions)
