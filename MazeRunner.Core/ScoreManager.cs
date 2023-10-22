@@ -4,7 +4,8 @@ namespace Reveche.MazeRunner;
 
 public class ScoreManager(ScoreList scoreList)
 {
-    private const string FilePath = "MazeRunner.Scores.json";
+    private const string OldScoreJsonPath = "MazeRunner.Scores.json";
+    private const string NewScoreJsonPath = "MazeRunner.Scores.dat";
 
     private static readonly JsonSerializerOptions SourceGenOptions = new()
     {
@@ -17,17 +18,29 @@ public class ScoreManager(ScoreList scoreList)
     public static ScoreList LoadScores()
     {
         var defaultScoreList = new ScoreList();
-        if (!File.Exists(FilePath)) return defaultScoreList;
+        
+        // This ensures backwards compatibility with the old JSON format.
+        if (File.Exists(OldScoreJsonPath))
+        {
+            var oldJson = File.ReadAllText(OldScoreJsonPath);
+            var scoreList = JsonSerializer.Deserialize(
+                oldJson, Context.ScoreList) ?? defaultScoreList;
+            SaveScores(scoreList);
+            File.Delete(OldScoreJsonPath);
+            return scoreList;
+        }
+        
+        if (!File.Exists(NewScoreJsonPath)) return defaultScoreList;
 
-        var json = File.ReadAllText(FilePath);
+        var json = File.ReadAllText(NewScoreJsonPath);
         return JsonSerializer.Deserialize(
-            json, Context.ScoreList) ?? defaultScoreList;
+            JsonScrambler.Decode(json), Context.ScoreList) ?? defaultScoreList;
     }
 
     public static void SaveScores(ScoreList scoreList)
     {
         var json = JsonSerializer.Serialize(scoreList, Context.ScoreList);
-        File.WriteAllText(FilePath, json);
+        File.WriteAllText(NewScoreJsonPath, JsonScrambler.Encode(json));
     }
 
     public void AddScore(string name, int score, MazeDifficulty mazeDifficulty, GameMode gameMode, int completedLevels)

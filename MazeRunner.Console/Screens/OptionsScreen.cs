@@ -69,10 +69,12 @@ public class OptionsScreen
             {
                 case ConsoleKey.LeftArrow:
                     ChangeOptionValue(_options.ElementAt(selectedIndex).Key, _options, -1);
+                    OptionsManager.SaveCurrentOptions(_gameState, _gameOptions);
                     break;
 
                 case ConsoleKey.RightArrow:
                     ChangeOptionValue(_options.ElementAt(selectedIndex).Key, _options, 1);
+                    OptionsManager.SaveCurrentOptions(_gameState, _gameOptions);
                     break;
 
                 case ConsoleKey.UpArrow:
@@ -91,7 +93,7 @@ public class OptionsScreen
 
                     if (selectedIndex == _options.Count - 1)
                         MainScreen.StartMenu();
-                    return;
+                    break;
             }
         }
     }

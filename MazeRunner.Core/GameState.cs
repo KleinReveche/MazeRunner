@@ -12,7 +12,8 @@ public class GameState
     public GameState()
     {
         var options = OptionsManager.LoadOptions();
-
+        
+        GameMode = options.GameMode;
         IsSoundOn = options.IsSoundOn;
         IsUtf8 = options.IsUtf8;
         MazeDifficulty = options.MazeDifficulty;
