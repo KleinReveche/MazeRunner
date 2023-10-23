@@ -27,6 +27,7 @@ public class ConsoleClassicGame
     public void Play()
     {
         var levelStartTime = new DateTime();
+        var continueGame = _gameState.IsGameOngoing;
 
         _levelIsCompleted = true;
         _shouldRedraw = true;
@@ -39,7 +40,8 @@ public class ConsoleClassicGame
                 _classicEngine.CalculateLevelScore(levelStartTime);
                 levelStartTime = DateTime.Now;
                 _gameState.IsCurrentlyPlaying = _classicState.CurrentLevel <= _classicState.MaxLevels;
-                _classicEngine.InitializeNewLevel();
+                if (!continueGame) _classicEngine.InitializeNewLevel();
+                continueGame = false;
                 _levelIsCompleted = false;
             }
 
@@ -56,7 +58,9 @@ public class ConsoleClassicGame
 
             var key = ReadKey().Key;
 
-            if (!_classicEngine.PlayerAction(key, out var didPlayerDie)) continue;
+            if (!_classicEngine.PlayerAction(key, out var didPlayerDie, out var isGamePaused) && !isGamePaused) continue;
+            
+            if (isGamePaused) break;
 
             if (didPlayerDie)
             {
@@ -112,8 +116,9 @@ public class ConsoleClassicGame
             SetCursorPosition(_classicState.MazeWidth / 2, _classicState.MazeHeight / 2);
             WriteLine("Game Over!");
         }
-
+        
         ReadKey();
+        ClassicSaveManager.DeleteClassicSaveFile();
         MainScreen.StartMenu();
     }
 
