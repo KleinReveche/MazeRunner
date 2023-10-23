@@ -17,5 +17,5 @@ public class GameState
     public MazeDifficulty MazeDifficulty { get; set; }
     public GameMode GameMode { get; set; }
     public bool IsCurrentlyPlaying { get; set; }
-    public bool IsCampaignOngoing { get; set; }
+    public bool IsGameOngoing { get; set; }
 }
