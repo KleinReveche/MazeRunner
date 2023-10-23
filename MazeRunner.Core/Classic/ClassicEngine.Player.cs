@@ -2,8 +2,9 @@
 
 public partial class ClassicEngine
 {
-    public bool PlayerAction(ConsoleKey key, out bool isPlayerDead)
+    public bool PlayerAction(ConsoleKey key, out bool isPlayerDead, out bool isGamePaused)
     {
+        isGamePaused = false;
         isPlayerDead = false;
         var placeBomb = false;
         var placeCandle = false;
@@ -30,6 +31,11 @@ public partial class ClassicEngine
                 break;
             case ConsoleKey.C:
                 placeCandle = true;
+                break;
+            case ConsoleKey.Escape:
+                
+                ClassicSaveManager.SaveCurrentSave(classicState);
+                isGamePaused = true;
                 break;
         }
 

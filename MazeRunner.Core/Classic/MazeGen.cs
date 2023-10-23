@@ -1,6 +1,6 @@
 ﻿namespace Reveche.MazeRunner.Classic;
 
-public class MazeGen(GameState gameState, ClassicState classicState)
+public class MazeGen(ClassicState classicState)
 {
     private readonly Random _random = new();
 
@@ -57,7 +57,7 @@ public class MazeGen(GameState gameState, ClassicState classicState)
     public void GenerateEnemy()
     {
         var min = classicState.CurrentLevel * 4 / 2;
-        var difficultyMultiplier = gameState.MazeDifficulty switch
+        var difficultyMultiplier = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 1,
             MazeDifficulty.Normal => 1,
@@ -115,8 +115,7 @@ public class MazeGen(GameState gameState, ClassicState classicState)
                 treasureType is TreasureType.Life
                     or TreasureType.IncreasedVisibilityEffect
                     or TreasureType.TemporaryInvulnerabilityEffect
-                    ? 1
-                    : random2.Next(1, classicState.CurrentLevel)));
+                    ? 1 : random2.Next(1, classicState.CurrentLevel)));
         }
 
         foreach (var treasureLocation in classicState.TreasureLocations)

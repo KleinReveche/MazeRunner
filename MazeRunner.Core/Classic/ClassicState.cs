@@ -1,14 +1,21 @@
-﻿namespace Reveche.MazeRunner.Classic;
+﻿using System.Text.Json.Serialization;
+
+namespace Reveche.MazeRunner.Classic;
 
 public class ClassicState
 {
-    public readonly List<(int candleY, int CandleX)> CandleLocations = new();
-
-    public readonly List<(int enemyY, int enemyX)> EnemyLocations = new();
-
-    public readonly List<(int treasureY, int treasureX, TreasureType treasureType, int count)>
+    public List<(int candleY, int CandleX)> CandleLocations = new();
+    public List<(int enemyY, int enemyX)> EnemyLocations = new();
+    public List<(int treasureY, int treasureX, TreasureType treasureType, int count)>
         TreasureLocations = new();
 
+    public ClassicState()
+    {
+        var options = OptionsManager.LoadOptions();
+
+        MazeDifficulty = options.MazeDifficulty;
+    }
+    
     public int PlayerX { get; set; } = 1;
     public int PlayerY { get; set; } = 1;
     public int PlayerLife { get; set; } = 3;
@@ -26,10 +33,13 @@ public class ClassicState
     public int ExitY { get; set; } // Exit Y-coordinate
     public int MazeWidth { get; set; } = 7;
     public int MazeHeight { get; set; } = 9;
+    [JsonIgnore]
     public char[,] Maze { get; set; } = null!;
+    public List<char[]> MazeList { get; set; } = null!; // This is for serialization
     public int PlayerVisibilityRadius { get; set; }
     public int CandleVisibilityRadius { get; set; }
     public int IncreasedVisibilityEffectRadius { get; set; }
     public int Score { get; set; }
     public string PlayerName { get; set; } = "Anonymous";
+    public MazeDifficulty MazeDifficulty { get; set; }
 }

@@ -1,9 +1,9 @@
 ﻿namespace Reveche.MazeRunner.Classic;
 
-public partial class ClassicEngine(GameState gameState, ClassicState classicState)
+public partial class ClassicEngine(ClassicState classicState)
 {
     private const int BlastRadius = 1;
-    private readonly MazeGen _mazeGen = new(gameState, classicState);
+    private readonly MazeGen _mazeGen = new(classicState);
 
     private int PlayerX => classicState.PlayerX;
     private int PlayerY => classicState.PlayerY;
@@ -30,7 +30,7 @@ public partial class ClassicEngine(GameState gameState, ClassicState classicStat
 
     public void AdjustToDifficulty()
     {
-        classicState.MaxLevels = gameState.MazeDifficulty switch
+        classicState.MaxLevels = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 4,
             MazeDifficulty.Normal => 5,
@@ -38,33 +38,33 @@ public partial class ClassicEngine(GameState gameState, ClassicState classicStat
             MazeDifficulty.Insanity => 6,
             _ => 6
         };
-        classicState.PlayerVisibilityRadius = gameState.MazeDifficulty switch
+        classicState.PlayerVisibilityRadius = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 4,
             MazeDifficulty.Normal => 3,
             MazeDifficulty.Hard => 2,
             _ => 1
         };
-        classicState.CandleVisibilityRadius = gameState.MazeDifficulty switch
+        classicState.CandleVisibilityRadius = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 2,
             MazeDifficulty.Normal => 2,
             _ => 1
         };
-        classicState.IncreasedVisibilityEffectRadius = gameState.MazeDifficulty switch
+        classicState.IncreasedVisibilityEffectRadius = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 3,
             MazeDifficulty.Normal => 2,
             _ => 1
         };
-        classicState.BombCount = gameState.MazeDifficulty switch
+        classicState.BombCount = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 4,
             MazeDifficulty.Normal => 3,
             MazeDifficulty.Hard => 2,
             _ => 1
         };
-        classicState.CandleCount = gameState.MazeDifficulty switch
+        classicState.CandleCount = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 6,
             MazeDifficulty.Normal => 5,

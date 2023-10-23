@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json.Serialization;
+using Reveche.MazeRunner.Classic;
 
 namespace Reveche.MazeRunner;
 
