@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.Versioning;
 
 namespace Reveche.MazeRunner.Sound;
 
@@ -18,7 +19,7 @@ public class GameSoundFx(GameState gameState)
         var selectedSoundFx = SoundFxFiles[(int) soundFx];
         using var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResLoc + selectedSoundFx);
         var sound = new CachedSound(resourceStream!);
-        AudioPlaybackEngine.Instance.PlaySound(sound);
+        AudioPlaybackEngineWindows.Instance.PlaySound(sound);
     }
 }
 

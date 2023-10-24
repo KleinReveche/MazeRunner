@@ -6,10 +6,10 @@ public class MusicPlayer(GameState gameState)
 {
     public void PlayBackgroundMusic(CancellationToken cancellationToken)
     {
-        var mp3Resources = new List<(CachedSound sound, int length)>
+        var mp3Resources = new List<(Stream sound, int length)>
         {
-            (new CachedSound(GetMusicStream("BitBeats3.mp3")), 82_155),
-            (new CachedSound(GetMusicStream("KLPeachGameOverII.mp3")), 20_062)
+            (GetMusicStream("BitBeats3.mp3"), 82_155),
+            (GetMusicStream("KLPeachGameOverII.mp3"), 20_062)
         };
 
         var random = new Random();
@@ -20,8 +20,17 @@ public class MusicPlayer(GameState gameState)
             var sound = mp3Resources[randomIndex].sound;
             var mp3ResourceLength = mp3Resources[randomIndex].length;
 
-            AudioPlaybackEngine.Instance.RemoveLast();
-            AudioPlaybackEngine.Instance.PlaySound(sound);
+            if (OperatingSystem.IsWindows())
+            {
+                AudioPlaybackEngineWindows.Instance.RemoveLast();
+                AudioPlaybackEngineWindows.Instance.PlaySound(new CachedSound(sound));
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                var audioPlaybackEngineLinux = new AudioPlaybackEngineLinux(gameState);
+                audioPlaybackEngineLinux.PlaySound(sound);
+            }
+            else break;
 
             if (gameState.IsCurrentlyPlaying) Thread.Sleep(mp3ResourceLength);
 

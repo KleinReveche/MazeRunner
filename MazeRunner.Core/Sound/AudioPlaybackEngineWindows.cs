@@ -1,19 +1,20 @@
 ﻿using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using NLayer.NAudioSupport;
 
 namespace Reveche.MazeRunner.Sound;
 
 // This was made by Mark Heath at https://markheath.net/post/fire-and-forget-audio-playback-with
 // with my modifications
-public class AudioPlaybackEngine : IDisposable
+public class AudioPlaybackEngineWindows : IDisposable
 {
-    public static readonly AudioPlaybackEngine Instance = new();
+    public static readonly AudioPlaybackEngineWindows Instance = new();
     private readonly MixingSampleProvider _mixer;
     private readonly List<ISampleProvider> _inputs = new();
 
-    private AudioPlaybackEngine(int sampleRate = 44100, int channelCount = 2)
+    private AudioPlaybackEngineWindows(int sampleRate = 44100, int channelCount = 2)
     {
-        var outputDevice = new WaveOutEvent();
+        var outputDevice = new WasapiOut();
         _mixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(sampleRate, channelCount))
         {
             ReadFully = true
@@ -24,10 +25,6 @@ public class AudioPlaybackEngine : IDisposable
 
     public void Dispose()
     {
-        foreach (var input in _inputs)
-        {
-            if (input is IDisposable disposable) disposable.Dispose();
-        }
         GC.SuppressFinalize(this);
     }
 
@@ -36,19 +33,13 @@ public class AudioPlaybackEngine : IDisposable
         _mixer.RemoveAllMixerInputs();
         _inputs.Clear();
     }
+    
     public void RemoveLast()
     {
         if (_inputs.Count == 0) return;
         var last = _inputs.Last();
         _mixer.RemoveMixerInput(last);
         _inputs.Remove(last);
-    }
-
-    public void PlaySound(string fileName)
-    {
-        var input = new AudioFileReader(fileName);
-        _inputs.Add(input);
-        AddMixerInput(new AutoDisposeFileReader(input));
     }
 
     private ISampleProvider ConvertToRightChannelCount(ISampleProvider input)
@@ -110,21 +101,8 @@ internal class CachedSoundSampleProvider(CachedSound sound) : ISampleProvider
     public WaveFormat WaveFormat => sound.WaveFormat;
 }
 
-internal class AutoDisposeFileReader(AudioFileReader reader) : ISampleProvider
+public class Mp3FileReader(Stream inputStream) : Mp3FileReaderBase(inputStream, CreateAcmFrameDecompressor, false)
 {
-    private bool _isDisposed;
-
-    public int Read(float[] buffer, int offset, int count)
-    {
-        if (_isDisposed)
-            return 0;
-        var read = reader.Read(buffer, offset, count);
-        if (read != 0) return read;
-        reader.Dispose();
-        _isDisposed = true;
-
-        return read;
-    }
-
-    public WaveFormat WaveFormat { get; } = reader.WaveFormat;
+    private static IMp3FrameDecompressor CreateAcmFrameDecompressor(WaveFormat mp3Format) 
+        => new Mp3FrameDecompressor(mp3Format);
 }

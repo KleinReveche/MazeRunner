@@ -100,7 +100,7 @@ public static class MainScreen
             { 
                 "Quit", () =>
                 {
-                    AudioPlaybackEngine.Instance.Dispose();
+                    if (OperatingSystem.IsWindows()) AudioPlaybackEngineWindows.Instance.Dispose();
                     Environment.Exit(0);
                 } 
             }
