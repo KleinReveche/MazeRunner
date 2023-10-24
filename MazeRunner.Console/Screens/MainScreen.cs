@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using Reveche.MazeRunner.Classic;
+using Reveche.MazeRunner.Serializable;
+using Reveche.MazeRunner.Sound;
 
 namespace Reveche.MazeRunner.Console.Screens;
 
@@ -25,7 +27,7 @@ public static class MainScreen
 
     public static readonly int CenterX = (System.Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
 
-    internal static GameState GameState = new();
+    internal static GameState GameState = OptionsManager.LoadOptions();
     private static ClassicState _classicState = new();
     private static GameEngineConsole _gameEngineConsole = new(GameState, _classicState);
     private static OptionsScreen _optionsScreen = new(_gameEngineConsole, GameState);
@@ -81,7 +83,7 @@ public static class MainScreen
             { "Continue", () => _gameEngineConsole.Play() },
             { "Start", () =>
                 {
-                    GameState = new GameState();
+                    GameState = OptionsManager.LoadOptions();
                     _classicState = new ClassicState();
                     _optionsScreen = new OptionsScreen(new GameEngineConsole(GameState, _classicState), GameState);
                     _optionsScreen.DisplayOptions();
@@ -95,7 +97,13 @@ public static class MainScreen
                 }
             },
             { "Credits", ShowCreditsScreen },
-            { "Quit", () => Environment.Exit(0) }
+            { 
+                "Quit", () =>
+                {
+                    AudioPlaybackEngine.Instance.Dispose();
+                    Environment.Exit(0);
+                } 
+            }
         };
 
         if (!GameState.IsGameOngoing)

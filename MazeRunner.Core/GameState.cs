@@ -1,18 +1,11 @@
-﻿namespace Reveche.MazeRunner;
+﻿using Reveche.MazeRunner.Serializable;
+
+namespace Reveche.MazeRunner;
 
 public class GameState
 {
-    public GameState()
-    {
-        var options = OptionsManager.LoadOptions();
-
-        GameMode = options.GameMode;
-        IsSoundOn = options.IsSoundOn;
-        IsUtf8 = options.IsUtf8;
-        MazeDifficulty = options.MazeDifficulty;
-    }
-
     public bool IsSoundOn { get; set; }
+    public bool IsSoundFxOn { get; set; }
     public bool IsUtf8 { get; set; }
     public MazeDifficulty MazeDifficulty { get; set; }
     public GameMode GameMode { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Reveche.MazeRunner.Serializable;
 using static System.Console;
 
 namespace Reveche.MazeRunner.Console.Screens;

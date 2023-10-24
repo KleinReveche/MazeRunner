@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Reveche.MazeRunner.Serializable;
 
 namespace Reveche.MazeRunner.Console.Screens;
 
@@ -7,7 +8,6 @@ public class OptionsScreen
     private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
     private readonly GameEngineConsole _gameEngineConsole;
     private readonly List<string> _gameModeValues = new() { "Classic", "Campaign", "Endless" };
-    private readonly GameOptions _gameOptions = OptionsManager.LoadOptions();
     private readonly GameState _gameState;
     private readonly Dictionary<string, string> _options;
     private readonly List<string> _soundValues = new() { "On", "Off" };
@@ -23,7 +23,8 @@ public class OptionsScreen
             { "Game Mode", _gameModeValues.ElementAt((int)_gameState.GameMode) },
             { "Difficulty", _difficultyValues.ElementAt((int)_gameState.MazeDifficulty) },
             { "Text Style", _gameState.IsUtf8 ? _textStyleValues[0] : _textStyleValues[1] },
-            { "Sound", _gameState.IsSoundOn ? _soundValues[0] : _soundValues[1] },
+            { "Music", _gameState.IsSoundOn ? _soundValues[0] : _soundValues[1] },
+            { "Sound Effects", _gameState.IsSoundFxOn ? _soundValues[0] : _soundValues[1] },
             { "Back", "" }
         };
     }
@@ -31,12 +32,6 @@ public class OptionsScreen
     public void DisplayOptions()
     {
         var buffer = new StringBuilder();
-
-        // This ensures that sound will not be an option on non-Windows platforms.
-        // As the System.Media.SoundPlayer class is only available on Windows.
-        if (!OperatingSystem.IsWindows())
-            _options.Remove("Sound");
-
         var selectedIndex = 0;
 
         while (true)
@@ -69,12 +64,12 @@ public class OptionsScreen
             {
                 case ConsoleKey.LeftArrow:
                     ChangeOptionValue(_options.ElementAt(selectedIndex).Key, _options, -1);
-                    OptionsManager.SaveCurrentOptions(_gameState, _gameOptions);
+                    OptionsManager.SaveOptions(_gameState);
                     break;
 
                 case ConsoleKey.RightArrow:
                     ChangeOptionValue(_options.ElementAt(selectedIndex).Key, _options, 1);
-                    OptionsManager.SaveCurrentOptions(_gameState, _gameOptions);
+                    OptionsManager.SaveOptions(_gameState);
                     break;
 
                 case ConsoleKey.UpArrow:
@@ -86,7 +81,7 @@ public class OptionsScreen
                     break;
 
                 case ConsoleKey.Enter:
-                    OptionsManager.SaveCurrentOptions(_gameState, _gameOptions);
+                    OptionsManager.SaveOptions(_gameState);
 
                     if (selectedIndex == 0)
                         _gameEngineConsole.Play();
@@ -128,7 +123,7 @@ public class OptionsScreen
                     ChangeTextStyle(1);
                 break;
             }
-            case "Sound":
+            case "Music":
             {
                 var currentIndex = _soundValues.IndexOf(value);
                 var newIndex = (currentIndex + change + _soundValues.Count) % _soundValues.Count;
@@ -144,6 +139,15 @@ public class OptionsScreen
                         MazeRunnerConsole.BackgroundSoundManager.RestartBackgroundMusic();
                         break;
                 }
+
+                break;
+            }
+            case "Sound Effects":
+            {
+                var currentIndex = _soundValues.IndexOf(value);
+                var newIndex = (currentIndex + change + _soundValues.Count) % _soundValues.Count;
+                options[optionKey] = _soundValues[newIndex];
+                _gameState.IsSoundFxOn = !_gameState.IsSoundFxOn;
 
                 break;
             }

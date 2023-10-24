@@ -1,10 +1,12 @@
-﻿namespace Reveche.MazeRunner.Classic;
+﻿using Reveche.MazeRunner.Sound;
 
-public partial class ClassicEngine(ClassicState classicState)
+namespace Reveche.MazeRunner.Classic;
+
+public partial class ClassicEngine(GameState gameState, ClassicState classicState)
 {
     private const int BlastRadius = 1;
     private readonly MazeGen _mazeGen = new(classicState);
-
+    private readonly GameSoundFx _gameSoundFx = new(gameState);
     private int PlayerX => classicState.PlayerX;
     private int PlayerY => classicState.PlayerY;
     private int LastPlayerX { get; set; }
