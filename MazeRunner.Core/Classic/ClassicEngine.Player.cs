@@ -1,4 +1,6 @@
-﻿namespace Reveche.MazeRunner.Classic;
+﻿using Reveche.MazeRunner.Sound;
+
+namespace Reveche.MazeRunner.Classic;
 
 public partial class ClassicEngine
 {
@@ -126,6 +128,7 @@ public partial class ClassicEngine
                 break;
         }
 
+        _gameSoundFx.PlayFx(ConsoleGameSoundFx.ItemPickup);
         classicState.Score += treasure.count *
                               ((int)treasure.treasureType +
                                (treasure.treasureType == TreasureType.Bomb ? 1 : 0));
@@ -137,6 +140,7 @@ public partial class ClassicEngine
         isPlayerDead = false;
         if (startBomb)
         {
+            _gameSoundFx.PlayFx(ConsoleGameSoundFx.BombPlace);
             classicState.BombIsUsed = true;
             classicState.BombTimer = 3;
             return;
@@ -146,6 +150,7 @@ public partial class ClassicEngine
             classicState.BombTimer--;
 
         if (classicState is not { BombIsUsed: true, BombTimer: 0 }) return;
+        _gameSoundFx.PlayFx(ConsoleGameSoundFx.BombExplode);
         for (var y = -BlastRadius; y <= BlastRadius; y++)
         for (var x = -BlastRadius; x <= BlastRadius; x++)
         {

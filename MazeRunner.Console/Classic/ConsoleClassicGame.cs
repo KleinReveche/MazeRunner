@@ -1,5 +1,6 @@
 ﻿using Reveche.MazeRunner.Classic;
 using Reveche.MazeRunner.Console.Screens;
+using Reveche.MazeRunner.Serializable;
 using static System.Console;
 
 namespace Reveche.MazeRunner.Console.Classic;

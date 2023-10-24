@@ -112,7 +112,7 @@ public partial class GameRenderer(GameState gameState, ClassicEngine classicEngi
         combinedBuffer.Clear();
         var mazeBufferLines = mazeBuffer.ToString().Split("\r\n");
         var inventoryBufferLines = inventoryBuffer.ToString().Split("\r\n");
-        var len = Math.Max(inventoryBufferLines.Length, (int)mazeBufferLines.Length);
+        var len = Math.Max(inventoryBufferLines.Length, mazeBufferLines.Length);
 
         for (var i = 0; i < len; i++)
         {

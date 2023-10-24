@@ -13,19 +13,5 @@
     <ItemGroup>
         <ProjectReference Include="..\MazeRunner.Core\MazeRunner.Core.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="System.Windows.Extensions" Version="8.0.0-rc.2.23479.6"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Remove="Music\KLPeachGameOverII.wav"/>
-        <None Remove="Music\BitBeats3.wav"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Include="Resources\Music\BitBeats3.wav"/>
-        <EmbeddedResource Include="Resources\Music\KLPeachGameOverII.wav"/>
-    </ItemGroup>
-
+    
 </Project>

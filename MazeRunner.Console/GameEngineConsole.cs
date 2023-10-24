@@ -6,7 +6,7 @@ namespace Reveche.MazeRunner.Console;
 
 public class GameEngineConsole(GameState gameState, ClassicState classicState)
 {
-    private readonly ClassicEngine _classicEngine = new(classicState);
+    private readonly ClassicEngine _classicEngine = new(gameState, classicState);
 
     public void Play()
     {
