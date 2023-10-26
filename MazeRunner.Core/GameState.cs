@@ -1,6 +1,4 @@
-﻿using Reveche.MazeRunner.Serializable;
-
-namespace Reveche.MazeRunner;
+﻿namespace Reveche.MazeRunner;
 
 public class GameState
 {
