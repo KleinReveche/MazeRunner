@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.Versioning;
 
 namespace Reveche.MazeRunner.Sound;
 
@@ -16,10 +15,23 @@ public class GameSoundFx(GameState gameState)
     public void PlayFx(ConsoleGameSoundFx soundFx)
     {
         if (!gameState.IsSoundFxOn) return;
-        var selectedSoundFx = SoundFxFiles[(int) soundFx];
-        using var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResLoc + selectedSoundFx);
-        var sound = new CachedSound(resourceStream!);
-        AudioPlaybackEngineWindows.Instance.PlaySound(sound);
+
+        var soundFxThread = new Thread(() =>
+        {
+            using var sound = Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream(ResLoc + SoundFxFiles[(int) soundFx])!;
+        
+            if (OperatingSystem.IsWindows())
+            {
+                MusicPlayer.PlayInWindows(sound);
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                MusicPlayer.PlayInLinux(sound, gameState);
+            }
+        });
+        
+        soundFxThread.Start();
     }
 }
 

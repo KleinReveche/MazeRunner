@@ -8,6 +8,7 @@
         <RootNamespace>Reveche.MazeRunner.Console</RootNamespace>
         <ApplicationIcon>Resources\maze-runner.ico</ApplicationIcon>
         <PackageId>MazeRunner.Console</PackageId>
+        <Company>Klein Reveche</Company>
     </PropertyGroup>
 
     <ItemGroup>

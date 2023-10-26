@@ -1,12 +1,11 @@
 ﻿using Alsa.Net;
-using Alsa.Net.Internal;
 using NAudio.Wave;
 using NLayer.NAudioSupport;
 using Reveche.MazeRunner.Serializable;
 
 namespace Reveche.MazeRunner.Sound;
 
-public class AudioPlaybackEngineLinux(GameState gameState) : IDisposable
+public class MusicPlayerLinux(GameState gameState) : IDisposable
 {
 
     public void Dispose()
