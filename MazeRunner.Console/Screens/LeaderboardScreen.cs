@@ -33,13 +33,7 @@ public class LeaderboardScreen
             CalculateColumnWidths();
             SortLeaderboard();
             DrawLeaderboard();
-
-            var separator = OperatingSystem.IsWindows() ? "\r\n" : "\n";
-            foreach (var line in LeaderboardBuffer.ToString().Split(separator))
-            {
-                SetCursorPosition(MainScreen.CenterX - 5, CursorTop);
-                WriteLine(line);
-            }
+            WriteLine(LeaderboardBuffer);
 
             var keyInfo = ReadKey(true);
 
@@ -62,10 +56,9 @@ public class LeaderboardScreen
         MainScreen.DisplayTitle();
 
         ForegroundColor = ConsoleColor.White;
-        SetCursorPosition(MainScreen.CenterX + 20, CursorTop);
-        WriteLine("Leaderboard: \n");
+        SetCursorPosition(MainScreen.CenterX - 1, CursorTop);
 
-        SetCursorPosition(MainScreen.CenterX + 10, CursorTop);
+        Write("Leaderboard: ");
         Write(_selectedCategoryIndex == 0 ? "[Score]" : "Score");
         Write(" | ");
         Write(_selectedCategoryIndex == 1 ? "[Difficulty]" : "Difficulty");
@@ -125,14 +118,15 @@ public class LeaderboardScreen
 
     private void DrawLeaderboard()
     {
+        var padding = (int)(MainScreen.CenterX * 1.75) / 2;
         LeaderboardBuffer.Clear();
-        var rowFormat = "│ {0,-" + _namePadding + "} │ {1,-"
+        var rowFormat = new string(' ', padding) + "│ {0,-" + _namePadding + "} │ {1,-"
                         + _scorePadding + "} │ {2,-"
                         + _difficultyPadding + "} │ {3,-"
                         + _completionPadding + "} │ {4,-"
                         + _levelPadding + "} │";
 
-        var lineFormat = "{0}" + new string('─', _namePadding + 2) + "{1}"
+        var lineFormat = new string(' ', padding) + "{0}" + new string('─', _namePadding + 2) + "{1}"
                          + new string('─', _scorePadding + 2) + "{2}"
                          + new string('─', _difficultyPadding + 2) + "{3}"
                          + new string('─', _completionPadding + 2) + "{4}"
