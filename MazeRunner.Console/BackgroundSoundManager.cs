@@ -23,8 +23,8 @@ public class BackgroundSoundManager
     {
         if (_musicThread == null) return;
         _cancellationTokenSource.Cancel();
-        AudioPlaybackEngine.Instance.RemoveAll();
-        AudioPlaybackEngine.Instance.Dispose();
+        AudioPlaybackEngineWindows.Instance.RemoveAll();
+        AudioPlaybackEngineWindows.Instance.Dispose();
         _musicThread?.Join();
     }
 

@@ -34,7 +34,8 @@ public class LeaderboardScreen
             SortLeaderboard();
             DrawLeaderboard();
 
-            foreach (var line in LeaderboardBuffer.ToString().Split("\r\n"))
+            var separator = OperatingSystem.IsWindows() ? "\r\n" : "\n";
+            foreach (var line in LeaderboardBuffer.ToString().Split(separator))
             {
                 SetCursorPosition(MainScreen.CenterX - 5, CursorTop);
                 WriteLine(line);
