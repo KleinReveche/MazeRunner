@@ -97,13 +97,7 @@ public static class MainScreen
                 }
             },
             { "Credits", ShowCreditsScreen },
-            { 
-                "Quit", () =>
-                {
-                    if (OperatingSystem.IsWindows()) AudioPlaybackEngineWindows.Instance.Dispose();
-                    Environment.Exit(0);
-                } 
-            }
+            { "Quit", () => Environment.Exit(0) }
         };
 
         if (!GameState.IsGameOngoing)
