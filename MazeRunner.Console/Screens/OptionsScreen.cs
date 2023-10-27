@@ -7,7 +7,7 @@ public class OptionsScreen
 {
     private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
     private readonly GameEngineConsole _gameEngineConsole;
-    private readonly List<string> _gameModeValues = new() { "Classic", "Campaign", "Endless" };
+    private readonly List<string> _gameModeValues = new() { "Classic", "Endless" };
     private readonly GameState _gameState;
     private readonly Dictionary<string, string> _options;
     private readonly List<string> _soundValues = new() { "On", "Off" };

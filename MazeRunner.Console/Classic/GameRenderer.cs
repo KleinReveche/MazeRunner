@@ -49,9 +49,6 @@ public partial class GameRenderer(GameState gameState, ClassicEngine classicEngi
             case GameMode.Classic:
                 AppendLine($"Level {Math.Min(classicState.CurrentLevel, classicState.MaxLevels)} of {classicState.MaxLevels}");
                 break;
-            case GameMode.Campaign:
-                AppendLine("Campaign");
-                break;
             case GameMode.Endless:
                 AppendLine($"Level {classicState.CurrentLevel} of ∞");
                 break;
