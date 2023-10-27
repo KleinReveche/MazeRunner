@@ -59,6 +59,9 @@ public partial class ClassicEngine(GameState gameState, ClassicState classicStat
             MazeDifficulty.Normal => 2,
             _ => 1
         };
+        
+        if (gameState.IsGameOngoing) return;
+        
         classicState.BombCount = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 4,
