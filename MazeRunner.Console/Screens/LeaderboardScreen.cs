@@ -33,13 +33,7 @@ public class LeaderboardScreen
             CalculateColumnWidths();
             SortLeaderboard();
             DrawLeaderboard();
-
-            var separator = OperatingSystem.IsWindows() ? "\r\n" : "\n";
-            foreach (var line in LeaderboardBuffer.ToString().Split(separator))
-            {
-                SetCursorPosition(MainScreen.CenterX - 5, CursorTop);
-                WriteLine(line);
-            }
+            WriteLine(LeaderboardBuffer);
 
             var keyInfo = ReadKey(true);
 
@@ -62,10 +56,9 @@ public class LeaderboardScreen
         MainScreen.DisplayTitle();
 
         ForegroundColor = ConsoleColor.White;
-        SetCursorPosition(MainScreen.CenterX + 20, CursorTop);
-        WriteLine("Leaderboard: \n");
+        SetCursorPosition(MainScreen.CenterX - 1, CursorTop);
 
-        SetCursorPosition(MainScreen.CenterX + 10, CursorTop);
+        Write("Leaderboard: ");
         Write(_selectedCategoryIndex == 0 ? "[Score]" : "Score");
         Write(" | ");
         Write(_selectedCategoryIndex == 1 ? "[Difficulty]" : "Difficulty");
@@ -79,11 +72,11 @@ public class LeaderboardScreen
 
     private void CalculateColumnWidths()
     {
-        var maxNameLength = Math.Max(_leaderboard.Max(p => p.Name.Length), 6);
-        var maxScoreLength = Math.Max(_leaderboard.Max(p => p.Score.ToString().Length), 5);
-        var maxDifficultyLength = Math.Max(_leaderboard.Max(p => p.MazeDifficulty.ToString().Length), 10);
-        var maxCompletionLength = Math.Max(_leaderboard.Max(p => p.GameMode.ToString().Length), 9);
-        var maxLevelLength = Math.Max(_leaderboard.Max(p => p.CompletedLevels.ToString().Length), 5);
+        var maxNameLength = Math.Max(_leaderboard.Max(playerScore => playerScore.Name.Length), 6);
+        var maxScoreLength = Math.Max(_leaderboard.Max(playerScore => playerScore.Score.ToString().Length), 5);
+        var maxDifficultyLength = Math.Max(_leaderboard.Max(playerScore => playerScore.MazeDifficulty.ToString().Length), 10);
+        var maxCompletionLength = Math.Max(_leaderboard.Max(playerScore => playerScore.GameMode.ToString().Length), 9);
+        var maxLevelLength = Math.Max(_leaderboard.Max(playerScore => playerScore.CompletedLevels.ToString().Length), 5);
 
         _namePadding = maxNameLength + 2;
         _scorePadding = maxScoreLength + 2;
@@ -97,27 +90,27 @@ public class LeaderboardScreen
         switch (_selectedCategoryIndex)
         {
             case 0: // Sort by Score
-                _leaderboard.Sort((a, b) => b.Score.CompareTo(a.Score));
+                _leaderboard.Sort((playerScoreA, playerScoreB) => playerScoreB.Score.CompareTo(playerScoreA.Score));
                 break;
-            case 1:
-                _leaderboard.Sort((a, b) =>
+            case 1: // Sort by Difficulty
+                _leaderboard.Sort((playerScoreA, playerScoreB) =>
                 {
-                    var difficulty = b.MazeDifficulty.CompareTo(a.MazeDifficulty);
-                    return difficulty != 0 ? difficulty : b.Score.CompareTo(a.Score);
+                    var difficulty = playerScoreB.MazeDifficulty.CompareTo(playerScoreA.MazeDifficulty);
+                    return difficulty != 0 ? difficulty : playerScoreB.Score.CompareTo(playerScoreA.Score);
                 });
                 break;
-            case 2: // Sort by Completion
-                _leaderboard.Sort((a, b) =>
+            case 2: // Sort by GameMode
+                _leaderboard.Sort((playerScoreA, playerScoreB) =>
                 {
-                    var completed = b.GameMode.CompareTo(a.GameMode);
-                    return completed != 0 ? completed : b.Score.CompareTo(a.Score);
+                    var gameMode = playerScoreB.GameMode.CompareTo(playerScoreA.GameMode);
+                    return gameMode != 0 ? gameMode : playerScoreB.Score.CompareTo(playerScoreA.Score);
                 });
                 break;
             case 3: // Sort by Level
-                _leaderboard.Sort((a, b) =>
+                _leaderboard.Sort((playerScoreA, playerScoreB) =>
                 {
-                    var level = b.CompletedLevels.CompareTo(a.CompletedLevels);
-                    return level != 0 ? level : b.Score.CompareTo(a.Score);
+                    var level = playerScoreB.CompletedLevels.CompareTo(playerScoreA.CompletedLevels);
+                    return level != 0 ? level : playerScoreB.Score.CompareTo(playerScoreA.Score);
                 });
                 break;
         }
@@ -125,14 +118,16 @@ public class LeaderboardScreen
 
     private void DrawLeaderboard()
     {
+        var padding = (int)(MainScreen.CenterX * 1.75) / 2;
         LeaderboardBuffer.Clear();
-        var rowFormat = "│ {0,-" + _namePadding + "} │ {1,-"
+        
+        var rowFormat = new string(' ', padding) + "│ {0,-" + _namePadding + "} │ {1,-"
                         + _scorePadding + "} │ {2,-"
                         + _difficultyPadding + "} │ {3,-"
                         + _completionPadding + "} │ {4,-"
                         + _levelPadding + "} │";
 
-        var lineFormat = "{0}" + new string('─', _namePadding + 2) + "{1}"
+        var lineFormat = new string(' ', padding) + "{0}" + new string('─', _namePadding + 2) + "{1}"
                          + new string('─', _scorePadding + 2) + "{2}"
                          + new string('─', _difficultyPadding + 2) + "{3}"
                          + new string('─', _completionPadding + 2) + "{4}"
@@ -143,8 +138,10 @@ public class LeaderboardScreen
         LeaderboardBuffer.AppendLine(string.Format(lineFormat, "├", "┼", "┼", "┼", "┼", "┤"));
 
         foreach (var score in _leaderboard)
+        {
             LeaderboardBuffer.AppendLine(string.Format(rowFormat, score.Name, score.Score, score.MazeDifficulty,
                 score.GameMode, score.CompletedLevels));
+        }
 
         LeaderboardBuffer.AppendLine(string.Format(lineFormat, "└", "┴", "┴", "┴", "┴", "┘"));
     }
