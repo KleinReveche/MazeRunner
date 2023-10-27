@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Reveche.MazeRunner.Classic;
 using Reveche.MazeRunner.Serializable;
-using Reveche.MazeRunner.Sound;
 
 namespace Reveche.MazeRunner.Console.Screens;
 
@@ -54,7 +53,6 @@ public static class MainScreen
         System.Console.WriteLine();
         System.Console.ResetColor();
     }
-
     
     public static void StartMenu()
     {

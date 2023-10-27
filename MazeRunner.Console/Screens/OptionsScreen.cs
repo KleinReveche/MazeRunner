@@ -105,7 +105,7 @@ public class OptionsScreen
                 var newIndex = (currentIndex + change + _gameModeValues.Count) % _gameModeValues.Count;
                 options[optionKey] = _gameModeValues[newIndex];
                 _gameState.GameMode =
-                    typeof(GameMode).GetEnumValues().Cast<GameMode>().ElementAt(newIndex);
+                    typeof(GameMode).GetEnumValuesAsUnderlyingType().Cast<GameMode>().ElementAt(newIndex);
                 break;
             }
             case "Difficulty":
@@ -114,7 +114,7 @@ public class OptionsScreen
                 var newIndex = (currentIndex + change + _difficultyValues.Count) % _difficultyValues.Count;
                 options[optionKey] = _difficultyValues[newIndex];
                 _gameState.MazeDifficulty =
-                    typeof(MazeDifficulty).GetEnumValues().Cast<MazeDifficulty>().ElementAt(newIndex);
+                    typeof(MazeDifficulty).GetEnumValuesAsUnderlyingType().Cast<MazeDifficulty>().ElementAt(newIndex);
 
                 if (currentIndex == 4 && _gameState.MazeDifficulty != MazeDifficulty.AsciiInsanity)
                     ChangeTextStyle(0);

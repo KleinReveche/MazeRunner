@@ -101,6 +101,7 @@ public class ConsoleClassicGame
 
         Write("Enter your name: ");
         _classicState.PlayerName = ReadLine() ?? "Anonymous";
+        if (_classicState.PlayerName.Length == 0) _classicState.PlayerName = "Anonymous";
         if (_classicState.CurrentLevel > _classicState.MaxLevels &&
             _classicState.PlayerLife > 0  && _gameState.GameMode == GameMode.Classic)
         {
