@@ -37,6 +37,5 @@ public enum MazeDifficulty
 public enum GameMode
 {
     Classic,
-    Campaign,
     Endless
 }

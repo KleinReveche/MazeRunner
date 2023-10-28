@@ -16,9 +16,6 @@ public class GameEngineConsole(GameState gameState, ClassicState classicState)
             case GameMode.Classic:
                 classicEndless.Play();
                 break;
-            case GameMode.Campaign:
-                System.Console.WriteLine("Campaign mode is not yet implemented. Stay Tuned!");
-                break;
             case GameMode.Endless:
                 classicEndless.Play();
                 break;
