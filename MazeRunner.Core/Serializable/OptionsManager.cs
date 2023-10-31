@@ -15,9 +15,9 @@ public static class OptionsManager
 
     private static readonly GameStateJsonContext Context = new(SourceGenOptions);
 
-    public static GameState LoadOptions()
+    public static OptionsState LoadOptions()
     {
-        var defaultOptions = new GameState
+        var defaultOptions = new OptionsState
         {
             GameMode = GameMode.Classic,
             IsSoundOn = true,
@@ -30,7 +30,7 @@ public static class OptionsManager
         {
             var oldJson = File.ReadAllText(OldOptionsJson);
             var options = JsonSerializer.Deserialize(
-                oldJson, Context.GameState) ?? defaultOptions;
+                oldJson, Context.OptionsState) ?? defaultOptions;
             SaveOptions(options);
             File.Delete(OldOptionsJson);
             return options;
@@ -40,12 +40,12 @@ public static class OptionsManager
 
         var json = File.ReadAllText(NewOptionsJson);
         return JsonSerializer.Deserialize(
-            JsonScrambler.Decode(json), Context.GameState) ?? defaultOptions;
+            JsonScrambler.Decode(json), Context.OptionsState) ?? defaultOptions;
     }
 
-    public static void SaveOptions(GameState gameState)
+    public static void SaveOptions(OptionsState optionsState)
     {
-        var json = JsonSerializer.Serialize(gameState, Context.GameState);
+        var json = JsonSerializer.Serialize(optionsState, Context.OptionsState);
         File.WriteAllText(NewOptionsJson, JsonScrambler.Encode(json));
     }
 }

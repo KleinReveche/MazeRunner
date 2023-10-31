@@ -67,10 +67,10 @@ public static class MainScreen
     private static readonly string Separator = OperatingSystem.IsWindows() ? "\r\n" : "\n";
     public static readonly int CenterX = (System.Console.WindowWidth - Runner.Split(Separator)[0].Length) / 2;
 
-    internal static GameState GameState = OptionsManager.LoadOptions();
+    internal static OptionsState OptionsState = OptionsManager.LoadOptions();
     private static ClassicState _classicState = new();
-    private static GameEngineConsole _gameEngineConsole = new(GameState, _classicState);
-    private static OptionsScreen _optionsScreen = new(_gameEngineConsole, GameState);
+    private static GameEngineConsole _gameEngineConsole = new(OptionsState, _classicState);
+    private static OptionsScreen _optionsScreen = new(_gameEngineConsole, OptionsState);
 
     public static void DisplayTitle()
     {
@@ -100,21 +100,21 @@ public static class MainScreen
         if (_classicState.CurrentLevel > _classicState.MaxLevels || _classicState.PlayerLife <= 0)
         {
             _classicState = new ClassicState();
-            _optionsScreen = new OptionsScreen(new GameEngineConsole(GameState, _classicState),GameState);
+            _optionsScreen = new OptionsScreen(new GameEngineConsole(OptionsState, _classicState),OptionsState);
         }
 
         if (ClassicSaveManager.ClassicSaveFileExists())
         {
             _classicState = ClassicSaveManager.LoadCurrentSave();
-            _gameEngineConsole = new GameEngineConsole(GameState, _classicState);
-            GameState.IsGameOngoing = true;
+            _gameEngineConsole = new GameEngineConsole(OptionsState, _classicState);
+            OptionsState.IsGameOngoing = true;
         }
         
         if (!ClassicSaveManager.ClassicSaveFileExists())
         {
-            _optionsScreen = new OptionsScreen(new GameEngineConsole(GameState, _classicState), GameState);
-            _gameEngineConsole = new GameEngineConsole(GameState, _classicState);
-            GameState.IsGameOngoing = false;
+            _optionsScreen = new OptionsScreen(new GameEngineConsole(OptionsState, _classicState), OptionsState);
+            _gameEngineConsole = new GameEngineConsole(OptionsState, _classicState);
+            OptionsState.IsGameOngoing = false;
         }
 
         Dictionary<string, Action> menuOptions = new()
@@ -123,9 +123,9 @@ public static class MainScreen
             { 
                 "Start", () =>
                 {
-                    GameState = OptionsManager.LoadOptions();
+                    OptionsState = OptionsManager.LoadOptions();
                     _classicState = new ClassicState();
-                    _optionsScreen = new OptionsScreen(new GameEngineConsole(GameState, _classicState), GameState);
+                    _optionsScreen = new OptionsScreen(new GameEngineConsole(OptionsState, _classicState), OptionsState);
                     _optionsScreen.DisplayOptions();
                 } 
             },
@@ -141,7 +141,7 @@ public static class MainScreen
             { "Quit", () => Environment.Exit(0) }
         };
 
-        if (!GameState.IsGameOngoing)
+        if (!OptionsState.IsGameOngoing)
             menuOptions.Remove("Continue");
         
         var selectedIndex = 0;
@@ -159,7 +159,7 @@ public static class MainScreen
             {
                 var option = optionKeys[i];
 
-                if (GameState.IsGameOngoing && option == "Start")
+                if (OptionsState.IsGameOngoing && option == "Start")
                     option = "New Game";
                 
                 buffer.Append(' ', CenterX + 20);

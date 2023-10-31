@@ -4,14 +4,14 @@ using Reveche.MazeRunner.Console.Screens;
 
 namespace Reveche.MazeRunner.Console;
 
-public class GameEngineConsole(GameState gameState, ClassicState classicState)
+public class GameEngineConsole(OptionsState optionsState, ClassicState classicState)
 {
-    private readonly ClassicEngine _classicEngine = new(gameState, classicState);
+    private readonly ClassicEngine _classicEngine = new(optionsState, classicState);
 
     public void Play()
     {
-        var classicEndless = new ConsoleClassicGame(gameState, _classicEngine, classicState);
-        switch (gameState.GameMode)
+        var classicEndless = new ConsoleClassicGame(optionsState, _classicEngine, classicState);
+        switch (optionsState.GameMode)
         {
             case GameMode.Classic:
                 classicEndless.Play();

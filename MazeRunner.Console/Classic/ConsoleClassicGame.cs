@@ -10,25 +10,25 @@ public class ConsoleClassicGame
     private readonly ClassicEngine _classicEngine;
     private readonly ClassicState _classicState;
     private readonly GameRenderer _gameRenderer;
-    private readonly GameState _gameState;
+    private readonly OptionsState _optionsState;
     private readonly ScoreList _scoreList = ScoreManager.LoadScores();
     private readonly ScoreManager _scoreManager;
     private bool _levelIsCompleted = true;
     private bool _shouldRedraw = true;
 
-    public ConsoleClassicGame(GameState gameState, ClassicEngine classicEngine, ClassicState classicState)
+    public ConsoleClassicGame(OptionsState optionsState, ClassicEngine classicEngine, ClassicState classicState)
     {
-        _gameState = gameState;
+        _optionsState = optionsState;
         _classicEngine = classicEngine;
         _classicState = classicState;
-        _gameRenderer = new GameRenderer(gameState, classicEngine, classicState);
+        _gameRenderer = new GameRenderer(optionsState, classicEngine, classicState);
         _scoreManager = new ScoreManager(_scoreList);
     }
 
     public void Play()
     {
         var levelStartTime = new DateTime();
-        var continueGame = _gameState.IsGameOngoing;
+        var continueGame = _optionsState.IsGameOngoing;
 
         _levelIsCompleted = true;
         _shouldRedraw = true;
@@ -40,7 +40,7 @@ public class ConsoleClassicGame
             {
                 _classicEngine.CalculateLevelScore(levelStartTime);
                 levelStartTime = DateTime.Now;
-                _gameState.IsCurrentlyPlaying = _classicState.CurrentLevel <= _classicState.MaxLevels;
+                _optionsState.IsCurrentlyPlaying = _classicState.CurrentLevel <= _classicState.MaxLevels;
                 if (!continueGame) _classicEngine.InitializeNewLevel();
                 continueGame = false;
                 _levelIsCompleted = false;
@@ -103,18 +103,18 @@ public class ConsoleClassicGame
         _classicState.PlayerName = ReadLine() ?? "Anonymous";
         if (_classicState.PlayerName.Length == 0) _classicState.PlayerName = "Anonymous";
         if (_classicState.CurrentLevel > _classicState.MaxLevels &&
-            _classicState.PlayerLife > 0  && _gameState.GameMode == GameMode.Classic)
+            _classicState.PlayerLife > 0  && _optionsState.GameMode == GameMode.Classic)
         {
             WriteLine("Congratulations! You have completed all levels. Press Any Key to exit.");
             _classicState.Score += 100;
             _scoreManager.AddScore(_classicState.PlayerName, _classicState.Score,
-                _gameState.MazeDifficulty, _gameState.GameMode, _classicState.MaxLevels);
+                _optionsState.MazeDifficulty, _optionsState.GameMode, _classicState.MaxLevels);
             ScoreManager.SaveScores(_scoreList);
         }
         else
         {
             _scoreManager.AddScore(_classicState.PlayerName, _classicState.Score,
-                _gameState.MazeDifficulty, _gameState.GameMode, _classicState.CurrentLevel - 1);
+                _optionsState.MazeDifficulty, _optionsState.GameMode, _classicState.CurrentLevel - 1);
             SetCursorPosition(_classicState.MazeWidth / 2, _classicState.MazeHeight / 2);
             WriteLine("Game Over!");
         }
@@ -131,7 +131,7 @@ public class ConsoleClassicGame
 
         if (_classicState.CurrentLevel > _classicState.MaxLevels)
         {
-            if (_gameState.GameMode == GameMode.Classic)
+            if (_optionsState.GameMode == GameMode.Classic)
             {
                 DisplayGameDone();
                 return;

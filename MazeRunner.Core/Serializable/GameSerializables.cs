@@ -18,7 +18,7 @@ public class ScoreEntry(string name, int score, MazeDifficulty mazeDifficulty, G
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(GameState))]
+[JsonSerializable(typeof(OptionsState))]
 internal partial class GameStateJsonContext : JsonSerializerContext;
 
 [JsonSourceGenerationOptions(WriteIndented = true)]

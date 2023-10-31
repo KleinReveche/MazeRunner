@@ -8,23 +8,23 @@ public class OptionsScreen
     private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
     private readonly GameEngineConsole _gameEngineConsole;
     private readonly List<string> _gameModeValues = new() { "Classic", "Endless" };
-    private readonly GameState _gameState;
+    private readonly OptionsState _optionsState;
     private readonly Dictionary<string, string> _options;
     private readonly List<string> _soundValues = new() { "On", "Off" };
     private readonly List<string> _textStyleValues = new() { "Unicode", "ASCII" };
 
-    public OptionsScreen(GameEngineConsole gameEngineConsole, GameState gameState)
+    public OptionsScreen(GameEngineConsole gameEngineConsole, OptionsState optionsState)
     {
-        _gameState = gameState;
+        _optionsState = optionsState;
         _gameEngineConsole = gameEngineConsole;
         _options = new Dictionary<string, string>
         {
             { "Play", "" },
-            { "Game Mode", _gameModeValues.ElementAt((int)_gameState.GameMode) },
-            { "Difficulty", _difficultyValues.ElementAt((int)_gameState.MazeDifficulty) },
-            { "Text Style", _gameState.IsUtf8 ? _textStyleValues[0] : _textStyleValues[1] },
-            { "Music", _gameState.IsSoundOn ? _soundValues[0] : _soundValues[1] },
-            { "Sound Effects", _gameState.IsSoundFxOn ? _soundValues[0] : _soundValues[1] },
+            { "Game Mode", _gameModeValues.ElementAt((int)_optionsState.GameMode) },
+            { "Difficulty", _difficultyValues.ElementAt((int)_optionsState.MazeDifficulty) },
+            { "Text Style", _optionsState.IsUtf8 ? _textStyleValues[0] : _textStyleValues[1] },
+            { "Music", _optionsState.IsSoundOn ? _soundValues[0] : _soundValues[1] },
+            { "Sound Effects", _optionsState.IsSoundFxOn ? _soundValues[0] : _soundValues[1] },
             { "Back", "" }
         };
     }
@@ -64,12 +64,12 @@ public class OptionsScreen
             {
                 case ConsoleKey.LeftArrow:
                     ChangeOptionValue(_options.ElementAt(selectedIndex).Key, _options, -1);
-                    OptionsManager.SaveOptions(_gameState);
+                    OptionsManager.SaveOptions(_optionsState);
                     break;
 
                 case ConsoleKey.RightArrow:
                     ChangeOptionValue(_options.ElementAt(selectedIndex).Key, _options, 1);
-                    OptionsManager.SaveOptions(_gameState);
+                    OptionsManager.SaveOptions(_optionsState);
                     break;
 
                 case ConsoleKey.UpArrow:
@@ -81,7 +81,7 @@ public class OptionsScreen
                     break;
 
                 case ConsoleKey.Enter:
-                    OptionsManager.SaveOptions(_gameState);
+                    OptionsManager.SaveOptions(_optionsState);
 
                     if (selectedIndex == 0)
                         _gameEngineConsole.Play();
@@ -104,7 +104,7 @@ public class OptionsScreen
                 var currentIndex = _gameModeValues.IndexOf(value);
                 var newIndex = (currentIndex + change + _gameModeValues.Count) % _gameModeValues.Count;
                 options[optionKey] = _gameModeValues[newIndex];
-                _gameState.GameMode =
+                _optionsState.GameMode =
                     typeof(GameMode).GetEnumValuesAsUnderlyingType().Cast<GameMode>().ElementAt(newIndex);
                 break;
             }
@@ -113,13 +113,13 @@ public class OptionsScreen
                 var currentIndex = _difficultyValues.IndexOf(value);
                 var newIndex = (currentIndex + change + _difficultyValues.Count) % _difficultyValues.Count;
                 options[optionKey] = _difficultyValues[newIndex];
-                _gameState.MazeDifficulty =
+                _optionsState.MazeDifficulty =
                     typeof(MazeDifficulty).GetEnumValuesAsUnderlyingType().Cast<MazeDifficulty>().ElementAt(newIndex);
 
-                if (currentIndex == 4 && _gameState.MazeDifficulty != MazeDifficulty.AsciiInsanity)
+                if (currentIndex == 4 && _optionsState.MazeDifficulty != MazeDifficulty.AsciiInsanity)
                     ChangeTextStyle(0);
 
-                if (_gameState.MazeDifficulty == MazeDifficulty.AsciiInsanity)
+                if (_optionsState.MazeDifficulty == MazeDifficulty.AsciiInsanity)
                     ChangeTextStyle(1);
                 break;
             }
@@ -128,9 +128,9 @@ public class OptionsScreen
                 var currentIndex = _soundValues.IndexOf(value);
                 var newIndex = (currentIndex + change + _soundValues.Count) % _soundValues.Count;
                 options[optionKey] = _soundValues[newIndex];
-                _gameState.IsSoundOn = !_gameState.IsSoundOn;
+                _optionsState.IsSoundOn = !_optionsState.IsSoundOn;
 
-                switch (_gameState.IsSoundOn)
+                switch (_optionsState.IsSoundOn)
                 {
                     case false:
                         MazeRunnerConsole.BackgroundSoundManager.StopBackgroundMusic();
@@ -147,7 +147,7 @@ public class OptionsScreen
                 var currentIndex = _soundValues.IndexOf(value);
                 var newIndex = (currentIndex + change + _soundValues.Count) % _soundValues.Count;
                 options[optionKey] = _soundValues[newIndex];
-                _gameState.IsSoundFxOn = !_gameState.IsSoundFxOn;
+                _optionsState.IsSoundFxOn = !_optionsState.IsSoundFxOn;
 
                 break;
             }
@@ -155,7 +155,7 @@ public class OptionsScreen
             {
                 var currentIndex = _textStyleValues.IndexOf(value);
                 var newIndex = (currentIndex + change + _textStyleValues.Count) % _textStyleValues.Count;
-                ChangeTextStyle(_gameState.MazeDifficulty == MazeDifficulty.AsciiInsanity ? 1 : newIndex);
+                ChangeTextStyle(_optionsState.MazeDifficulty == MazeDifficulty.AsciiInsanity ? 1 : newIndex);
                 break;
             }
         }
@@ -163,7 +163,7 @@ public class OptionsScreen
 
     private void ChangeTextStyle(int style) // 0 for unicode, 1 for ascii
     {
-        _gameState.IsUtf8 = style == 0;
-        _options["Text Style"] = _gameState.IsUtf8 ? "Unicode" : "ASCII";
+        _optionsState.IsUtf8 = style == 0;
+        _options["Text Style"] = _optionsState.IsUtf8 ? "Unicode" : "ASCII";
     }
 }

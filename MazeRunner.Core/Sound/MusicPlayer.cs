@@ -4,7 +4,7 @@ using NLayer.NAudioSupport;
 
 namespace Reveche.MazeRunner.Sound;
 
-public class MusicPlayer(GameState gameState)
+public class MusicPlayer(OptionsState optionsState)
 {
     private readonly List<(string soundName, int length)> _mp3Resources = new()
     {
@@ -16,7 +16,7 @@ public class MusicPlayer(GameState gameState)
     {
         var random = new Random();
 
-        while (!cancellationToken.IsCancellationRequested && gameState.IsSoundOn)
+        while (!cancellationToken.IsCancellationRequested && optionsState.IsSoundOn)
         {
             var randomIndex = random.Next(_mp3Resources.Count);
             using var sound = Assembly.GetExecutingAssembly()
@@ -29,15 +29,15 @@ public class MusicPlayer(GameState gameState)
             }
             else if (OperatingSystem.IsLinux())
             {
-                PlayInLinux(sound, gameState);
+                PlayInLinux(sound, optionsState);
 
                 var mp3ResourceLength = _mp3Resources[randomIndex].length;
-                if (gameState.IsCurrentlyPlaying) Thread.Sleep(mp3ResourceLength);
+                if (optionsState.IsCurrentlyPlaying) Thread.Sleep(mp3ResourceLength);
 
                 // This ensures that unnecessary checks are not done when the game is not playing.
                 var millisecondsPassed = 0;
                 while (!cancellationToken.IsCancellationRequested
-                       && gameState is { IsSoundOn: true, IsCurrentlyPlaying: false }
+                       && optionsState is { IsSoundOn: true, IsCurrentlyPlaying: false }
                        && millisecondsPassed < mp3ResourceLength)
                 {
                     millisecondsPassed += 500;
@@ -61,9 +61,9 @@ public class MusicPlayer(GameState gameState)
         while (outputDevice.PlaybackState == PlaybackState.Playing) Thread.Sleep(1000);
     }
 
-    public static void PlayInLinux(Stream sound, GameState gameState)
+    public static void PlayInLinux(Stream sound, OptionsState optionsState)
     {
-        var audioPlaybackEngineLinux = new MusicPlayerLinux(gameState);
+        var audioPlaybackEngineLinux = new MusicPlayerLinux(optionsState);
         audioPlaybackEngineLinux.PlaySound(sound);
     }
 

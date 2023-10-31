@@ -36,10 +36,10 @@ public partial class GameRenderer
     {
         return classicState.PlayerLife switch
         {
-            2 => gameState.IsUtf8 ? "😐" : "P",
-            1 => gameState.IsUtf8 ? "🤕" : "P",
-            0 => gameState.IsUtf8 ? "👻" : "X",
-            _ => gameState.IsUtf8 ? "😀" : "P"
+            2 => optionsState.IsUtf8 ? "😐" : "P",
+            1 => optionsState.IsUtf8 ? "🤕" : "P",
+            0 => optionsState.IsUtf8 ? "👻" : "X",
+            _ => optionsState.IsUtf8 ? "😀" : "P"
         };
     }
 
@@ -50,7 +50,7 @@ public partial class GameRenderer
             .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= classicState.CandleVisibilityRadius
                                    && Math.Abs(y - candleLocation.Item1) <= classicState.CandleVisibilityRadius);
         var isTemporaryVisible = classicState is { PlayerHasIncreasedVisibility: true };
-        var isGameDone = classicState.CurrentLevel > classicState.MaxLevels && gameState.GameMode == GameMode.Classic;
+        var isGameDone = classicState.CurrentLevel > classicState.MaxLevels && optionsState.GameMode == GameMode.Classic;
 
         return distanceToPlayer <= classicState.PlayerVisibilityRadius +
                (isTemporaryVisible ? classicState.IncreasedVisibilityEffectRadius : 0)
@@ -76,7 +76,7 @@ public partial class GameRenderer
 
         string IsUtf8(char icon)
         {
-            if (!gameState.IsUtf8) return icon.ToString();
+            if (!optionsState.IsUtf8) return icon.ToString();
 
             return icon switch
             {
