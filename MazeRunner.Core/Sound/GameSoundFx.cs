@@ -2,19 +2,20 @@
 
 namespace Reveche.MazeRunner.Sound;
 
-public class GameSoundFx(GameState gameState)
+public class GameSoundFx(OptionsState optionsState)
 {
     private const string ResLoc = "Reveche.MazeRunner.Resources.Music.";
     private static readonly string[] SoundFxFiles = 
     {
         "BombExplode.mp3", 
         "BombPlace.mp3",
-        "ItemPickup.mp3"
+        "ItemPickup.mp3",
+        "PlaceItem.mp3"
     };
     
     public void PlayFx(ConsoleGameSoundFx soundFx)
     {
-        if (!gameState.IsSoundFxOn) return;
+        if (!optionsState.IsSoundFxOn) return;
 
         var soundFxThread = new Thread(() =>
         {
@@ -27,7 +28,7 @@ public class GameSoundFx(GameState gameState)
             }
             else if (OperatingSystem.IsLinux())
             {
-                MusicPlayer.PlayInLinux(sound, gameState);
+                MusicPlayer.PlayInLinux(sound, optionsState);
             }
         });
         
@@ -39,5 +40,6 @@ public enum ConsoleGameSoundFx
 {
     BombExplode,
     BombPlace,
-    ItemPickup
+    ItemPickup,
+    PlaceItem
 }

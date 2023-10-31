@@ -12,7 +12,7 @@ public class BackgroundSoundManager
     {
         _musicThread = new Thread(() =>
         {
-            var musicPlayer = new MusicPlayer(MainScreen.GameState);
+            var musicPlayer = new MusicPlayer(MainScreen.OptionsState);
             musicPlayer.PlayBackgroundMusic(_cancellationTokenSource.Token);
         });
 

@@ -1,6 +1,6 @@
 ﻿namespace Reveche.MazeRunner;
 
-public class GameState
+public class OptionsState
 {
     public bool IsSoundOn { get; set; }
     public bool IsSoundFxOn { get; set; }

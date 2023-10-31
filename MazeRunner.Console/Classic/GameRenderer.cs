@@ -3,7 +3,7 @@ using Reveche.MazeRunner.Classic;
 
 namespace Reveche.MazeRunner.Console.Classic;
 
-public partial class GameRenderer(GameState gameState, ClassicEngine classicEngine, ClassicState classicState)
+public partial class GameRenderer(OptionsState optionsState, ClassicEngine classicEngine, ClassicState classicState)
 {
     private StringBuilder DrawInventory()
     {
@@ -44,7 +44,7 @@ public partial class GameRenderer(GameState gameState, ClassicEngine classicEngi
         AppendHorizontalLine();
         AppendEmptyLine();
 
-        switch (gameState.GameMode)
+        switch (optionsState.GameMode)
         {
             case GameMode.Classic:
                 AppendLine($"Level {Math.Min(classicState.CurrentLevel, classicState.MaxLevels)} of {classicState.MaxLevels}");
@@ -117,7 +117,7 @@ public partial class GameRenderer(GameState gameState, ClassicEngine classicEngi
             if (i < mazeBufferLines.Length - 1)
                 combinedBuffer.Append((string?)mazeBufferLines[i]);
             else
-                combinedBuffer.Append(' ', classicState.MazeWidth * (gameState.IsUtf8 ? 2 : 1));
+                combinedBuffer.Append(' ', classicState.MazeWidth * (optionsState.IsUtf8 ? 2 : 1));
 
             combinedBuffer.Append(' ', 2);
 

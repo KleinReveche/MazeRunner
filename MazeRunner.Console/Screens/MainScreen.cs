@@ -24,24 +24,65 @@ public static class MainScreen
                                   ╚═╝░░╚═╝░╚═════╝░╚═╝░░╚══╝╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝
                                   """;
 
-    public static readonly int CenterX = (System.Console.WindowWidth - Runner.Split('\n')[0].Length) / 2;
+    private const string About = """
+                                 Credits
+                                 --------
+                                 Created by Klein Reveche.
+                                 Version 1.0.0
 
-    internal static GameState GameState = OptionsManager.LoadOptions();
+                                 Music
+                                 --------
+                                 8-bit Air Fight by moodmode from Pixabay
+                                 Bit Beats 3 by XtremeFreddy from Pixabay
+                                 Other sound effects from Pixabay
+
+                                 © 2023 Klein Reveche. All rights reserved.
+                                 """;
+    
+    private const string HowToPlay = """
+                                      How to Play
+                                      -----------
+                                      Use the arrow keys to move the runner.
+                                      Go to the door to advance to the next level.
+                                      Avoid the enemies.
+
+                                      Controls:
+                                      - Arrow Keys or WASD Keys to move player.
+                                      - Place a bomb with the B Key. It will detonate after 2 turns.
+                                      - Place a candle with the C Key. It has a 3x3 range and will last for the current level.
+                                      - Note: The bomb and candle will be placed on the last position of the player.
+
+                                      Game Modes:
+                                      - Classic: Play through 6 levels of increasing difficulty.
+                                      - Endless: Play through endless levels of increasing difficulty.
+
+                                      Difficulty:
+                                      - Easy: 4 levels on Classic, High visibility, more starting items.
+                                      - Normal: 5 levels on Classic, Normal visibility, normal starting items.
+                                      - Hard: 5 levels on Classic, Reduced visibility, less starting items.
+                                      - Insanity: 6 levels on Classic, Almost no visibility, least starting items.
+                                      - ASCII Insanity: Same with Insanity but a forced ASCII Look.
+                                      """;
+
+    private static readonly string Separator = OperatingSystem.IsWindows() ? "\r\n" : "\n";
+    public static readonly int CenterX = (System.Console.WindowWidth - Runner.Split(Separator)[0].Length) / 2;
+
+    internal static OptionsState OptionsState = OptionsManager.LoadOptions();
     private static ClassicState _classicState = new();
-    private static GameEngineConsole _gameEngineConsole = new(GameState, _classicState);
-    private static OptionsScreen _optionsScreen = new(_gameEngineConsole, GameState);
+    private static GameEngineConsole _gameEngineConsole = new(OptionsState, _classicState);
+    private static OptionsScreen _optionsScreen = new(_gameEngineConsole, OptionsState);
 
     public static void DisplayTitle()
     {
         var buffer = new StringBuilder();
         System.Console.ForegroundColor = ConsoleColor.White;
-        foreach (var line in Maze.Split('\n'))
+        foreach (var line in Maze.Split(Separator))
         {
             buffer.Append(' ', CenterX + 8);
             buffer.AppendLine(line);
         }
 
-        foreach (var line in Runner.Split('\n'))
+        foreach (var line in Runner.Split(Separator))
         {
             buffer.Append(' ', CenterX);
             buffer.AppendLine(line);
@@ -59,31 +100,32 @@ public static class MainScreen
         if (_classicState.CurrentLevel > _classicState.MaxLevels || _classicState.PlayerLife <= 0)
         {
             _classicState = new ClassicState();
-            _optionsScreen = new OptionsScreen(new GameEngineConsole(GameState, _classicState),GameState);
+            _optionsScreen = new OptionsScreen(new GameEngineConsole(OptionsState, _classicState),OptionsState);
         }
 
         if (ClassicSaveManager.ClassicSaveFileExists())
         {
             _classicState = ClassicSaveManager.LoadCurrentSave();
-            _gameEngineConsole = new GameEngineConsole(GameState, _classicState);
-            GameState.IsGameOngoing = true;
+            _gameEngineConsole = new GameEngineConsole(OptionsState, _classicState);
+            OptionsState.IsGameOngoing = true;
         }
         
         if (!ClassicSaveManager.ClassicSaveFileExists())
         {
-            _optionsScreen = new OptionsScreen(new GameEngineConsole(GameState, _classicState), GameState);
-            _gameEngineConsole = new GameEngineConsole(GameState, _classicState);
-            GameState.IsGameOngoing = false;
+            _optionsScreen = new OptionsScreen(new GameEngineConsole(OptionsState, _classicState), OptionsState);
+            _gameEngineConsole = new GameEngineConsole(OptionsState, _classicState);
+            OptionsState.IsGameOngoing = false;
         }
 
         Dictionary<string, Action> menuOptions = new()
         {
             { "Continue", () => _gameEngineConsole.Play() },
-            { "Start", () =>
+            { 
+                "Start", () =>
                 {
-                    GameState = OptionsManager.LoadOptions();
+                    OptionsState = OptionsManager.LoadOptions();
                     _classicState = new ClassicState();
-                    _optionsScreen = new OptionsScreen(new GameEngineConsole(GameState, _classicState), GameState);
+                    _optionsScreen = new OptionsScreen(new GameEngineConsole(OptionsState, _classicState), OptionsState);
                     _optionsScreen.DisplayOptions();
                 } 
             },
@@ -94,11 +136,12 @@ public static class MainScreen
                     leaderboardScreen.ShowScreen();
                 }
             },
-            { "Credits", ShowCreditsScreen },
+            { "How to Play", () => ShowTextScreen(HowToPlay, -12) },
+            { "Credits", () => ShowTextScreen(About, 8) },
             { "Quit", () => Environment.Exit(0) }
         };
 
-        if (!GameState.IsGameOngoing)
+        if (!OptionsState.IsGameOngoing)
             menuOptions.Remove("Continue");
         
         var selectedIndex = 0;
@@ -116,7 +159,7 @@ public static class MainScreen
             {
                 var option = optionKeys[i];
 
-                if (GameState.IsGameOngoing && option == "Start")
+                if (OptionsState.IsGameOngoing && option == "Start")
                     option = "New Game";
                 
                 buffer.Append(' ', CenterX + 20);
@@ -152,28 +195,14 @@ public static class MainScreen
         }
     }
 
-    private static void ShowCreditsScreen()
+    private static void ShowTextScreen(string text, int padding = 0)
     {
-        const string about = """
-                             Credits
-                             --------
-                             Created by Klein Reveche.
-                             Version 0.5.0
-
-                             Music
-                             --------
-                             8-bit Air Fight by moodmode from Pixabay
-                             Bit Beats 3 by XtremeFreddy from Pixabay
-
-                             © 2023 Klein Reveche. All rights reserved.
-                             """;
-
         System.Console.Clear();
         DisplayTitle();
 
-        foreach (var line in about.Split('\n'))
+        foreach (var line in text.Split(Separator))
         {
-            System.Console.SetCursorPosition(CenterX + 8, System.Console.CursorTop);
+            System.Console.SetCursorPosition(CenterX + padding, System.Console.CursorTop);
             System.Console.WriteLine(line);
         }
 

@@ -5,7 +5,7 @@ using Reveche.MazeRunner.Serializable;
 
 namespace Reveche.MazeRunner.Sound;
 
-public class MusicPlayerLinux(GameState gameState) : IDisposable
+public class MusicPlayerLinux(OptionsState optionsState) : IDisposable
 {
 
     public void Dispose()
@@ -24,9 +24,9 @@ public class MusicPlayerLinux(GameState gameState) : IDisposable
         }
         catch
         {
-            gameState.IsSoundOn = false;
-            gameState.IsSoundFxOn = false;
-            OptionsManager.SaveOptions(gameState);
+            optionsState.IsSoundOn = false;
+            optionsState.IsSoundFxOn = false;
+            OptionsManager.SaveOptions(optionsState);
         }
     }
 

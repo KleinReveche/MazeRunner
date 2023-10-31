@@ -16,15 +16,19 @@ public partial class ClassicEngine
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (key)
         {
+            case ConsoleKey.W:
             case ConsoleKey.UpArrow:
                 newPlayerY--;
                 break;
+            case ConsoleKey.S:
             case ConsoleKey.DownArrow:
                 newPlayerY++;
                 break;
+            case ConsoleKey.A:
             case ConsoleKey.LeftArrow:
                 newPlayerX--;
                 break;
+            case ConsoleKey.D:
             case ConsoleKey.RightArrow:
                 newPlayerX++;
                 break;
@@ -43,7 +47,11 @@ public partial class ClassicEngine
 
         if (placeCandle)
         {
-            if (classicState.CandleCount == 0) return false;
+            if (classicState.CandleCount == 0 ||
+                classicState.CandleLocations.Any(candleLocation =>
+                    candleLocation.Item2 == LastPlayerX && candleLocation.Item1 == LastPlayerY) ||
+                (LastPlayerX == 0 && LastPlayerY == 0)) return false;
+            _gameSoundFx.PlayFx(ConsoleGameSoundFx.PlaceItem);
             classicState.CandleCount--;
             classicState.CandleLocations.Add((LastPlayerY, LastPlayerX));
             return true;
