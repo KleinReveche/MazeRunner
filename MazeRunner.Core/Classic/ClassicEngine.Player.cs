@@ -16,15 +16,19 @@ public partial class ClassicEngine
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (key)
         {
+            case ConsoleKey.W:
             case ConsoleKey.UpArrow:
                 newPlayerY--;
                 break;
+            case ConsoleKey.S:
             case ConsoleKey.DownArrow:
                 newPlayerY++;
                 break;
+            case ConsoleKey.A:
             case ConsoleKey.LeftArrow:
                 newPlayerX--;
                 break;
+            case ConsoleKey.D:
             case ConsoleKey.RightArrow:
                 newPlayerX++;
                 break;
