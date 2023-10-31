@@ -9,7 +9,8 @@ public class GameSoundFx(OptionsState optionsState)
     {
         "BombExplode.mp3", 
         "BombPlace.mp3",
-        "ItemPickup.mp3"
+        "ItemPickup.mp3",
+        "PlaceItem.mp3"
     };
     
     public void PlayFx(ConsoleGameSoundFx soundFx)
@@ -39,5 +40,6 @@ public enum ConsoleGameSoundFx
 {
     BombExplode,
     BombPlace,
-    ItemPickup
+    ItemPickup,
+    PlaceItem
 }

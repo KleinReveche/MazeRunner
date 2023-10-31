@@ -47,7 +47,9 @@ public partial class ClassicEngine
 
         if (placeCandle)
         {
-            if (classicState.CandleCount == 0) return false;
+            if (classicState.CandleCount == 0 || classicState.CandleLocations.Any(candleLocation =>
+                candleLocation.Item2 == newPlayerX && candleLocation.Item1 == newPlayerY)) return false;
+            _gameSoundFx.PlayFx(ConsoleGameSoundFx.PlaceItem);
             classicState.CandleCount--;
             classicState.CandleLocations.Add((LastPlayerY, LastPlayerX));
             return true;
