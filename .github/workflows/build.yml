@@ -49,13 +49,30 @@ jobs:
       run: |
         tag=$(git rev-parse --short HEAD)
         release_name="MazeRunner-$tag-${{ matrix.target }}"
-
+        
+        if [ "${{ matrix.target }}" == "win-x64" ]; then
+          csproj="${{ github.workspace }}\MazeRunner.Console\MazeRunner.Console.csproj"
+        else
+          csproj="${{ github.workspace }}/MazeRunner.Console/MazeRunner.Console.csproj"
+        fi
+        
         # Build everything
-        dotnet publish MazeRunner.Console/MazeRunner.Console.csproj --runtime "${{ matrix.target }}" -c Release -p:PublishSingleFile=true --self-contained true -p:PublishTrimmed=true  -o "release/$release_name"
+        dotnet publish "$csproj" --runtime "${{ matrix.target }}" -c Release --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:DebugType=None -p:DebugSymbols=false -o "$release_name"
+        
+        # Move and rename the executable to a release folder
+        mkdir release
+        
+        # Set environment variable from the release name
         echo "release_name=$release_name" >> $GITHUB_ENV
+        
+        if [ "${{ matrix.target }}" == "win-x64" ]; then
+          mv "./$release_name/MazeRunner.Console.exe" "./release/$release_name.exe"
+        else
+          mv "./$release_name/MazeRunner.Console" "./release/$release_name"
+        fi
 
     - name: Upload 
       uses: actions/upload-artifact@v3
       with:
-        name: MazeRunner.Console
-        path: release/${{ env.release_name }}
+        name: MazeRunner
+        path: release/*
