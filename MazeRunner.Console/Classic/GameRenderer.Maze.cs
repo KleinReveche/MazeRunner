@@ -63,6 +63,8 @@ public partial class GameRenderer
             .Any(candleLocation => x == candleLocation.CandleX && y == candleLocation.candleY);
         var isTreasure = classicState.TreasureLocations
             .Any(treasureLocation => x == treasureLocation.treasureX && y == treasureLocation.treasureY);
+        var isBomb = classicState.BombLocations
+            .Any(bombLocation => x == bombLocation.bombX && y == bombLocation.bombY);
 
         if (!isCellVisible) return classicState.PlayerLife == 0 ? IsUtf8(MazeIcons.LostFog) : IsUtf8(MazeIcons.Fog);
 
@@ -72,7 +74,8 @@ public partial class GameRenderer
 
         if (classicEngine.CheckEnemyCollision(x, y) && classicState.CurrentLevel != 1) return IsUtf8(MazeIcons.Enemy);
 
-        return isCandle ? IsUtf8(MazeIcons.Candle) : IsUtf8(isTreasure ? MazeIcons.Treasure : Maze[y, x]);
+        if (isCandle) return IsUtf8(MazeIcons.Candle);
+        return isTreasure ? IsUtf8(MazeIcons.Treasure) : IsUtf8(isBomb ? MazeIcons.Bomb : Maze[y, x]);
 
         string IsUtf8(char icon)
         {
