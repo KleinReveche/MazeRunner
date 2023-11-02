@@ -81,13 +81,13 @@ public class ConsoleClassicGame
 
     private void Draw()
     {
-        _classicEngine.BombSequence(out _);
+        _classicEngine.BombSequence(out var isPlayerDeadByBomb);
         Clear();
         Write(_gameRenderer.DrawCombinedBuffer());
 
         _classicEngine.CheckPlayerEnemyCollision(out var isPlayerDead);
 
-        if (isPlayerDead) WriteLine("You died!");
+        if (isPlayerDead || isPlayerDeadByBomb) WriteLine("You died!");
         if (_classicState.CurrentLevel != 1) _classicEngine.MoveAllEnemies();
         _shouldRedraw = false;
     }
