@@ -11,8 +11,6 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
     private int PlayerY => classicState.PlayerY;
     private int LastPlayerX { get; set; }
     private int LastPlayerY { get; set; }
-    private int BombX { get; set; }
-    private int BombY { get; set; }
     private char[,] Maze => classicState.Maze;
 
     public void InitializeNewLevel()
@@ -20,7 +18,7 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
         if (classicState.PlayerHasIncreasedVisibility)
             classicState.PlayerHasIncreasedVisibility = false;
         classicState.CandleLocations.Clear();
-        classicState.BombIsUsed = false;
+        classicState.BombLocations.Clear();
         classicState.MazeHeight = _mazeGen.GenerateRandomMazeSize();
         classicState.MazeWidth = _mazeGen.GenerateRandomMazeSize();
         _mazeGen.InitializeMaze();

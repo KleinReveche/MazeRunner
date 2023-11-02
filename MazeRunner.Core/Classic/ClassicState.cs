@@ -9,6 +9,7 @@ public class ClassicState
     public List<(int enemyY, int enemyX)> EnemyLocations = new();
     public List<(int treasureY, int treasureX, TreasureType treasureType, int count)>
         TreasureLocations = new();
+    public List<(int bombY, int bombX, int timer)> BombLocations = new();
 
     public ClassicState()
     {
@@ -22,8 +23,6 @@ public class ClassicState
     public int PlayerLife { get; set; } = 3;
     public int BombCount { get; set; } = 2;
     public int CandleCount { get; set; } = 4;
-    public bool BombIsUsed { get; set; }
-    public int BombTimer { get; set; } = 2;
     public int PlayerInvincibilityEffectDuration { get; set; }
     public bool IsPlayerInvulnerable { get; set; }
     public bool PlayerHasIncreasedVisibility { get; set; }

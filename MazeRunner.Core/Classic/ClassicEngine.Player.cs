@@ -57,14 +57,11 @@ public partial class ClassicEngine
             return true;
         }
 
-        if (placeBomb && classicState is { BombCount: > 0, BombIsUsed: false })
+        if (placeBomb && classicState is { BombCount: > 0})
         {
             classicState.BombCount--;
-            classicState.Maze[LastPlayerY, LastPlayerX] = MazeIcons.Bomb;
-            BombX = LastPlayerX;
-            BombY = LastPlayerY;
-
-            BombSequence(out isPlayerDead, true);
+            classicState.BombLocations.Add((LastPlayerY, LastPlayerX, 2));
+            _gameSoundFx.PlayFx(ConsoleGameSoundFx.BombPlace);
             return true;
         }
 
@@ -143,42 +140,43 @@ public partial class ClassicEngine
         classicState.TreasureLocations.Remove(treasure);
     }
 
-    public void BombSequence(out bool isPlayerDead, bool startBomb = false)
+    public void BombSequence(out bool isPlayerDead)
     {
         isPlayerDead = false;
-        if (startBomb)
+        
+        for (var bombIndex = 0; bombIndex < classicState.BombLocations.Count; bombIndex++)
         {
-            _gameSoundFx.PlayFx(ConsoleGameSoundFx.BombPlace);
-            classicState.BombIsUsed = true;
-            classicState.BombTimer = 3;
-            return;
-        }
+            var bomb = classicState.BombLocations[bombIndex];
 
-        if (classicState.BombTimer > 0)
-            classicState.BombTimer--;
-
-        if (classicState is not { BombIsUsed: true, BombTimer: 0 }) return;
-        _gameSoundFx.PlayFx(ConsoleGameSoundFx.BombExplode);
-        for (var y = -BlastRadius; y <= BlastRadius; y++)
-        for (var x = -BlastRadius; x <= BlastRadius; x++)
-        {
-            var playerIsInvulnerable = classicState.IsPlayerInvulnerable;
-            if (BombX + x == PlayerX && BombY + y == PlayerY && !playerIsInvulnerable)
+            if (bomb.timer > 0)
             {
-                classicState.PlayerLife--;
-                isPlayerDead = true;
+                var newBombTimer = bomb.timer - 1;
+                classicState.BombLocations[bombIndex] = (bomb.bombY, bomb.bombX, newBombTimer);
+                continue;
             }
-
-            if (CheckEnemyCollision(BombX + x, BombY + y, out (int EnemyX, int EnemyY) enemy))
+            
+            _gameSoundFx.PlayFx(ConsoleGameSoundFx.BombExplode);
+            for (var y = -BlastRadius; y <= BlastRadius; y++)
+            for (var x = -BlastRadius; x <= BlastRadius; x++)
             {
-                classicState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
-                classicState.Score += 20;
+                var playerIsInvulnerable = classicState.IsPlayerInvulnerable;
+                if (bomb.bombX + x == PlayerX && bomb.bombY + y == PlayerY && !playerIsInvulnerable)
+                {
+                    classicState.PlayerLife--;
+                    isPlayerDead = true;
+                }
+
+                if (CheckEnemyCollision(bomb.bombX + x, bomb.bombY + y, out (int EnemyX, int EnemyY) enemy))
+                {
+                    classicState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
+                    classicState.Score += 20;
+                }
+
+                if (_mazeGen.IsInBounds(bomb.bombX + x, bomb.bombY + y))
+                    Maze[bomb.bombY + y, bomb.bombX + x] = MazeIcons.Empty;
             }
-
-            if (_mazeGen.IsInBounds(BombX + x, BombY + y))
-                Maze[BombY + y, BombX + x] = MazeIcons.Empty;
+            
+            classicState.BombLocations.Remove(bomb);
         }
-
-        classicState.BombIsUsed = false;
     }
 }
