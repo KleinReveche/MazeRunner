@@ -20,8 +20,8 @@ public class MusicPlayer(OptionsState optionsState)
         {
             var randomIndex = random.Next(_mp3Resources.Count);
             using var sound = Assembly.GetExecutingAssembly()
-                    .GetManifestResourceStream(
-                        $"Reveche.MazeRunner.Resources.Music.{_mp3Resources[randomIndex].soundName}")!;
+                .GetManifestResourceStream(
+                    $"Reveche.MazeRunner.Resources.Music.{_mp3Resources[randomIndex].soundName}")!;
 
             if (OperatingSystem.IsWindows())
             {

@@ -59,8 +59,9 @@ public class ConsoleClassicGame
 
             var key = ReadKey().Key;
 
-            if (!_classicEngine.PlayerAction(key, out var didPlayerDie, out var isGamePaused) && !isGamePaused) continue;
-            
+            if (!_classicEngine.PlayerAction(key, out var didPlayerDie, out var isGamePaused) &&
+                !isGamePaused) continue;
+
             if (isGamePaused) break;
 
             if (didPlayerDie)
@@ -103,7 +104,7 @@ public class ConsoleClassicGame
         _classicState.PlayerName = ReadLine() ?? "Anonymous";
         if (_classicState.PlayerName.Length == 0) _classicState.PlayerName = "Anonymous";
         if (_classicState.CurrentLevel > _classicState.MaxLevels &&
-            _classicState.PlayerLife > 0  && _optionsState.GameMode == GameMode.Classic)
+            _classicState.PlayerLife > 0 && _optionsState.GameMode == GameMode.Classic)
         {
             WriteLine("Congratulations! You have completed all levels. Press Any Key to exit.");
             _classicState.Score += 100;
@@ -118,7 +119,7 @@ public class ConsoleClassicGame
             SetCursorPosition(_classicState.MazeWidth / 2, _classicState.MazeHeight / 2);
             WriteLine("Game Over!");
         }
-        
+
         ReadKey();
         ClassicSaveManager.DeleteClassicSaveFile();
         MainScreen.StartMenu();

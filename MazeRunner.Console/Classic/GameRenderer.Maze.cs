@@ -50,7 +50,8 @@ public partial class GameRenderer
             .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= classicState.CandleVisibilityRadius
                                    && Math.Abs(y - candleLocation.Item1) <= classicState.CandleVisibilityRadius);
         var isTemporaryVisible = classicState is { PlayerHasIncreasedVisibility: true };
-        var isGameDone = classicState.CurrentLevel > classicState.MaxLevels && optionsState.GameMode == GameMode.Classic;
+        var isGameDone = classicState.CurrentLevel > classicState.MaxLevels &&
+                         optionsState.GameMode == GameMode.Classic;
 
         return distanceToPlayer <= classicState.PlayerVisibilityRadius +
                (isTemporaryVisible ? classicState.IncreasedVisibilityEffectRadius : 0)

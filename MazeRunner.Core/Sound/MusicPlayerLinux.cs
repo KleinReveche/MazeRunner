@@ -7,7 +7,6 @@ namespace Reveche.MazeRunner.Sound;
 
 public class MusicPlayerLinux(OptionsState optionsState) : IDisposable
 {
-
     public void Dispose()
     {
         GC.SuppressFinalize(this);
@@ -16,7 +15,7 @@ public class MusicPlayerLinux(OptionsState optionsState) : IDisposable
     public void PlaySound(Stream sound)
     {
         var waveStream = ConvertToWaveFormat(sound);
-        
+
         try
         {
             using var alsaDevice = AlsaDeviceBuilder.Create(new SoundDeviceSettings());
@@ -35,7 +34,7 @@ public class MusicPlayerLinux(OptionsState optionsState) : IDisposable
         var outfile = new MemoryStream();
         using var reader = new Mp3FileReaderBase(stream, wf => new Mp3FrameDecompressor(wf));
         WaveFileWriter.WriteWavFileToStream(outfile, reader);
-        
+
         return outfile;
     }
 }

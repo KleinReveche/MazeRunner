@@ -120,7 +120,7 @@ public class LeaderboardScreen
     {
         var padding = (int)(MainScreen.CenterX * 1.75) / 2;
         LeaderboardBuffer.Clear();
-        
+
         var rowFormat = new string(' ', padding) + "│ {0,-" + _namePadding + "} │ {1,-"
                         + _scorePadding + "} │ {2,-"
                         + _difficultyPadding + "} │ {3,-"
@@ -138,10 +138,8 @@ public class LeaderboardScreen
         LeaderboardBuffer.AppendLine(string.Format(lineFormat, "├", "┼", "┼", "┼", "┼", "┤"));
 
         foreach (var score in _leaderboard)
-        {
             LeaderboardBuffer.AppendLine(string.Format(rowFormat, score.Name, score.Score, score.MazeDifficulty,
                 score.GameMode, score.CompletedLevels));
-        }
 
         LeaderboardBuffer.AppendLine(string.Format(lineFormat, "└", "┴", "┴", "┴", "┴", "┘"));
     }

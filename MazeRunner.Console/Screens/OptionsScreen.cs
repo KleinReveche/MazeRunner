@@ -8,8 +8,8 @@ public class OptionsScreen
     private readonly List<string> _difficultyValues = new() { "Easy", "Normal", "Hard", "Insanity", "ASCII Insanity" };
     private readonly GameEngineConsole _gameEngineConsole;
     private readonly List<string> _gameModeValues = new() { "Classic", "Endless" };
-    private readonly OptionsState _optionsState;
     private readonly Dictionary<string, string> _options;
+    private readonly OptionsState _optionsState;
     private readonly List<string> _soundValues = new() { "On", "Off" };
     private readonly List<string> _textStyleValues = new() { "Unicode", "ASCII" };
 

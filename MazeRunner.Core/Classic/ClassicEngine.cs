@@ -5,8 +5,8 @@ namespace Reveche.MazeRunner.Classic;
 public partial class ClassicEngine(OptionsState optionsState, ClassicState classicState)
 {
     private const int BlastRadius = 1;
-    private readonly MazeGen _mazeGen = new(classicState);
     private readonly GameSoundFx _gameSoundFx = new(optionsState);
+    private readonly MazeGen _mazeGen = new(classicState);
     private int PlayerX => classicState.PlayerX;
     private int PlayerY => classicState.PlayerY;
     private int LastPlayerX { get; set; }
@@ -57,9 +57,9 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
             MazeDifficulty.Normal => 2,
             _ => 1
         };
-        
+
         if (optionsState.IsGameOngoing) return;
-        
+
         classicState.BombCount = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 4,

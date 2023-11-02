@@ -39,7 +39,7 @@ public partial class ClassicEngine
                 placeCandle = true;
                 break;
             case ConsoleKey.Escape:
-                
+
                 ClassicSaveManager.SaveCurrentSave(classicState);
                 isGamePaused = true;
                 break;
@@ -59,8 +59,8 @@ public partial class ClassicEngine
 
         var isBombAtNewPosition = classicState.BombLocations.Any(bombLocation =>
             bombLocation.bombX == LastPlayerX && bombLocation.bombY == LastPlayerY);
-        
-        if (placeBomb && !isBombAtNewPosition && classicState is { BombCount: > 0})
+
+        if (placeBomb && !isBombAtNewPosition && classicState is { BombCount: > 0 })
         {
             classicState.BombCount--;
             classicState.BombLocations.Add((LastPlayerY, LastPlayerX, 2));
@@ -146,7 +146,7 @@ public partial class ClassicEngine
     public void BombSequence(out bool isPlayerDead)
     {
         isPlayerDead = false;
-        
+
         for (var bombIndex = 0; bombIndex < classicState.BombLocations.Count; bombIndex++)
         {
             var bomb = classicState.BombLocations[bombIndex];
@@ -157,7 +157,7 @@ public partial class ClassicEngine
                 classicState.BombLocations[bombIndex] = (bomb.bombY, bomb.bombX, newBombTimer);
                 continue;
             }
-            
+
             _gameSoundFx.PlayFx(ConsoleGameSoundFx.BombExplode);
             for (var y = -BlastRadius; y <= BlastRadius; y++)
             for (var x = -BlastRadius; x <= BlastRadius; x++)
@@ -178,7 +178,7 @@ public partial class ClassicEngine
                 if (_mazeGen.IsInBounds(bomb.bombX + x, bomb.bombY + y))
                     Maze[bomb.bombY + y, bomb.bombX + x] = MazeIcons.Empty;
             }
-            
+
             classicState.BombLocations.Remove(bomb);
         }
     }
