@@ -57,7 +57,10 @@ public partial class ClassicEngine
             return true;
         }
 
-        if (placeBomb && classicState is { BombCount: > 0})
+        var isBombAtNewPosition = classicState.BombLocations.Any(bombLocation =>
+            bombLocation.bombX == LastPlayerX && bombLocation.bombY == LastPlayerY);
+        
+        if (placeBomb && !isBombAtNewPosition && classicState is { BombCount: > 0})
         {
             classicState.BombCount--;
             classicState.BombLocations.Add((LastPlayerY, LastPlayerX, 2));
