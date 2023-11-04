@@ -5,7 +5,28 @@ namespace Reveche.MazeRunner.Classic;
 public partial class ClassicEngine(OptionsState optionsState, ClassicState classicState)
 {
     private const int BlastRadius = 1;
+
+    private readonly double _difficultyModifier = classicState.MazeDifficulty switch
+    {
+        MazeDifficulty.Hard => 1.2,
+        MazeDifficulty.Insanity => 1.3,
+        MazeDifficulty.AsciiInsanity => 1.4,
+        _ => 1
+    };
+
     private readonly GameSoundFx _gameSoundFx = new(optionsState);
+
+    private readonly double _higherLevelModifier = classicState.CurrentLevel switch
+    {
+        > 10 => 1.5,
+        10 => 1.0,
+        9 => 0.9,
+        8 => 0.5,
+        7 => 0.3,
+        6 => 0.1,
+        _ => 0
+    };
+
     private readonly MazeGen _mazeGen = new(classicState);
     private int PlayerX => classicState.PlayerX;
     private int PlayerY => classicState.PlayerY;
@@ -99,5 +120,6 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
         var timeScore = maxTime - (int)(DateTime.Now - levelStartTime).TotalSeconds;
 
         classicState.Score += timeScore < 0 ? 0 : timeScore;
+        classicState.Score += (int)(50 * (_difficultyModifier + _higherLevelModifier)); // For completing the level
     }
 }

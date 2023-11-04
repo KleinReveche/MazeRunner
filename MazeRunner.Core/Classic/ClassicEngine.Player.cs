@@ -138,9 +138,10 @@ public partial class ClassicEngine
         }
 
         _gameSoundFx.PlayFx(ConsoleGameSoundFx.ItemPickup);
-        classicState.Score += treasure.count *
-                              ((int)treasure.treasureType +
-                               (treasure.treasureType == TreasureType.Bomb ? 1 : 0));
+        classicState.Score += (int)(treasure.count *
+                                    ((int)treasure.treasureType +
+                                     (treasure.treasureType == TreasureType.Bomb ? 1 : 0) *
+                                     (_difficultyModifier + _higherLevelModifier)));
         classicState.TreasureLocations.Remove(treasure);
     }
 
@@ -173,7 +174,7 @@ public partial class ClassicEngine
                 if (CheckEnemyCollision(bomb.bombX + x, bomb.bombY + y, out (int EnemyX, int EnemyY) enemy))
                 {
                     classicState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
-                    classicState.Score += 20;
+                    classicState.Score += (int)(20 * (_difficultyModifier + _higherLevelModifier));
                 }
 
                 if (_mazeGen.IsInBounds(bomb.bombX + x, bomb.bombY + y))
