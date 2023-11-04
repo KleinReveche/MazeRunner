@@ -6,6 +6,7 @@ public partial class ClassicEngine
 {
     public bool PlayerAction(ConsoleKey key, out bool isPlayerDead, out bool isGamePaused)
     {
+        Console.Write("\b \b"); // To remove input key from showing on screen
         isGamePaused = false;
         isPlayerDead = false;
         var placeBomb = false;
