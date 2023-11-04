@@ -53,7 +53,7 @@ public partial class ClassicEngine
                 break;
         }
 
-        _gameSoundFx.PlayFx(ConsoleGameSoundFx.ItemPickup);
+        _gameSoundFx.PlayFx(SoundFx.ItemPickup);
         classicState.Score += (int)(treasure.count *
                                     ((int)treasure.treasureType +
                                      (treasure.treasureType == TreasureType.Bomb ? 1 : 0) *
@@ -76,7 +76,7 @@ public partial class ClassicEngine
                 continue;
             }
 
-            _gameSoundFx.PlayFx(ConsoleGameSoundFx.BombExplode);
+            _gameSoundFx.PlayFx(SoundFx.BombExplode);
             for (var y = -BlastRadius; y <= BlastRadius; y++)
             for (var x = -BlastRadius; x <= BlastRadius; x++)
             {

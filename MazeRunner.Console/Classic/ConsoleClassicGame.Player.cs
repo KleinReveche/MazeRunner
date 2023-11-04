@@ -61,7 +61,7 @@ public partial class ConsoleClassicGame
                 _classicState.CandleLocations.Any(candleLocation =>
                     candleLocation.Item2 == LastPlayerX && candleLocation.Item1 == LastPlayerY) ||
                 (LastPlayerX == 0 && LastPlayerY == 0)) return false;
-            _gameSoundFx.PlayFx(ConsoleGameSoundFx.PlaceItem);
+            _gameSoundFx.PlayFx(SoundFx.PlaceItem);
             _classicState.CandleCount--;
             _classicState.CandleLocations.Add((LastPlayerY, LastPlayerX));
             return true;
@@ -74,7 +74,7 @@ public partial class ConsoleClassicGame
         {
             _classicState.BombCount--;
             _classicState.BombLocations.Add((LastPlayerY, LastPlayerX, 2));
-            _gameSoundFx.PlayFx(ConsoleGameSoundFx.BombPlace);
+            _gameSoundFx.PlayFx(SoundFx.BombPlace);
             return true;
         }
 

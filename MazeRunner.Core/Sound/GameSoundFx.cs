@@ -14,7 +14,7 @@ public class GameSoundFx(OptionsState optionsState)
         "PlaceItem.mp3"
     };
 
-    public void PlayFx(ConsoleGameSoundFx soundFx)
+    public void PlayFx(SoundFx soundFx)
     {
         if (!optionsState.IsSoundFxOn) return;
 
@@ -32,7 +32,7 @@ public class GameSoundFx(OptionsState optionsState)
     }
 }
 
-public enum ConsoleGameSoundFx
+public enum SoundFx
 {
     BombExplode,
     BombPlace,
