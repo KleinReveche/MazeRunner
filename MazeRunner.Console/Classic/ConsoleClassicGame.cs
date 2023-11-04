@@ -1,11 +1,12 @@
 ﻿using Reveche.MazeRunner.Classic;
 using Reveche.MazeRunner.Console.Screens;
 using Reveche.MazeRunner.Serializable;
+using Reveche.MazeRunner.Sound;
 using static System.Console;
 
 namespace Reveche.MazeRunner.Console.Classic;
 
-public class ConsoleClassicGame
+public partial class ConsoleClassicGame
 {
     private readonly ClassicEngine _classicEngine;
     private readonly ClassicState _classicState;
@@ -13,6 +14,7 @@ public class ConsoleClassicGame
     private readonly OptionsState _optionsState;
     private readonly ScoreList _scoreList = ScoreManager.LoadScores();
     private readonly ScoreManager _scoreManager;
+    private readonly GameSoundFx _gameSoundFx;
     private bool _levelIsCompleted = true;
     private bool _shouldRedraw = true;
 
@@ -21,6 +23,7 @@ public class ConsoleClassicGame
         _optionsState = optionsState;
         _classicEngine = classicEngine;
         _classicState = classicState;
+        _gameSoundFx = new GameSoundFx(_optionsState);
         _gameRenderer = new GameRenderer(optionsState, classicEngine, classicState);
         _scoreManager = new ScoreManager(_scoreList);
     }
@@ -59,7 +62,7 @@ public class ConsoleClassicGame
 
             var key = ReadKey().Key;
 
-            if (!_classicEngine.ConsolePlayerAction(key, out var didPlayerDie, out var isGamePaused, out var itemPlaced)
+            if (!PlayerAction(key, out var didPlayerDie, out var isGamePaused, out var itemPlaced)
                 && !isGamePaused) continue;
 
             if (isGamePaused) break;

@@ -30,8 +30,6 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
     private readonly MazeGen _mazeGen = new(classicState);
     private int PlayerX => classicState.PlayerX;
     private int PlayerY => classicState.PlayerY;
-    private int LastPlayerX { get; set; }
-    private int LastPlayerY { get; set; }
     private char[,] Maze => classicState.Maze;
 
     public void InitializeNewLevel()
@@ -97,7 +95,7 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
         };
     }
 
-    private bool IsCellEmpty(int x, int y)
+    public bool IsCellEmpty(int x, int y)
     {
         var maze = classicState.Maze;
         if (x >= 0 && x < maze.GetLength(1) && y >= 0 && y < maze.GetLength(0))
