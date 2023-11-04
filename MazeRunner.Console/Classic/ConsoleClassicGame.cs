@@ -38,7 +38,7 @@ public class ConsoleClassicGame
         {
             if (_levelIsCompleted)
             {
-                _classicEngine.CalculateLevelScore(levelStartTime);
+                if (_classicState.CurrentLevel != 1) _classicEngine.CalculateLevelScore(levelStartTime);
                 levelStartTime = DateTime.Now;
                 _optionsState.IsCurrentlyPlaying = _classicState.CurrentLevel <= _classicState.MaxLevels;
                 if (!continueGame) _classicEngine.InitializeNewLevel();
