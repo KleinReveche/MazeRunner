@@ -59,8 +59,8 @@ public class ConsoleClassicGame
 
             var key = ReadKey().Key;
 
-            if (!_classicEngine.ConsolePlayerAction(key, out var didPlayerDie, out var isGamePaused) &&
-                !isGamePaused) continue;
+            if (!_classicEngine.ConsolePlayerAction(key, out var didPlayerDie, out var isGamePaused, out var itemPlaced)
+                && !isGamePaused) continue;
 
             if (isGamePaused) break;
 
@@ -73,6 +73,8 @@ public class ConsoleClassicGame
 
             if (_classicEngine.CheckForTreasure(out var treasure))
                 PlayerAcquireTreasure(treasure);
+
+            if (_classicState.CurrentLevel != 1 && !itemPlaced) _classicEngine.MoveAllEnemies();
 
             _shouldRedraw = true;
         }
@@ -89,7 +91,6 @@ public class ConsoleClassicGame
         _classicEngine.CheckPlayerEnemyCollision(out var isPlayerDead);
 
         if (isPlayerDead || isPlayerDeadByBomb) WriteLine("You died!");
-        if (_classicState.CurrentLevel != 1) _classicEngine.MoveAllEnemies();
         _shouldRedraw = false;
     }
 

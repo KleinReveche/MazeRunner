@@ -4,11 +4,12 @@ namespace Reveche.MazeRunner.Classic;
 
 public partial class ClassicEngine
 {
-    public bool ConsolePlayerAction(ConsoleKey key, out bool isPlayerDead, out bool isGamePaused)
+    public bool ConsolePlayerAction(ConsoleKey key, out bool isPlayerDead, out bool isGamePaused, out bool isItemPlaced)
     {
         Console.Write("\b \b"); // To remove input key from showing on screen
         isGamePaused = false;
         isPlayerDead = false;
+        isItemPlaced = false;
         var placeBomb = false;
         var placeCandle = false;
         var newPlayerX = classicState.PlayerX;
@@ -35,12 +36,13 @@ public partial class ClassicEngine
                 break;
             case ConsoleKey.B:
                 placeBomb = true;
+                isItemPlaced = true;
                 break;
             case ConsoleKey.C:
                 placeCandle = true;
+                isItemPlaced = true;
                 break;
             case ConsoleKey.Escape:
-
                 ClassicSaveManager.SaveCurrentSave(classicState);
                 isGamePaused = true;
                 break;
