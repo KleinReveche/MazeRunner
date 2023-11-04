@@ -6,54 +6,88 @@ public partial class ClassicEngine
     {
         var random = new Random();
         var enemyCount = classicState.EnemyLocations.Count;
+        var exitX = classicState.ExitX;
+        var exitY = classicState.ExitY;
 
         for (var i = 0; i < enemyCount; i++)
         {
             var enemyLocation = classicState.EnemyLocations[i];
 
+            var playerX = classicState.PlayerX;
+            var playerY = classicState.PlayerY;
             var enemyX = enemyLocation.enemyX;
             var enemyY = enemyLocation.enemyY;
-            var exitX = classicState.ExitX;
-            var exitY = classicState.ExitY;
+            var radius = (int)(3 * (_difficultyModifier + _higherLevelModifier));
+            // Derived from Euclidean distance formula
+            var distance = Math.Sqrt(Math.Pow(playerX - enemyX, 2) + Math.Pow(playerY - enemyY, 2));
 
-            var tries = 5;
-
-            while (tries-- > 0)
+            // Player is within the radius, move towards the player
+            if (distance <= radius)
             {
-                var direction = random.Next(4);
                 var newEnemyX = enemyX;
                 var newEnemyY = enemyY;
+                var deltaX = playerX - enemyX;
+                var deltaY = playerY - enemyY;
 
-                switch (direction)
+                if (Math.Abs(deltaX) > Math.Abs(deltaY))
                 {
-                    case 0:
-                        newEnemyY--;
-                        break;
-                    case 1:
-                        newEnemyY++;
-                        break;
-                    case 2:
-                        newEnemyX--;
-                        break;
-                    case 3:
-                        newEnemyX++;
-                        break;
+                    newEnemyX += Math.Sign(deltaX); // Move in the X direction
+
+                    if (IsCellValid(newEnemyX, enemyY)) enemyLocation.enemyX = newEnemyX;
                 }
+                else
+                {
+                    newEnemyY += Math.Sign(deltaY); // Move in the Y direction
 
-                if (newEnemyX < 0 ||
-                    newEnemyX >= classicState.MazeWidth ||
-                    newEnemyY < 0 ||
-                    newEnemyY >= classicState.MazeHeight ||
-                    (newEnemyX == exitX && newEnemyY == exitY) ||
-                    !IsCellEmpty(newEnemyX, newEnemyY) ||
-                    classicState.EnemyLocations.Any(loc => loc.enemyX == newEnemyX && loc.enemyY == newEnemyY))
-                    continue;
-
-                enemyLocation.enemyX = newEnemyX;
-                enemyLocation.enemyY = newEnemyY;
-                classicState.EnemyLocations[i] = enemyLocation;
-                break;
+                    if (IsCellValid(enemyX, newEnemyY)) enemyLocation.enemyY = newEnemyY;
+                }
             }
+            else
+            {
+                var tries = 6;
+
+                while (tries-- > 0)
+                {
+                    var newEnemyX = enemyX;
+                    var newEnemyY = enemyY;
+                    var direction = random.Next(4);
+
+                    switch (direction)
+                    {
+                        case 0:
+                            newEnemyY--;
+                            break;
+                        case 1:
+                            newEnemyY++;
+                            break;
+                        case 2:
+                            newEnemyX--;
+                            break;
+                        case 3:
+                            newEnemyX++;
+                            break;
+                    }
+
+                    if (!IsCellValid(newEnemyX, newEnemyY)) continue;
+
+                    enemyLocation.enemyX = newEnemyX;
+                    enemyLocation.enemyY = newEnemyY;
+                    break;
+                }
+            }
+
+            classicState.EnemyLocations[i] = enemyLocation;
+        }
+
+        return;
+
+        bool IsCellValid(int x, int y)
+        {
+            return x >= 0 && x < classicState.MazeWidth &&
+                   y >= 0 && y < classicState.MazeHeight &&
+                   (x != exitX || y != exitY) &&
+                   IsCellEmpty(x, y) &&
+                   !classicState.EnemyLocations.Any(loc => loc.enemyX == x && loc.enemyY == y);
         }
     }
 
