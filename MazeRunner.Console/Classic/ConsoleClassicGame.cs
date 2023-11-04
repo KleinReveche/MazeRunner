@@ -59,7 +59,7 @@ public class ConsoleClassicGame
 
             var key = ReadKey().Key;
 
-            if (!_classicEngine.PlayerAction(key, out var didPlayerDie, out var isGamePaused) &&
+            if (!_classicEngine.ConsolePlayerAction(key, out var didPlayerDie, out var isGamePaused) &&
                 !isGamePaused) continue;
 
             if (isGamePaused) break;
