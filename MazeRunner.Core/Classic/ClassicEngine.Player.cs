@@ -127,7 +127,8 @@ public partial class ClassicEngine
                 break;
             case TreasureType.TemporaryInvulnerabilityEffect:
                 classicState.IsPlayerInvulnerable = true;
-                classicState.PlayerInvincibilityEffectDuration = 10;
+                classicState.PlayerInvincibilityEffectDuration =
+                    (int)(15 * (_difficultyModifier + _higherLevelModifier));
                 break;
             case TreasureType.AtAGlanceEffect:
                 classicState.AtAGlance = true;
