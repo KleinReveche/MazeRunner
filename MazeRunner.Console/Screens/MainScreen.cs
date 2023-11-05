@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 using Reveche.MazeRunner.Classic;
 using Reveche.MazeRunner.Serializable;
 
@@ -24,21 +26,6 @@ public static class MainScreen
                                   ╚═╝░░╚═╝░╚═════╝░╚═╝░░╚══╝╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝
                                   """;
 
-    private const string About = """
-                                 Credits
-                                 --------
-                                 Created by Klein Reveche.
-                                 Version 1.0.0
-
-                                 Music
-                                 --------
-                                 8-bit Air Fight by moodmode from Pixabay
-                                 Bit Beats 3 by XtremeFreddy from Pixabay
-                                 Other sound effects from Pixabay
-
-                                 © 2023 Klein Reveche. All rights reserved.
-                                 """;
-
     private const string HowToPlay = """
                                      How to Play
                                      -----------
@@ -63,6 +50,21 @@ public static class MainScreen
                                      - Insanity: 6 levels on Classic, Almost no visibility, least starting items.
                                      - ASCII Insanity: Same with Insanity but a forced ASCII Look.
                                      """;
+
+    private static readonly string About = $"""
+                                            Credits
+                                            --------
+                                            Created by Klein Reveche.
+                                            Version {GetVersion()}
+
+                                            Music
+                                            --------
+                                            8-bit Air Fight by moodmode from Pixabay
+                                            Bit Beats 3 by XtremeFreddy from Pixabay
+                                            Other sound effects from Pixabay
+
+                                            © 2023 Klein Reveche. All rights reserved.
+                                            """;
 
     private static readonly string Separator = OperatingSystem.IsWindows() ? "\r\n" : "\n";
     public static readonly int CenterX = (System.Console.WindowWidth - Runner.Split(Separator)[0].Length) / 2;
@@ -209,5 +211,14 @@ public static class MainScreen
 
         System.Console.ReadKey();
         StartMenu();
+    }
+
+    private static string GetVersion()
+    {
+        var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location)
+            .ProductVersion?[..20] ?? "Unknown";
+        if (!(version.Contains("rc") | version.Contains("alpha") | version.Contains("beta")))
+            return version[..version.IndexOf('+')];
+        return version;
     }
 }
