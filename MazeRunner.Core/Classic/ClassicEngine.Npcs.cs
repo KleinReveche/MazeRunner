@@ -18,11 +18,13 @@ public partial class ClassicEngine
             var enemyX = enemyLocation.enemyX;
             var enemyY = enemyLocation.enemyY;
             var radius = (int)(3 * (_difficultyModifier + _higherLevelModifier));
+
             // Derived from Euclidean distance formula
             var distance = Math.Sqrt(Math.Pow(playerX - enemyX, 2) + Math.Pow(playerY - enemyY, 2));
+            var chanceToFollow = random.Next(1, 100);
 
             // Player is within the radius, move towards the player
-            if (distance <= radius)
+            if (distance <= radius && chanceToFollow <= 60)
             {
                 var newEnemyX = enemyX;
                 var newEnemyY = enemyY;
