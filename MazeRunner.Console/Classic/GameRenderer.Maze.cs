@@ -90,7 +90,7 @@ public partial class GameRenderer
                 MazeIcons.Exit => "🚪",
                 MazeIcons.Enemy => "👾",
                 MazeIcons.Bomb => "💣",
-                MazeIcons.Candle => "🕯️",
+                MazeIcons.Candle => OperatingSystem.IsWindows() ? "🕯️" : "🕯️ ",
                 MazeIcons.Treasure => "📦",
                 MazeIcons.Fog => "🟫",
                 MazeIcons.LostFog => "🟥",
