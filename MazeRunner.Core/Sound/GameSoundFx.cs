@@ -23,9 +23,8 @@ public class GameSoundFx(OptionsState optionsState)
             using var sound = Assembly.GetExecutingAssembly()
                 .GetManifestResourceStream(ResLoc + SoundFxFiles[(int)soundFx])!;
 
-            if (OperatingSystem.IsWindows())
-                MusicPlayer.PlayInWindows(sound);
-            else if (OperatingSystem.IsLinux()) MusicPlayer.PlayInLinux(sound, optionsState);
+            var player = new MusicPlayerCore(optionsState);
+            player.PlaySound(sound);
         });
 
         soundFxThread.Start();
