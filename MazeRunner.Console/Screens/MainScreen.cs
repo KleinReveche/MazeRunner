@@ -141,7 +141,13 @@ public static class MainScreen
             },
             { "How to Play", () => ShowTextScreen(HowToPlay, -12) },
             { "Credits", () => ShowTextScreen(About, 8) },
-            { "Quit", () => Environment.Exit(0) }
+            {
+                "Quit", () =>
+                {
+                    if (OperatingSystem.IsLinux()) Process.Start("pkill", "mpg123");
+                    Environment.Exit(0);
+                }
+            }
         };
 
         if (!OptionsState.IsGameOngoing)
@@ -215,10 +221,21 @@ public static class MainScreen
 
     private static string GetVersion()
     {
-        var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location)
-            .ProductVersion?[..20] ?? "Unknown";
-        if (!(version.Contains("rc") | version.Contains("alpha") | version.Contains("beta")))
-            return version[..version.IndexOf('+')];
+        string version;
+        
+        try
+        {
+            var attributes = Assembly.GetExecutingAssembly()
+                .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
+             
+            version = attributes.Length == 0 ? "Unknown" :
+                ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion[..20];
+        }
+        catch
+        {
+            version = "Unknown";
+        }
+        
         return version;
     }
 }
