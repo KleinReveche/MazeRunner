@@ -10,7 +10,7 @@ public partial class GameRenderer
     private int ExitX => classicState.ExitX;
     private int ExitY => classicState.ExitY;
 
-    public StringBuilder DrawMaze()
+    private StringBuilder DrawMaze()
     {
         var mazeBuffer = new StringBuilder();
         var playerCharacter = GetPlayerCharacter();
@@ -50,7 +50,8 @@ public partial class GameRenderer
             .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= classicState.CandleVisibilityRadius
                                    && Math.Abs(y - candleLocation.Item1) <= classicState.CandleVisibilityRadius);
         var isTemporaryVisible = classicState is { PlayerHasIncreasedVisibility: true };
-        var isGameDone = classicState.CurrentLevel > classicState.MaxLevels && optionsState.GameMode == GameMode.Classic;
+        var isGameDone = classicState.CurrentLevel > classicState.MaxLevels &&
+                         optionsState.GameMode == GameMode.Classic;
 
         return distanceToPlayer <= classicState.PlayerVisibilityRadius +
                (isTemporaryVisible ? classicState.IncreasedVisibilityEffectRadius : 0)
@@ -89,7 +90,7 @@ public partial class GameRenderer
                 MazeIcons.Exit => "🚪",
                 MazeIcons.Enemy => "👾",
                 MazeIcons.Bomb => "💣",
-                MazeIcons.Candle => "🕯️",
+                MazeIcons.Candle => OperatingSystem.IsWindows() ? "🕯️" : "🕯️ ",
                 MazeIcons.Treasure => "📦",
                 MazeIcons.Fog => "🟫",
                 MazeIcons.LostFog => "🟥",

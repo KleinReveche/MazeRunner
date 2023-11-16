@@ -5,12 +5,31 @@ namespace Reveche.MazeRunner.Classic;
 public partial class ClassicEngine(OptionsState optionsState, ClassicState classicState)
 {
     private const int BlastRadius = 1;
-    private readonly MazeGen _mazeGen = new(classicState);
+
+    private readonly double _difficultyModifier = classicState.MazeDifficulty switch
+    {
+        MazeDifficulty.Hard => 1.2,
+        MazeDifficulty.Insanity => 1.3,
+        MazeDifficulty.AsciiInsanity => 1.4,
+        _ => 1
+    };
+
     private readonly GameSoundFx _gameSoundFx = new(optionsState);
+
+    private readonly double _higherLevelModifier = classicState.CurrentLevel switch
+    {
+        > 10 => 1.5,
+        10 => 1.0,
+        9 => 0.9,
+        8 => 0.5,
+        7 => 0.3,
+        6 => 0.1,
+        _ => 0
+    };
+
+    private readonly MazeGen _mazeGen = new(classicState);
     private int PlayerX => classicState.PlayerX;
     private int PlayerY => classicState.PlayerY;
-    private int LastPlayerX { get; set; }
-    private int LastPlayerY { get; set; }
     private char[,] Maze => classicState.Maze;
 
     public void InitializeNewLevel()
@@ -57,9 +76,9 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
             MazeDifficulty.Normal => 2,
             _ => 1
         };
-        
+
         if (optionsState.IsGameOngoing) return;
-        
+
         classicState.BombCount = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 4,
@@ -76,7 +95,7 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
         };
     }
 
-    private bool IsCellEmpty(int x, int y)
+    public bool IsCellEmpty(int x, int y)
     {
         var maze = classicState.Maze;
         if (x >= 0 && x < maze.GetLength(1) && y >= 0 && y < maze.GetLength(0))
@@ -99,5 +118,6 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
         var timeScore = maxTime - (int)(DateTime.Now - levelStartTime).TotalSeconds;
 
         classicState.Score += timeScore < 0 ? 0 : timeScore;
+        classicState.Score += (int)(50 * (_difficultyModifier + _higherLevelModifier)); // For completing the level
     }
 }

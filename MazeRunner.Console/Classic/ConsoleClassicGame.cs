@@ -1,11 +1,12 @@
 ﻿using Reveche.MazeRunner.Classic;
 using Reveche.MazeRunner.Console.Screens;
 using Reveche.MazeRunner.Serializable;
+using Reveche.MazeRunner.Sound;
 using static System.Console;
 
 namespace Reveche.MazeRunner.Console.Classic;
 
-public class ConsoleClassicGame
+public partial class ConsoleClassicGame
 {
     private readonly ClassicEngine _classicEngine;
     private readonly ClassicState _classicState;
@@ -13,6 +14,7 @@ public class ConsoleClassicGame
     private readonly OptionsState _optionsState;
     private readonly ScoreList _scoreList = ScoreManager.LoadScores();
     private readonly ScoreManager _scoreManager;
+    private readonly GameSoundFx _gameSoundFx;
     private bool _levelIsCompleted = true;
     private bool _shouldRedraw = true;
 
@@ -21,6 +23,7 @@ public class ConsoleClassicGame
         _optionsState = optionsState;
         _classicEngine = classicEngine;
         _classicState = classicState;
+        _gameSoundFx = new GameSoundFx(_optionsState);
         _gameRenderer = new GameRenderer(optionsState, classicEngine, classicState);
         _scoreManager = new ScoreManager(_scoreList);
     }
@@ -38,7 +41,7 @@ public class ConsoleClassicGame
         {
             if (_levelIsCompleted)
             {
-                _classicEngine.CalculateLevelScore(levelStartTime);
+                if (_classicState.CurrentLevel != 1) _classicEngine.CalculateLevelScore(levelStartTime);
                 levelStartTime = DateTime.Now;
                 _optionsState.IsCurrentlyPlaying = _classicState.CurrentLevel <= _classicState.MaxLevels;
                 if (!continueGame) _classicEngine.InitializeNewLevel();
@@ -59,8 +62,9 @@ public class ConsoleClassicGame
 
             var key = ReadKey().Key;
 
-            if (!_classicEngine.PlayerAction(key, out var didPlayerDie, out var isGamePaused) && !isGamePaused) continue;
-            
+            if (!PlayerAction(key, out var didPlayerDie, out var isGamePaused, out var itemPlaced)
+                && !isGamePaused) continue;
+
             if (isGamePaused) break;
 
             if (didPlayerDie)
@@ -72,6 +76,8 @@ public class ConsoleClassicGame
 
             if (_classicEngine.CheckForTreasure(out var treasure))
                 PlayerAcquireTreasure(treasure);
+
+            if (_classicState.CurrentLevel != 1 && !itemPlaced) _classicEngine.MoveAllEnemies();
 
             _shouldRedraw = true;
         }
@@ -88,7 +94,6 @@ public class ConsoleClassicGame
         _classicEngine.CheckPlayerEnemyCollision(out var isPlayerDead);
 
         if (isPlayerDead || isPlayerDeadByBomb) WriteLine("You died!");
-        if (_classicState.CurrentLevel != 1) _classicEngine.MoveAllEnemies();
         _shouldRedraw = false;
     }
 
@@ -103,7 +108,7 @@ public class ConsoleClassicGame
         _classicState.PlayerName = ReadLine() ?? "Anonymous";
         if (_classicState.PlayerName.Length == 0) _classicState.PlayerName = "Anonymous";
         if (_classicState.CurrentLevel > _classicState.MaxLevels &&
-            _classicState.PlayerLife > 0  && _optionsState.GameMode == GameMode.Classic)
+            _classicState.PlayerLife > 0 && _optionsState.GameMode == GameMode.Classic)
         {
             WriteLine("Congratulations! You have completed all levels. Press Any Key to exit.");
             _classicState.Score += 100;
@@ -118,7 +123,7 @@ public class ConsoleClassicGame
             SetCursorPosition(_classicState.MazeWidth / 2, _classicState.MazeHeight / 2);
             WriteLine("Game Over!");
         }
-        
+
         ReadKey();
         ClassicSaveManager.DeleteClassicSaveFile();
         MainScreen.StartMenu();

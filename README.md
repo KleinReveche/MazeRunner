@@ -36,7 +36,9 @@ A simple maze runner and dungeon crawler game implemented in C# for the console.
 - Add new features or gameplay mechanics.
 
 ## Game Prerequisites
-- On Linux, you need libasound2-dev installed for sound support.
+#### Sound Support
+- Linux - mpg123
+- macOs - afplay
 
 ## Building and Running
 1. **Install the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).**

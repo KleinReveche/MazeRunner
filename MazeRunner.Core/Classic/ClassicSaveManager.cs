@@ -14,26 +14,26 @@ public static class ClassicSaveManager
         IncludeFields = true,
         WriteIndented = true
     };
-    
+
     private static readonly CurrentClassicSaveJsonContext Context = new(SourceGenOptions);
-    
+
     public static ClassicState LoadCurrentSave()
     {
         if (!ClassicSaveFileExists()) return new ClassicState();
-        
+
         var json = File.ReadAllText(ClassicSaveJsonPath);
         var gameState = JsonSerializer.Deserialize(
             JsonScrambler.Decode(json), Context.ClassicState) ?? new ClassicState();
-        
+
         gameState.Maze = gameState.MazeList.To2DArray();
-        
+
         return gameState;
     }
-    
+
     public static void SaveCurrentSave(ClassicState classicState)
     {
         classicState.MazeList = classicState.Maze.ToListOfCharArray();
-        
+
         var json = JsonSerializer.Serialize(classicState, Context.ClassicState);
         File.WriteAllText(ClassicSaveJsonPath, JsonScrambler.Encode(json));
     }
@@ -47,10 +47,7 @@ public static class ClassicSaveManager
         for (var i = 0; i < rows; i++)
         {
             var row = source[i];
-            for (var j = 0; j < row.Count; j++)
-            {
-                result[i, j] = row[j];
-            }
+            for (var j = 0; j < row.Count; j++) result[i, j] = row[j];
         }
 
         return result;
@@ -59,14 +56,11 @@ public static class ClassicSaveManager
     private static List<char[]> ToListOfCharArray(this char[,] source)
     {
         var mazeList = new List<char[]>();
-        
+
         for (var i = 0; i < source.GetLength(0); i++)
         {
             var line = new char[source.GetLength(1)];
-            for (var j = 0; j < source.GetLength(1); j++)
-            {
-                line[j] = source[i, j];
-            }
+            for (var j = 0; j < source.GetLength(1); j++) line[j] = source[i, j];
             mazeList.Add(line);
         }
 
