@@ -5,7 +5,7 @@ namespace Reveche.MazeRunner.Serializable;
 
 public class ScoreList
 {
-    public List<ScoreEntry> Scores { get; set; } = new();
+    public List<ScoreEntry> Scores { get; set; } = [];
 }
 
 public class ScoreEntry(string name, int score, MazeDifficulty mazeDifficulty, GameMode gameMode, int completedLevels)

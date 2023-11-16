@@ -5,11 +5,11 @@ namespace Reveche.MazeRunner.Classic;
 
 public class ClassicState
 {
-    public List<(int bombY, int bombX, int timer)> BombLocations = new();
-    public List<(int candleY, int CandleX)> CandleLocations = new();
-    public List<(int enemyY, int enemyX)> EnemyLocations = new();
+    public List<(int bombY, int bombX, int timer)> BombLocations = [];
+    public List<(int candleY, int CandleX)> CandleLocations = [];
+    public List<(int enemyY, int enemyX)> EnemyLocations = [];
     public List<(int treasureY, int treasureX, TreasureType treasureType, int count)>
-        TreasureLocations = new();
+        TreasureLocations = [];
 
     public ClassicState()
     {
