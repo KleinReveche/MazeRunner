@@ -229,7 +229,10 @@ public static class MainScreen
                 .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
              
             version = attributes.Length == 0 ? "Unknown" :
-                ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion[..20];
+                ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion;
+            
+            if (!(version.Contains("rc") | version.Contains("alpha") | version.Contains("beta")))
+                return version[..version.IndexOf('+')];
         }
         catch
         {
