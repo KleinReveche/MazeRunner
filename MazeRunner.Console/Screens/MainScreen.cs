@@ -227,9 +227,10 @@ public static class MainScreen
         {
             var attributes = Assembly.GetExecutingAssembly()
                 .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
-             
+            
             version = attributes.Length == 0 ? "Unknown" :
                 ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion;
+            version = version[..(version.IndexOf('+') + 8)];
             
             if (!(version.Contains("rc") | version.Contains("alpha") | version.Contains("beta")))
                 return version[..version.IndexOf('+')];
