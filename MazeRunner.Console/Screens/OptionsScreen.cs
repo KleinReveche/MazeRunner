@@ -101,64 +101,64 @@ public class OptionsScreen
         switch (optionKey)
         {
             case "Game Mode":
-            {
-                var currentIndex = _gameModeValues.IndexOf(value);
-                var newIndex = (currentIndex + change + _gameModeValues.Count) % _gameModeValues.Count;
-                options[optionKey] = _gameModeValues[newIndex];
-                _optionsState.GameMode =
-                    typeof(GameMode).GetEnumValuesAsUnderlyingType().Cast<GameMode>().ElementAt(newIndex);
-                break;
-            }
-            case "Difficulty":
-            {
-                var currentIndex = _difficultyValues.IndexOf(value);
-                var newIndex = (currentIndex + change + _difficultyValues.Count) % _difficultyValues.Count;
-                options[optionKey] = _difficultyValues[newIndex];
-                _optionsState.MazeDifficulty =
-                    typeof(MazeDifficulty).GetEnumValuesAsUnderlyingType().Cast<MazeDifficulty>().ElementAt(newIndex);
-
-                if (currentIndex == 4 && _optionsState.MazeDifficulty != MazeDifficulty.AsciiInsanity)
-                    ChangeTextStyle(0);
-
-                if (_optionsState.MazeDifficulty == MazeDifficulty.AsciiInsanity)
-                    ChangeTextStyle(1);
-                break;
-            }
-            case "Music":
-            {
-                var currentIndex = _soundValues.IndexOf(value);
-                var newIndex = (currentIndex + change + _soundValues.Count) % _soundValues.Count;
-                options[optionKey] = _soundValues[newIndex];
-                _optionsState.IsSoundOn = !_optionsState.IsSoundOn;
-
-                switch (_optionsState.IsSoundOn)
                 {
-                    case false:
-                        MazeRunnerConsole.BackgroundSoundManager.StopBackgroundMusic();
-                        break;
-                    case true:
-                        MazeRunnerConsole.BackgroundSoundManager.RestartBackgroundMusic();
-                        break;
+                    var currentIndex = _gameModeValues.IndexOf(value);
+                    var newIndex = (currentIndex + change + _gameModeValues.Count) % _gameModeValues.Count;
+                    options[optionKey] = _gameModeValues[newIndex];
+                    _optionsState.GameMode =
+                        typeof(GameMode).GetEnumValuesAsUnderlyingType().Cast<GameMode>().ElementAt(newIndex);
+                    break;
                 }
+            case "Difficulty":
+                {
+                    var currentIndex = _difficultyValues.IndexOf(value);
+                    var newIndex = (currentIndex + change + _difficultyValues.Count) % _difficultyValues.Count;
+                    options[optionKey] = _difficultyValues[newIndex];
+                    _optionsState.MazeDifficulty =
+                        typeof(MazeDifficulty).GetEnumValuesAsUnderlyingType().Cast<MazeDifficulty>().ElementAt(newIndex);
 
-                break;
-            }
+                    if (currentIndex == 4 && _optionsState.MazeDifficulty != MazeDifficulty.AsciiInsanity)
+                        ChangeTextStyle(0);
+
+                    if (_optionsState.MazeDifficulty == MazeDifficulty.AsciiInsanity)
+                        ChangeTextStyle(1);
+                    break;
+                }
+            case "Music":
+                {
+                    var currentIndex = _soundValues.IndexOf(value);
+                    var newIndex = (currentIndex + change + _soundValues.Count) % _soundValues.Count;
+                    options[optionKey] = _soundValues[newIndex];
+                    _optionsState.IsSoundOn = !_optionsState.IsSoundOn;
+
+                    switch (_optionsState.IsSoundOn)
+                    {
+                        case false:
+                            MazeRunnerConsole.BackgroundSoundManager.StopBackgroundMusic();
+                            break;
+                        case true:
+                            MazeRunnerConsole.BackgroundSoundManager.RestartBackgroundMusic();
+                            break;
+                    }
+
+                    break;
+                }
             case "Sound Effects":
-            {
-                var currentIndex = _soundValues.IndexOf(value);
-                var newIndex = (currentIndex + change + _soundValues.Count) % _soundValues.Count;
-                options[optionKey] = _soundValues[newIndex];
-                _optionsState.IsSoundFxOn = !_optionsState.IsSoundFxOn;
+                {
+                    var currentIndex = _soundValues.IndexOf(value);
+                    var newIndex = (currentIndex + change + _soundValues.Count) % _soundValues.Count;
+                    options[optionKey] = _soundValues[newIndex];
+                    _optionsState.IsSoundFxOn = !_optionsState.IsSoundFxOn;
 
-                break;
-            }
+                    break;
+                }
             case "Text Style":
-            {
-                var currentIndex = _textStyleValues.IndexOf(value);
-                var newIndex = (currentIndex + change + _textStyleValues.Count) % _textStyleValues.Count;
-                ChangeTextStyle(_optionsState.MazeDifficulty == MazeDifficulty.AsciiInsanity ? 1 : newIndex);
-                break;
-            }
+                {
+                    var currentIndex = _textStyleValues.IndexOf(value);
+                    var newIndex = (currentIndex + change + _textStyleValues.Count) % _textStyleValues.Count;
+                    ChangeTextStyle(_optionsState.MazeDifficulty == MazeDifficulty.AsciiInsanity ? 1 : newIndex);
+                    break;
+                }
         }
     }
 

@@ -6,29 +6,29 @@ public class GameSoundFx(OptionsState optionsState)
 {
     private const string ResLoc = "Reveche.MazeRunner.Resources.Music.";
 
-    private static readonly string[] SoundFxFiles =
-    {
+private static readonly string[] SoundFxFiles =
+{
         "BombExplode.mp3",
         "BombPlace.mp3",
         "ItemPickup.mp3",
         "PlaceItem.mp3"
     };
 
-    public void PlayFx(SoundFx soundFx)
+public void PlayFx(SoundFx soundFx)
+{
+    if (!optionsState.IsSoundFxOn) return;
+
+    var soundFxThread = new Thread(() =>
     {
-        if (!optionsState.IsSoundFxOn) return;
+        using var sound = Assembly.GetExecutingAssembly()
+            .GetManifestResourceStream(ResLoc + SoundFxFiles[(int)soundFx])!;
 
-        var soundFxThread = new Thread(() =>
-        {
-            using var sound = Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream(ResLoc + SoundFxFiles[(int)soundFx])!;
+        var player = new MusicPlayerCore(optionsState);
+        player.PlaySound(sound);
+    });
 
-            var player = new MusicPlayerCore(optionsState);
-            player.PlaySound(sound);
-        });
-
-        soundFxThread.Start();
-    }
+    soundFxThread.Start();
+}
 }
 
 public enum SoundFx

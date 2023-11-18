@@ -78,24 +78,24 @@ public partial class ClassicEngine
 
             _gameSoundFx.PlayFx(SoundFx.BombExplode);
             for (var y = -BlastRadius; y <= BlastRadius; y++)
-            for (var x = -BlastRadius; x <= BlastRadius; x++)
-            {
-                var playerIsInvulnerable = classicState.IsPlayerInvulnerable;
-                if (bomb.bombX + x == PlayerX && bomb.bombY + y == PlayerY && !playerIsInvulnerable)
+                for (var x = -BlastRadius; x <= BlastRadius; x++)
                 {
-                    classicState.PlayerLife--;
-                    isPlayerDead = true;
-                }
+                    var playerIsInvulnerable = classicState.IsPlayerInvulnerable;
+                    if (bomb.bombX + x == PlayerX && bomb.bombY + y == PlayerY && !playerIsInvulnerable)
+                    {
+                        classicState.PlayerLife--;
+                        isPlayerDead = true;
+                    }
 
-                if (CheckEnemyCollision(bomb.bombX + x, bomb.bombY + y, out (int EnemyX, int EnemyY) enemy))
-                {
-                    classicState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
-                    classicState.Score += (int)(20 * (_difficultyModifier + _higherLevelModifier));
-                }
+                    if (CheckEnemyCollision(bomb.bombX + x, bomb.bombY + y, out (int EnemyX, int EnemyY) enemy))
+                    {
+                        classicState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
+                        classicState.Score += (int)(20 * (_difficultyModifier + _higherLevelModifier));
+                    }
 
-                if (_mazeGen.IsInBounds(bomb.bombX + x, bomb.bombY + y))
-                    Maze[bomb.bombY + y, bomb.bombX + x] = MazeIcons.Empty;
-            }
+                    if (_mazeGen.IsInBounds(bomb.bombX + x, bomb.bombY + y))
+                        Maze[bomb.bombY + y, bomb.bombX + x] = MazeIcons.Empty;
+                }
 
             classicState.BombLocations.Remove(bomb);
         }

@@ -66,9 +66,9 @@ public static class ClassicSaveManager
 
         return mazeList;
     }
-    
+
     public static bool ClassicSaveFileExists() => File.Exists(ClassicSaveJsonPath);
-    
+
     public static void DeleteClassicSaveFile()
     {
         if (ClassicSaveFileExists())

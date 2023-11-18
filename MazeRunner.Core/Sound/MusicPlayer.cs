@@ -10,33 +10,33 @@ public class MusicPlayer(OptionsState optionsState)
         ("KLPeachGameOverII.mp3", 20_062)
     ];
 
-    public void PlayBackgroundMusic(CancellationToken cancellationToken)
+public void PlayBackgroundMusic(CancellationToken cancellationToken)
+{
+    var player = new MusicPlayerCore(optionsState);
+    var random = new Random();
+
+    while (!cancellationToken.IsCancellationRequested && optionsState.IsSoundOn)
     {
-        var player = new MusicPlayerCore(optionsState);
-        var random = new Random();
+        var randomIndex = random.Next(_mp3Resources.Count);
+        using var sound = Assembly.GetExecutingAssembly()
+            .GetManifestResourceStream(
+                $"Reveche.MazeRunner.Resources.Music.{_mp3Resources[randomIndex].soundName}")!;
 
-        while (!cancellationToken.IsCancellationRequested && optionsState.IsSoundOn)
+        player.PlaySound(sound);
+
+        var mp3ResourceLength = _mp3Resources[randomIndex].length;
+        if (optionsState.IsCurrentlyPlaying) Thread.Sleep(mp3ResourceLength);
+
+        // This ensures that unnecessary checks are not done when the game is not playing.
+        var millisecondsPassed = 0;
+        while (!cancellationToken.IsCancellationRequested
+               && optionsState is { IsSoundOn: true, IsCurrentlyPlaying: false }
+               && millisecondsPassed < mp3ResourceLength)
         {
-            var randomIndex = random.Next(_mp3Resources.Count);
-            using var sound = Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream(
-                    $"Reveche.MazeRunner.Resources.Music.{_mp3Resources[randomIndex].soundName}")!;
-            
-            player.PlaySound(sound);
-                
-            var mp3ResourceLength = _mp3Resources[randomIndex].length;
-            if (optionsState.IsCurrentlyPlaying) Thread.Sleep(mp3ResourceLength);
-
-            // This ensures that unnecessary checks are not done when the game is not playing.
-            var millisecondsPassed = 0;
-            while (!cancellationToken.IsCancellationRequested
-                   && optionsState is { IsSoundOn: true, IsCurrentlyPlaying: false }
-                   && millisecondsPassed < mp3ResourceLength)
-            {
-                millisecondsPassed += 500;
-                Thread.Sleep(500);
-            }
+            millisecondsPassed += 500;
+            Thread.Sleep(500);
         }
-        player.Dispose();
     }
+    player.Dispose();
+}
 }

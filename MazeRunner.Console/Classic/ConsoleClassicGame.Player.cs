@@ -10,7 +10,7 @@ public partial class ConsoleClassicGame
     private int LastPlayerX { get; set; }
     private int LastPlayerY { get; set; }
     private char[,] Maze => _classicState.Maze;
-    
+
     private bool PlayerAction(ConsoleKey key, out bool isPlayerDead, out bool isGamePaused, out bool isItemPlaced)
     {
         System.Console.Write("\b \b"); // To remove input key from showing on screen

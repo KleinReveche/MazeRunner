@@ -11,10 +11,10 @@ public class ScoreList
 public class ScoreEntry(string name, int score, MazeDifficulty mazeDifficulty, GameMode gameMode, int completedLevels)
 {
     public string Name { get; } = name;
-    public int Score { get; } = score;
-    public MazeDifficulty MazeDifficulty { get; } = mazeDifficulty;
-    public GameMode GameMode { get; } = gameMode;
-    public int CompletedLevels { get; } = completedLevels;
+public int Score { get; } = score;
+public MazeDifficulty MazeDifficulty { get; } = mazeDifficulty;
+public GameMode GameMode { get; } = gameMode;
+public int CompletedLevels { get; } = completedLevels;
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
