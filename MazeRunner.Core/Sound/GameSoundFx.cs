@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Reveche.MazeRunner.Sound;
+﻿namespace Reveche.MazeRunner.Sound;
 
 public class GameSoundFx(OptionsState optionsState)
 {
@@ -20,8 +18,8 @@ public class GameSoundFx(OptionsState optionsState)
 
         var soundFxThread = new Thread(() =>
         {
-            using var sound = Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream(ResLoc + SoundFxFiles[(int)soundFx])!;
+            using var sound =
+                typeof(GameSoundFx).Assembly.GetManifestResourceStream(ResLoc + SoundFxFiles[(int)soundFx])!;
 
             var player = new MusicPlayerCore(optionsState);
             player.PlaySound(sound);

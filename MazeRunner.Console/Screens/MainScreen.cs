@@ -222,16 +222,17 @@ public static class MainScreen
     private static string GetVersion()
     {
         string version;
-        
+
         try
         {
-            var attributes = Assembly.GetExecutingAssembly()
+            var attributes = typeof(MainScreen).Assembly
                 .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
-            
-            version = attributes.Length == 0 ? "Unknown" :
-                ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion;
+
+            version = attributes.Length == 0
+                ? "Unknown"
+                : ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion;
             version = version[..(version.IndexOf('+') + 8)];
-            
+
             if (!(version.Contains("rc") | version.Contains("alpha") | version.Contains("beta")))
                 return version[..version.IndexOf('+')];
         }
@@ -239,7 +240,7 @@ public static class MainScreen
         {
             version = "Unknown";
         }
-        
+
         return version;
     }
 }
