@@ -56,6 +56,9 @@ public partial class ConsoleClassicGame
                 ClassicSaveManager.SaveCurrentSave(_classicState);
                 isGamePaused = true;
                 break;
+            // ReSharper disable once RedundantEmptySwitchSection
+            default:
+                break;
         }
 
         CurrentKeys.Add(key);
