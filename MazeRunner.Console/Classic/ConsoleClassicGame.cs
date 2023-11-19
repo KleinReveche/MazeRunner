@@ -32,6 +32,7 @@ public partial class ConsoleClassicGame
     {
         var levelStartTime = new DateTime();
         var continueGame = _optionsState.IsGameOngoing;
+        if (!continueGame) _classicState.MazeDifficulty = _optionsState.MazeDifficulty;
 
         _levelIsCompleted = true;
         _shouldRedraw = true;
