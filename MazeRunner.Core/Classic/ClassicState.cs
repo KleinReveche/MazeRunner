@@ -40,7 +40,7 @@ public class ClassicState
     [JsonIgnore]
     public char[,] Maze
     {
-        get => _maze;
+        get => (char[,]) _maze.Clone();
         set => _maze = value ?? throw new ArgumentNullException(nameof(value));
     }
 
