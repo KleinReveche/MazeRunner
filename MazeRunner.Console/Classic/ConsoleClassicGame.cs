@@ -11,10 +11,10 @@ public partial class ConsoleClassicGame
     private readonly ClassicEngine _classicEngine;
     private readonly ClassicState _classicState;
     private readonly GameRenderer _gameRenderer;
+    private readonly GameSoundFx _gameSoundFx;
     private readonly OptionsState _optionsState;
     private readonly ScoreList _scoreList = ScoreManager.LoadScores();
     private readonly ScoreManager _scoreManager;
-    private readonly GameSoundFx _gameSoundFx;
     private bool _levelIsCompleted = true;
     private bool _shouldRedraw = true;
 
@@ -41,6 +41,7 @@ public partial class ConsoleClassicGame
         {
             if (_levelIsCompleted)
             {
+                CurrentKeys.Clear();
                 if (_classicState.CurrentLevel != 1) _classicEngine.CalculateLevelScore(levelStartTime);
                 levelStartTime = DateTime.UtcNow;
                 _optionsState.IsCurrentlyPlaying = _classicState.CurrentLevel <= _classicState.MaxLevels;
