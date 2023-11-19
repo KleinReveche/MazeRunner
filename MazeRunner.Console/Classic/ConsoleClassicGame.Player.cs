@@ -6,7 +6,7 @@ namespace Reveche.MazeRunner.Console.Classic;
 public partial class ConsoleClassicGame
 {
 #if DEBUG
-    private bool debugIsFullyVisible;
+    private bool _debugIsFullyVisible;
 #endif
     private int PlayerX => _classicState.PlayerX;
     private int PlayerY => _classicState.PlayerY;
@@ -17,7 +17,6 @@ public partial class ConsoleClassicGame
 
     private bool PlayerAction(ConsoleKey key, out bool isPlayerDead, out bool isGamePaused, out bool isItemPlaced)
     {
-        System.Console.Write("\b \b"); // To remove input key from showing on screen
         isGamePaused = false;
         isPlayerDead = false;
         isItemPlaced = false;
@@ -102,7 +101,7 @@ public partial class ConsoleClassicGame
             _classicState.AtAGlance = false;
 
 #if DEBUG
-        if (debugIsFullyVisible)
+        if (_debugIsFullyVisible)
             _classicState.AtAGlance = true;
 #endif
 
@@ -188,7 +187,7 @@ public partial class ConsoleClassicGame
         if (CurrentKeys.SequenceEqual(debugFullyVisibleCombination))
         {
             _classicState.AtAGlance = true;
-            debugIsFullyVisible = !debugIsFullyVisible;
+            _debugIsFullyVisible = !_debugIsFullyVisible;
             CurrentKeys.Clear();
         }
 

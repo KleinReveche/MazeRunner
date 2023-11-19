@@ -62,7 +62,7 @@ public partial class ConsoleClassicGame
             if (_classicState.PlayerX == _classicState.ExitX && _classicState.PlayerY == _classicState.ExitY)
                 PlayerExit();
 
-            var key = ReadKey().Key;
+            var key = ReadKey(true).Key;
 
             if (!PlayerAction(key, out var didPlayerDie, out var isGamePaused, out var itemPlaced)
                 && !isGamePaused) continue;
