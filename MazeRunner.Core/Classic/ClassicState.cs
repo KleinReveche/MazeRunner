@@ -35,14 +35,7 @@ public class ClassicState
     public int MazeHeight { get; set; } = 9;
     
     [JsonIgnore]
-    private char[,] _maze = null!;
-
-    [JsonIgnore]
-    public char[,] Maze
-    {
-        get => (char[,]) _maze.Clone();
-        set => _maze = value ?? throw new ArgumentNullException(nameof(value));
-    }
+    public char[,] Maze = null!;
 
     public List<char[]> MazeList { get; set; } = null!; // This is for serialization
     public int PlayerVisibilityRadius { get; set; }
