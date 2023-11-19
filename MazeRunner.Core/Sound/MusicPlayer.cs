@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Reveche.MazeRunner.Sound;
+﻿namespace Reveche.MazeRunner.Sound;
 
 public class MusicPlayer(OptionsState optionsState)
 {
@@ -18,7 +16,7 @@ public class MusicPlayer(OptionsState optionsState)
         while (!cancellationToken.IsCancellationRequested && optionsState.IsSoundOn)
         {
             var randomIndex = random.Next(_mp3Resources.Count);
-            using var sound = Assembly.GetExecutingAssembly()
+            using var sound = typeof(MusicPlayer).Assembly
                 .GetManifestResourceStream(
                     $"Reveche.MazeRunner.Resources.Music.{_mp3Resources[randomIndex].soundName}")!;
             

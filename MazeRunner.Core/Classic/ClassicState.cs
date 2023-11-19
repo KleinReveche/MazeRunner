@@ -33,8 +33,16 @@ public class ClassicState
     public int ExitY { get; set; } // Exit Y-coordinate
     public int MazeWidth { get; set; } = 7;
     public int MazeHeight { get; set; } = 9;
+    
+    [JsonIgnore]
+    private char[,] _maze = null!;
 
-    [JsonIgnore] public char[,] Maze { get; set; } = null!;
+    [JsonIgnore]
+    public char[,] Maze
+    {
+        get => (char[,]) _maze.Clone();
+        set => _maze = value ?? throw new ArgumentNullException(nameof(value));
+    }
 
     public List<char[]> MazeList { get; set; } = null!; // This is for serialization
     public int PlayerVisibilityRadius { get; set; }

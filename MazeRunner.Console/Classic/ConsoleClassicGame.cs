@@ -42,7 +42,7 @@ public partial class ConsoleClassicGame
             if (_levelIsCompleted)
             {
                 if (_classicState.CurrentLevel != 1) _classicEngine.CalculateLevelScore(levelStartTime);
-                levelStartTime = DateTime.Now;
+                levelStartTime = DateTime.UtcNow;
                 _optionsState.IsCurrentlyPlaying = _classicState.CurrentLevel <= _classicState.MaxLevels;
                 if (!continueGame) _classicEngine.InitializeNewLevel();
                 continueGame = false;
@@ -164,10 +164,6 @@ public partial class ConsoleClassicGame
                 WriteLine(
                     "Glance at the maze after pressing a key. At your next turn, it'll be hidden again.");
                 break;
-            case TreasureType.Bomb:
-            case TreasureType.Candle:
-            case TreasureType.Life:
-            case TreasureType.None:
             default:
                 WriteLine($"You found {treasure.count} {treasure.treasureType}!");
                 break;

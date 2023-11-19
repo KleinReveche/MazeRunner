@@ -115,7 +115,7 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
             _ => 210
         };
 
-        var timeScore = maxTime - (int)(DateTime.Now - levelStartTime).TotalSeconds;
+        var timeScore = maxTime - (int)(DateTime.UtcNow - levelStartTime).TotalSeconds;
 
         classicState.Score += timeScore < 0 ? 0 : timeScore;
         classicState.Score += (int)(50 * (_difficultyModifier + _higherLevelModifier)); // For completing the level

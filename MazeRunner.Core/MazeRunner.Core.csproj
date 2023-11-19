@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <AssemblyName>MazeRunner.Core</AssemblyName>
         <RootNamespace>Reveche.MazeRunner</RootNamespace>
+		<PublishAot>true</PublishAot>
         <Company>Klein Reveche</Company>
     </PropertyGroup>
 

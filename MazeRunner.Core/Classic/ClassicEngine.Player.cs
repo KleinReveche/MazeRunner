@@ -49,7 +49,6 @@ public partial class ClassicEngine
                 classicState.AtAGlance = true;
                 break;
             case TreasureType.None:
-            default:
                 break;
         }
 

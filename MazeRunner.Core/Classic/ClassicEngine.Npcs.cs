@@ -89,7 +89,7 @@ public partial class ClassicEngine
                    y >= 0 && y < classicState.MazeHeight &&
                    (x != exitX || y != exitY) &&
                    IsCellEmpty(x, y) &&
-                   !classicState.EnemyLocations.Any(loc => loc.enemyX == x && loc.enemyY == y);
+                   classicState.EnemyLocations.All(loc => loc.enemyX != x || loc.enemyY != y);
         }
     }
 

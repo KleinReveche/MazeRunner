@@ -33,7 +33,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.100-rc.2.23502.2
+        dotnet-version: 8.0.x
         
     - name: Restore dependencies
       run: dotnet restore
@@ -57,7 +57,7 @@ jobs:
         fi
         
         # Build everything
-        dotnet publish "$csproj" --runtime "${{ matrix.target }}" -c Release --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:DebugType=None -p:DebugSymbols=false -o "$release_name"
+        dotnet publish "$csproj" --runtime "${{ matrix.target }}" -c Release --self-contained true -p:PublishTrimmed=true -p:DebugType=None -p:DebugSymbols=false -o "$release_name"
         
         # Move and rename the executable to a release folder
         mkdir release
