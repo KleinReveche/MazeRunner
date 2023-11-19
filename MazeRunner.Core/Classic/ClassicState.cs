@@ -35,7 +35,7 @@ public class ClassicState
     public int MazeHeight { get; set; } = 9;
     
     [JsonIgnore]
-    private char[,] _maze;
+    private char[,] _maze = null!;
 
     [JsonIgnore]
     public char[,] Maze
