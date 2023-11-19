@@ -52,7 +52,7 @@ public partial class ClassicEngine
                 {
                     var newEnemyX = enemyX;
                     var newEnemyY = enemyY;
-                    var direction = random.Next(4);
+                    var direction = random.Next(0, 3);
 
                     switch (direction)
                     {
@@ -68,6 +68,8 @@ public partial class ClassicEngine
                         case 3:
                             newEnemyX++;
                             break;
+                        default:
+                            throw new Exception("Wrong direction");
                     }
 
                     if (!IsCellValid(newEnemyX, newEnemyY)) continue;

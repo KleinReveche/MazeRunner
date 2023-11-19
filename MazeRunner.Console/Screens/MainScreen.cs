@@ -200,6 +200,8 @@ public static class MainScreen
                     var selectedOption = optionKeys[selectedIndex];
                     if (menuOptions.TryGetValue(selectedOption, out var value)) value();
                     return;
+                default:
+                    break;
             }
         }
     }

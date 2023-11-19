@@ -89,6 +89,8 @@ public class OptionsScreen
                     if (selectedIndex == _options.Count - 1)
                         MainScreen.StartMenu();
                     break;
+                default:
+                    break;
             }
         }
         // ReSharper disable once FunctionNeverReturns
@@ -159,6 +161,8 @@ public class OptionsScreen
                 ChangeTextStyle(_optionsState.MazeDifficulty == MazeDifficulty.AsciiInsanity ? 1 : newIndex);
                 break;
             }
+            default:
+                throw new Exception("Invalid option key");
         }
     }
 

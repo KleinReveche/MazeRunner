@@ -50,6 +50,8 @@ public partial class ClassicEngine
                 break;
             case TreasureType.None:
                 break;
+            default:
+                throw new Exception("Wrong treasure type");
         }
 
         _gameSoundFx.PlayFx(SoundFx.ItemPickup);

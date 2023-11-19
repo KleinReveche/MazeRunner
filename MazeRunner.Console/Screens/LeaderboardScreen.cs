@@ -113,6 +113,8 @@ public class LeaderboardScreen
                     return level != 0 ? level : playerScoreB.Score.CompareTo(playerScoreA.Score);
                 });
                 break;
+            default:
+                throw new Exception("Wrong category index");
         }
     }
 
