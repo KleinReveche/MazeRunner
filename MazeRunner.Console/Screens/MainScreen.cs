@@ -221,7 +221,7 @@ public static class MainScreen
 
     private static string GetVersion()
     {
-        string version;
+        var version = "";
 
         try
         {

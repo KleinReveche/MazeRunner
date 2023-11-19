@@ -70,7 +70,7 @@ public class MazeGen(ClassicState classicState)
 
         for (var i = 0; i < maxEnemies; i++)
         {
-            int enemyX, enemyY;
+            int enemyX = 0, enemyY = 0;
 
             do
             {
@@ -89,9 +89,10 @@ public class MazeGen(ClassicState classicState)
 
         for (var i = 0; i < treasureCount; i++)
         {
-            int treasureX, treasureY;
+            int treasureX = 0, treasureY = 0;
             var random2 = new Random();
-            bool isTreasureAlreadyThere, isTreasureOnPlayer, isTreasureOnExit, isTreasureOnEnemy;
+            bool isTreasureAlreadyThere = false, isTreasureOnPlayer = false, 
+                isTreasureOnExit = false, isTreasureOnEnemy = false;
 
             do
             {
@@ -189,7 +190,7 @@ public class MazeGen(ClassicState classicState)
     public int GenerateRandomMazeSize()
     {
         var random = new Random();
-        int randomNum;
+        var randomNum = 0;
         var min = 5 * classicState.CurrentLevel;
         var max = 7 * classicState.CurrentLevel;
 
