@@ -164,10 +164,6 @@ public partial class ConsoleClassicGame
                 WriteLine(
                     "Glance at the maze after pressing a key. At your next turn, it'll be hidden again.");
                 break;
-            case TreasureType.Bomb:
-            case TreasureType.Candle:
-            case TreasureType.Life:
-            case TreasureType.None:
             default:
                 WriteLine($"You found {treasure.count} {treasure.treasureType}!");
                 break;
