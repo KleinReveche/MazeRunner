@@ -1,10 +1,12 @@
-﻿namespace Reveche.MazeRunner.Classic;
+﻿using DotNetXtensions.Cryptography;
+
+namespace Reveche.MazeRunner.Classic;
 
 public partial class ClassicEngine
 {
     public void MoveAllEnemies()
     {
-        var random = new Random();
+        var random = new CryptoRandom();
         var enemyCount = classicState.EnemyLocations.Count;
         var exitX = classicState.ExitX;
         var exitY = classicState.ExitY;

@@ -1,4 +1,6 @@
-﻿namespace Reveche.MazeRunner.Sound;
+﻿using DotNetXtensions.Cryptography;
+
+namespace Reveche.MazeRunner.Sound;
 
 public class MusicPlayer(OptionsState optionsState)
 {
@@ -11,7 +13,7 @@ public class MusicPlayer(OptionsState optionsState)
     public void PlayBackgroundMusic(CancellationToken cancellationToken)
     {
         var player = new MusicPlayerCore(optionsState);
-        var random = new Random();
+        var random = new CryptoRandom();
 
         while (!cancellationToken.IsCancellationRequested && optionsState.IsSoundOn)
         {
