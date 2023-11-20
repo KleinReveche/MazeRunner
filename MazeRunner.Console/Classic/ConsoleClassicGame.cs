@@ -118,6 +118,23 @@ public partial class ConsoleClassicGame
                                         ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚═╝
 
                                        """;
+        const string youWonText = """
+
+                                  ██╗   ██╗ ██████╗ ██╗   ██╗
+                                  ╚██╗ ██╔╝██╔═══██╗██║   ██║
+                                   ╚████╔╝ ██║   ██║██║   ██║
+                                    ╚██╔╝  ██║   ██║██║   ██║
+                                     ██║   ╚██████╔╝╚██████╔╝
+                                     ╚═╝    ╚═════╝  ╚═════╝
+
+                                  ██╗    ██╗ ██████╗ ███╗   ██╗██╗
+                                  ██║    ██║██╔═══██╗████╗  ██║██║
+                                  ██║ █╗ ██║██║   ██║██╔██╗ ██║██║
+                                  ██║███╗██║██║   ██║██║╚██╗██║╚═╝
+                                  ╚███╔███╔╝╚██████╔╝██║ ╚████║██╗
+                                   ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝
+
+                                  """;
 
         var combinedBuffer = _gameRenderer.DrawCombinedBuffer();
         Clear();
@@ -129,7 +146,7 @@ public partial class ConsoleClassicGame
         if (_classicState.CurrentLevel > _classicState.MaxLevels &&
             _classicState.PlayerLife > 0 && _optionsState.GameMode == GameMode.Classic)
         {
-            WriteLine("Congratulations! You have completed all levels. Press Any Key to exit.");
+            WriteText(youWonText);
             _classicState.Score += 100;
             _scoreManager.AddScore(_classicState.PlayerName, _classicState.Score,
                 _optionsState.MazeDifficulty, _optionsState.GameMode, _classicState.MaxLevels);
@@ -139,19 +156,27 @@ public partial class ConsoleClassicGame
         {
             _scoreManager.AddScore(_classicState.PlayerName, _classicState.Score,
                 _optionsState.MazeDifficulty, _optionsState.GameMode, _classicState.CurrentLevel - 1);
-
-            var lines = gameOverText.Split("\n");
-            for (var i = 0; i < lines.Length; i++)
-            {
-                var left = Math.Max(0, _classicState.MazeWidth / 2 - 6);
-                var top = Math.Max(0, (_classicState.CurrentLevel > 3) ? _classicState.MazeHeight / 2 + i - 12 : 0 + i);
-                SetCursorPosition(left, top);
-                WriteLine(lines[i]);
-            }
+            WriteText(gameOverText);
         }
 
         ReadKey();
         ClassicSaveManager.DeleteClassicSaveFile();
+        
+        return;
+        void WriteText(string text)
+        {
+            var middle = _classicState.MazeWidth / 2;
+            var top = Math.Max(0, _classicState.MazeHeight / 2 - 10);
+            var lines = text.Split("\n");
+            var lineCount = lines.Length;
+            var left = Math.Max(0, middle - lines[0].Length / 2 - 6);
+
+            for (var i = 0; i < lineCount; i++)
+            {
+                SetCursorPosition(left, top + i);
+                WriteLine(lines[i]);
+            }
+        }
     }
 
     private void PlayerExit()
