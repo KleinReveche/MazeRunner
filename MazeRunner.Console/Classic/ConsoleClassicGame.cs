@@ -14,9 +14,9 @@ public partial class ConsoleClassicGame
     private readonly OptionsState _optionsState;
     private readonly ScoreList _scoreList = ScoreManager.LoadScores();
     private readonly ScoreManager _scoreManager;
+    private bool _isGameDone = false;
     private bool _levelIsCompleted = true;
     private bool _shouldRedraw = true;
-    private bool _isGameDone = false;
 
     public ConsoleClassicGame(OptionsState optionsState, ClassicEngine classicEngine, ClassicState classicState)
     {
@@ -61,7 +61,7 @@ public partial class ConsoleClassicGame
 
             if (_classicState.PlayerX == _classicState.ExitX && _classicState.PlayerY == _classicState.ExitY)
                 PlayerExit();
-            
+
             if (_isGameDone) break;
 
             var key = ReadKey(true).Key;
@@ -101,7 +101,24 @@ public partial class ConsoleClassicGame
 
     private void DisplayGameDone()
     {
-        // TODO: Create a proper game over screen
+        const string gameOverText = """
+
+                                        ██████╗  █████╗ ███╗   ███╗███████╗
+                                       ██╔════╝ ██╔══██╗████╗ ████║██╔════╝
+                                       ██║  ███╗███████║██╔████╔██║█████╗
+                                       ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝
+                                       ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗
+                                        ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
+
+                                        ██████╗ ██╗   ██╗███████╗██████╗ ██╗
+                                       ██╔═══██╗██║   ██║██╔════╝██╔══██╗██║
+                                       ██║   ██║██║   ██║█████╗  ██████╔╝██║
+                                       ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗╚═╝
+                                       ╚██████╔╝ ╚████╔╝ ███████╗██║  ██║██╗
+                                        ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚═╝
+
+                                       """;
+
         var combinedBuffer = _gameRenderer.DrawCombinedBuffer();
         Clear();
         Write(combinedBuffer);
@@ -122,8 +139,15 @@ public partial class ConsoleClassicGame
         {
             _scoreManager.AddScore(_classicState.PlayerName, _classicState.Score,
                 _optionsState.MazeDifficulty, _optionsState.GameMode, _classicState.CurrentLevel - 1);
-            SetCursorPosition(_classicState.MazeWidth / 2, _classicState.MazeHeight / 2);
-            WriteLine("Game Over!");
+
+            var lines = gameOverText.Split("\n");
+            for (var i = 0; i < lines.Length; i++)
+            {
+                var left = Math.Max(0, _classicState.MazeWidth / 2 - 6);
+                var top = Math.Max(0, (_classicState.CurrentLevel > 3) ? _classicState.MazeHeight / 2 + i - 12 : 0 + i);
+                SetCursorPosition(left, top);
+                WriteLine(lines[i]);
+            }
         }
 
         ReadKey();
