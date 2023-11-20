@@ -16,6 +16,7 @@ public partial class ConsoleClassicGame
     private readonly ScoreManager _scoreManager;
     private bool _levelIsCompleted = true;
     private bool _shouldRedraw = true;
+    private bool _isGameDone = false;
 
     public ConsoleClassicGame(OptionsState optionsState, ClassicEngine classicEngine, ClassicState classicState)
     {
@@ -60,6 +61,8 @@ public partial class ConsoleClassicGame
 
             if (_classicState.PlayerX == _classicState.ExitX && _classicState.PlayerY == _classicState.ExitY)
                 PlayerExit();
+            
+            if (_isGameDone) break;
 
             var key = ReadKey(true).Key;
 
@@ -137,6 +140,7 @@ public partial class ConsoleClassicGame
             if (_optionsState.GameMode == GameMode.Classic)
             {
                 DisplayGameDone();
+                _isGameDone = true;
                 return;
             }
 

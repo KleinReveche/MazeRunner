@@ -118,24 +118,24 @@ public static class MainScreen
             OptionsState.IsGameOngoing = false;
         }
 
-        var menuOptions = new List<string>
-        {
-            "Continue",
-            "Start",
-            "Leaderboard",
-            "How to Play",
-            "Credits",
-            "Quit"
-        };
-
-        if (!OptionsState.IsGameOngoing)
-            menuOptions.Remove("Continue");
-
         var selectedIndex = 0;
         var buffer = new StringBuilder();
 
         while (true)
         {
+            var menuOptions = new List<string>
+            {
+                "Continue",
+                "Start",
+                "Leaderboard",
+                "How to Play",
+                "Credits",
+                "Quit"
+            };
+
+            if (!OptionsState.IsGameOngoing)
+                menuOptions.Remove("Continue");
+            
             buffer.Clear();
             System.Console.Clear();
             DisplayTitle();

@@ -55,6 +55,7 @@ public partial class ConsoleClassicGame
             case ConsoleKey.Escape:
                 ClassicSaveManager.SaveCurrentSave(_classicState);
                 isGamePaused = true;
+                _optionsState.IsGameOngoing = true;
                 break;
             default:
                 break;
