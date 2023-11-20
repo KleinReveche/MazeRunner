@@ -161,6 +161,7 @@ public partial class ConsoleClassicGame
 
         ReadKey();
         ClassicSaveManager.DeleteClassicSaveFile();
+        _optionsState.IsGameOngoing = false;
         
         return;
         void WriteText(string text)
