@@ -6,17 +6,17 @@
         <Nullable>enable</Nullable>
         <AssemblyName>MazeRunner.Core</AssemblyName>
         <RootNamespace>Reveche.MazeRunner</RootNamespace>
-		<PublishAot>true</PublishAot>
+        <PublishAot>true</PublishAot>
         <Company>Klein Reveche</Company>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DotNetXtensions.Cryptography" Version="3.4.0" />
+        <PackageReference Include="DotNetXtensions.Cryptography" Version="3.4.0"/>
         <PackageReference Include="MinVer" Version="5.0.0-beta.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NetCoreAudio" Version="1.7.0" />
+        <PackageReference Include="NetCoreAudio" Version="1.7.0"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -8,6 +8,9 @@ public class ClassicState
     public List<(int bombY, int bombX, int timer)> BombLocations = [];
     public List<(int candleY, int CandleX)> CandleLocations = [];
     public List<(int enemyY, int enemyX)> EnemyLocations = [];
+
+    [JsonIgnore] public char[,] Maze = null!;
+
     public List<(int treasureY, int treasureX, TreasureType treasureType, int count)>
         TreasureLocations = [];
 
@@ -33,10 +36,6 @@ public class ClassicState
     public int ExitY { get; set; } // Exit Y-coordinate
     public int MazeWidth { get; set; } = 7;
     public int MazeHeight { get; set; } = 9;
-    
-    [JsonIgnore]
-    public char[,] Maze = null!;
-
     public List<char[]> MazeList { get; set; } = null!; // This is for serialization
     public int PlayerVisibilityRadius { get; set; }
     public int CandleVisibilityRadius { get; set; }

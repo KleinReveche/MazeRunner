@@ -21,9 +21,9 @@ public class MusicPlayer(OptionsState optionsState)
             using var sound = typeof(MusicPlayer).Assembly
                 .GetManifestResourceStream(
                     $"Reveche.MazeRunner.Resources.Music.{_mp3Resources[randomIndex].soundName}")!;
-            
+
             player.PlaySound(sound);
-                
+
             var mp3ResourceLength = _mp3Resources[randomIndex].length;
             if (optionsState.IsCurrentlyPlaying) Thread.Sleep(mp3ResourceLength);
 
@@ -37,6 +37,7 @@ public class MusicPlayer(OptionsState optionsState)
                 Thread.Sleep(500);
             }
         }
+
         player.Dispose();
     }
 }

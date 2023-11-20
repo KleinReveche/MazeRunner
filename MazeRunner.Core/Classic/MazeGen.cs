@@ -93,8 +93,10 @@ public class MazeGen(ClassicState classicState)
         {
             int treasureX = 0, treasureY = 0;
             var random2 = new CryptoRandom();
-            bool isTreasureAlreadyThere = false, isTreasureOnPlayer = false, 
-                isTreasureOnExit = false, isTreasureOnEnemy = false;
+            bool isTreasureAlreadyThere = false,
+                isTreasureOnPlayer = false,
+                isTreasureOnExit = false,
+                isTreasureOnEnemy = false;
 
             do
             {

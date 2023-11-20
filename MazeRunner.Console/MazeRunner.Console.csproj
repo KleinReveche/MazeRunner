@@ -9,7 +9,7 @@
         <ApplicationIcon>Resources\maze-runner.ico</ApplicationIcon>
         <PackageId>MazeRunner.Console</PackageId>
         <Company>Klein Reveche</Company>
-		<PublishAot>true</PublishAot>
+        <PublishAot>true</PublishAot>
     </PropertyGroup>
 
     <ItemGroup>
