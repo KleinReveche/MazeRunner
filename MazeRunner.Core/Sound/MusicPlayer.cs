@@ -25,12 +25,11 @@ public class MusicPlayer(OptionsState optionsState)
             player.PlaySound(sound);
 
             var mp3ResourceLength = _mp3Resources[randomIndex].length;
-            if (optionsState.IsCurrentlyPlaying) Thread.Sleep(mp3ResourceLength);
 
             // This ensures that unnecessary checks are not done when the game is not playing.
             var millisecondsPassed = 0;
             while (!cancellationToken.IsCancellationRequested
-                   && optionsState is { IsSoundOn: true, IsCurrentlyPlaying: false }
+                   && optionsState is { IsSoundOn: true, IsCurrentlyPlaying: true }
                    && millisecondsPassed < mp3ResourceLength)
             {
                 millisecondsPassed += 500;
