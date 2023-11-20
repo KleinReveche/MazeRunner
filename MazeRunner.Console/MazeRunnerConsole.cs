@@ -20,7 +20,6 @@ public static class MazeRunnerConsole
         BackgroundSoundManager.StartBackgroundMusic();
 
         MainScreen.StartMenu();
-        System.Console.ReadKey();
 
         BackgroundSoundManager.StopBackgroundMusic();
     }

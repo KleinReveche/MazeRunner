@@ -1,5 +1,4 @@
 ﻿using Reveche.MazeRunner.Classic;
-using Reveche.MazeRunner.Console.Screens;
 using Reveche.MazeRunner.Serializable;
 using Reveche.MazeRunner.Sound;
 using static System.Console;
@@ -83,8 +82,6 @@ public partial class ConsoleClassicGame
 
             _shouldRedraw = true;
         }
-
-        MainScreen.StartMenu();
     }
 
     private void Draw()
@@ -128,7 +125,6 @@ public partial class ConsoleClassicGame
 
         ReadKey();
         ClassicSaveManager.DeleteClassicSaveFile();
-        MainScreen.StartMenu();
     }
 
     private void PlayerExit()

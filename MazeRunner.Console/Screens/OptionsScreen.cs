@@ -84,16 +84,18 @@ public class OptionsScreen
                     OptionsManager.SaveOptions(_optionsState);
 
                     if (selectedIndex == 0)
+                    {
                         _gameEngineConsole.Play();
+                        return;
+                    }
 
                     if (selectedIndex == _options.Count - 1)
-                        MainScreen.StartMenu();
+                        return;
                     break;
                 default:
                     break;
             }
         }
-        // ReSharper disable once FunctionNeverReturns
     }
 
     // ReSharper disable once SuggestBaseTypeForParameter

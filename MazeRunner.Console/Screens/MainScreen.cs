@@ -119,35 +119,14 @@ public static class MainScreen
             OptionsState.IsGameOngoing = false;
         }
 
-        Dictionary<string, Action> menuOptions = new()
+        var menuOptions = new List<string>
         {
-            { "Continue", () => _gameEngineConsole.Play() },
-            {
-                "Start", () =>
-                {
-                    OptionsState = OptionsManager.LoadOptions();
-                    _classicState = new ClassicState();
-                    _optionsScreen =
-                        new OptionsScreen(new GameEngineConsole(OptionsState, _classicState), OptionsState);
-                    _optionsScreen.DisplayOptions();
-                }
-            },
-            {
-                "Leaderboard", () =>
-                {
-                    var leaderboardScreen = new LeaderboardScreen();
-                    leaderboardScreen.ShowScreen();
-                }
-            },
-            { "How to Play", () => ShowTextScreen(HowToPlay, -12) },
-            { "Credits", () => ShowTextScreen(About, 8) },
-            {
-                "Quit", () =>
-                {
-                    if (OperatingSystem.IsLinux()) Process.Start("pkill", "mpg123");
-                    Environment.Exit(0);
-                }
-            }
+            "Continue",
+            "Start",
+            "Leaderboard",
+            "How to Play",
+            "Credits",
+            "Quit"
         };
 
         if (!OptionsState.IsGameOngoing)
@@ -162,11 +141,9 @@ public static class MainScreen
             System.Console.Clear();
             DisplayTitle();
 
-            var optionKeys = menuOptions.Keys.ToList();
-
             for (var i = 0; i < menuOptions.Count; i++)
             {
-                var option = optionKeys[i];
+                var option = menuOptions[i];
 
                 if (OptionsState.IsGameOngoing && option == "Start")
                     option = "New Game";
@@ -185,7 +162,6 @@ public static class MainScreen
             System.Console.WriteLine(buffer);
             var keyInfo = System.Console.ReadKey();
 
-            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (keyInfo.Key)
             {
                 case ConsoleKey.UpArrow:
@@ -197,12 +173,46 @@ public static class MainScreen
                     break;
 
                 case ConsoleKey.Enter:
-                    var selectedOption = optionKeys[selectedIndex];
-                    if (menuOptions.TryGetValue(selectedOption, out var value)) value();
-                    return;
+                    var selectedOption = menuOptions[selectedIndex];
+                    ShowScreen(selectedOption, out var quit);
+                    if (quit) return;
+                    continue;
                 default:
                     break;
             }
+        }
+    }
+
+    private static void ShowScreen(string screenName, out bool quit)
+    {
+        quit = false;
+        switch (screenName)
+        {
+            case "Continue":
+                _gameEngineConsole.Play();
+                break;
+            case "Start":
+                OptionsState = OptionsManager.LoadOptions();
+                _classicState = new ClassicState();
+                _optionsScreen =
+                    new OptionsScreen(new GameEngineConsole(OptionsState, _classicState), OptionsState);
+                _optionsScreen.DisplayOptions();
+                break;
+            case "Leaderboard":
+                var leaderboardScreen = new LeaderboardScreen();
+                leaderboardScreen.ShowScreen();
+                break;
+            case "How to Play":
+                ShowTextScreen(HowToPlay, -12);
+                break;
+            case "Credits":
+                ShowTextScreen(About, 8);
+                break;
+            case "Quit":
+                quit = true;
+                return;
+            default:
+                throw new ArgumentException("Invalid screen name");
         }
     }
 
@@ -218,7 +228,6 @@ public static class MainScreen
         }
 
         System.Console.ReadKey();
-        StartMenu();
     }
 
     private static string GetVersion()

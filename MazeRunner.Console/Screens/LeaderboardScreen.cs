@@ -46,8 +46,6 @@ public class LeaderboardScreen
 
             if (keyInfo.Key is ConsoleKey.Escape or ConsoleKey.Spacebar or ConsoleKey.Enter) break;
         }
-
-        MainScreen.StartMenu();
     }
 
     private static void DisplayCategory()
