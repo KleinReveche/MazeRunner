@@ -21,9 +21,14 @@ public class MazeGen(ClassicState classicState)
             var isBorder = x == 0 || x == mazeWidth - 1 || y == 0 || y == mazeHeight - 1;
             classicState.Maze[y, x] = isBorder ? MazeIcons.Border : MazeIcons.Wall;
         }
+        
+        GenerateMaze(1, 1); // Start generating maze from (1, 1)
+        GenerateExit();
+        GenerateEnemy();
+        GenerateTreasure();
     }
 
-    public void GenerateMaze(int x, int y)
+    private void GenerateMaze(int x, int y)
     {
         classicState.Maze[y, x] = MazeIcons.Empty;
         int[] directions = { 0, 1, 2, 3 };
@@ -40,7 +45,7 @@ public class MazeGen(ClassicState classicState)
         }
     }
 
-    public void GenerateExit()
+    private void GenerateExit()
     {
         var min = classicState.CurrentLevel * 4 / 2;
 
@@ -56,7 +61,7 @@ public class MazeGen(ClassicState classicState)
         classicState.Maze[classicState.ExitY, classicState.ExitX] = MazeIcons.Empty;
     }
 
-    public void GenerateEnemy()
+    private void GenerateEnemy()
     {
         var min = classicState.CurrentLevel * 4 / 2;
         var difficultyMultiplier = classicState.MazeDifficulty switch
@@ -84,7 +89,7 @@ public class MazeGen(ClassicState classicState)
         }
     }
 
-    public void GenerateTreasure()
+    private void GenerateTreasure()
     {
         if (classicState.CurrentLevel <= 2) return;
         var treasureCount = _cryptoRandom.Next(1, classicState.CurrentLevel - 1);

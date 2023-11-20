@@ -41,10 +41,6 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
         classicState.MazeHeight = _mazeGen.GenerateRandomMazeSize();
         classicState.MazeWidth = _mazeGen.GenerateRandomMazeSize();
         _mazeGen.InitializeMaze();
-        _mazeGen.GenerateMaze(1, 1); // Start generating maze from (1, 1)
-        _mazeGen.GenerateExit();
-        _mazeGen.GenerateEnemy();
-        _mazeGen.GenerateTreasure();
     }
 
     public void AdjustToDifficulty()
