@@ -4,21 +4,27 @@ namespace Reveche.MazeRunner.Classic;
 
 public partial class ClassicEngine
 {
-    public void MoveAllEnemies()
+    public void MoveAllEnemies(bool isHigherLevel = false)
     {
         var random = new CryptoRandom();
-        var enemyCount = classicState.EnemyLocations.Count;
+        var enemyLocations = classicState.EnemyLocations;
+        var higherClassEnemyLocations = classicState.HigherClassEnemy;
+        var enemyCount = isHigherLevel ? classicState.HigherClassEnemy.Count : classicState.EnemyLocations.Count;
         var exitX = classicState.ExitX;
         var exitY = classicState.ExitY;
 
         for (var i = 0; i < enemyCount; i++)
         {
-            var enemyLocation = classicState.EnemyLocations[i];
+            (int enemyY, int enemyX) enemyLocation = default;
+            (int enemyY, int enemyX, Enemy enemy) higherClassEnemyLocation = default;
+
+            if (isHigherLevel) higherClassEnemyLocation = higherClassEnemyLocations[i];
+            else enemyLocation = enemyLocations[i];
 
             var playerX = classicState.PlayerX;
             var playerY = classicState.PlayerY;
-            var enemyX = enemyLocation.enemyX;
-            var enemyY = enemyLocation.enemyY;
+            var enemyX = isHigherLevel ? higherClassEnemyLocation.enemyX : enemyLocation.enemyX;
+            var enemyY = isHigherLevel ? higherClassEnemyLocation.enemyY : enemyLocation.enemyY;
             var radius = (int)(3 * (_difficultyModifier + _higherLevelModifier));
 
             // Derived from Euclidean distance formula
@@ -37,18 +43,26 @@ public partial class ClassicEngine
                 {
                     newEnemyX += Math.Sign(deltaX); // Move in the X direction
 
-                    if (IsCellValid(newEnemyX, enemyY)) enemyLocation.enemyX = newEnemyX;
+                    if (IsCellValid(newEnemyX, enemyY))
+                    {
+                        if (isHigherLevel) higherClassEnemyLocation.enemyX = newEnemyX;
+                        else enemyLocation.enemyX = newEnemyX;
+                    }
                 }
                 else
                 {
                     newEnemyY += Math.Sign(deltaY); // Move in the Y direction
 
-                    if (IsCellValid(enemyX, newEnemyY)) enemyLocation.enemyY = newEnemyY;
+                    if (IsCellValid(enemyX, newEnemyY))
+                    {
+                        if (isHigherLevel) higherClassEnemyLocation.enemyY = newEnemyY;
+                        else enemyLocation.enemyY = newEnemyY;
+                    }
                 }
             }
             else
             {
-                var tries = 6;
+                var tries = 10;
 
                 while (tries-- > 0)
                 {
@@ -76,24 +90,42 @@ public partial class ClassicEngine
 
                     if (!IsCellValid(newEnemyX, newEnemyY)) continue;
 
-                    enemyLocation.enemyX = newEnemyX;
-                    enemyLocation.enemyY = newEnemyY;
+                    if (isHigherLevel)
+                    {
+                        higherClassEnemyLocation.enemyX = newEnemyX;
+                        higherClassEnemyLocation.enemyY = newEnemyY;
+                    }
+                    else
+                    {
+                        enemyLocation.enemyX = newEnemyX;
+                        enemyLocation.enemyY = newEnemyY;
+                    }
+
                     break;
                 }
             }
 
-            classicState.EnemyLocations[i] = enemyLocation;
+            if (isHigherLevel)
+                classicState.HigherClassEnemy[i] = higherClassEnemyLocation;
+            else
+                classicState.EnemyLocations[i] = enemyLocation;
         }
 
         return;
 
+
         bool IsCellValid(int x, int y)
         {
+            var isEnemyThere = isHigherLevel
+                ? classicState.HigherClassEnemy.All(enemyLocation =>
+                    enemyLocation.enemyX != x || enemyLocation.enemyY != y)
+                : classicState.EnemyLocations.All(enemyLocation =>
+                    enemyLocation.enemyX != x || enemyLocation.enemyY != y);
+
             return x >= 0 && x < classicState.MazeWidth &&
                    y >= 0 && y < classicState.MazeHeight &&
                    (x != exitX || y != exitY) &&
-                   IsCellEmpty(x, y) &&
-                   classicState.EnemyLocations.All(loc => loc.enemyX != x || loc.enemyY != y);
+                   IsCellEmpty(x, y) && isEnemyThere;
         }
     }
 
@@ -108,6 +140,15 @@ public partial class ClassicEngine
             x == enemyLocation.enemyX && y == enemyLocation.enemyY);
 
         enemy = enemyLocation != default ? (enemyLocation.enemyX, enemyLocation.enemyY) : (0, 0);
+        return enemyLocation != default;
+    }
+    
+    private bool CheckEnemyCollision(int x, int y, out (int enemyX, int enemyY, Enemy enemy) enemy)
+    {
+        var enemyLocation = classicState.HigherClassEnemy.FirstOrDefault(enemyLocation =>
+            x == enemyLocation.enemyX && y == enemyLocation.enemyY);
+
+        enemy = enemyLocation != default ? (enemyLocation.enemyX, enemyLocation.enemyY, enemyLocation.enemy) : (0, 0, Enemy.None);
         return enemyLocation != default;
     }
 }

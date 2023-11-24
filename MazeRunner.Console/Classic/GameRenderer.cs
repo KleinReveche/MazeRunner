@@ -37,6 +37,7 @@ public partial class GameRenderer(OptionsState optionsState, ClassicEngine class
         var middle = inventoryWidth / 2;
         var currentScore = $"Score: {classicState.Score}";
         var playerLife = $"{classicState.PlayerLife} {(classicState.PlayerLife == 1 ? "Life" : "Lives")} Left";
+        var playerHealth = $"Health: {(classicState.PlayerHealth > 0 ? classicState.PlayerHealth : 0)}";
 
         AppendCorner(true);
         inventoryBuffer.AppendLine("│".PadRight(middle - 6) +
@@ -58,6 +59,7 @@ public partial class GameRenderer(OptionsState optionsState, ClassicEngine class
 
         AppendLine(currentScore);
         AppendLine(playerLife);
+        AppendLine(playerHealth);
         AppendEmptyLine();
 
         bool hasStatus = false, hasItem = false;

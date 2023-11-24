@@ -1,4 +1,5 @@
-﻿using Reveche.MazeRunner.Classic;
+﻿using DotNetXtensions.Cryptography;
+using Reveche.MazeRunner.Classic;
 using Reveche.MazeRunner.Serializable;
 using Reveche.MazeRunner.Sound;
 using static System.Console;
@@ -49,6 +50,24 @@ public partial class ConsoleClassicGame
                 if (!continueGame) _classicEngine.InitializeNewLevel();
                 continueGame = false;
                 _levelIsCompleted = false;
+                if (_classicState.CurrentLevel > 5)
+                {
+                    var random = new Random();
+                    if (random.Next(1, 100) >= 80)
+                        _classicState.PlayerMaxHealth += 10 * (int)Math.Ceiling(_classicState.CurrentLevel / 2.0);
+                }
+                _classicState.PlayerBurnDuration = 0;
+                _classicState.DecreasedVisibilityEffectDuration = 0;
+            }
+            
+            if (_classicState.DecreasedVisibilityEffectDuration > 0)
+                _classicState.DecreasedVisibilityEffectDuration--;
+
+            if (_classicState.PlayerBurnDuration > 0)
+            {
+                var random = new CryptoRandom();
+                _classicState.PlayerHealth -= random.Next(3, 11);
+                _classicState.PlayerBurnDuration--;
             }
 
             if (_shouldRedraw) Draw();
@@ -58,6 +77,8 @@ public partial class ConsoleClassicGame
                 DisplayGameDone();
                 break;
             }
+
+            if (_classicState.PlayerHealth <= 0) _classicState.PlayerHealth = 100;
 
             if (_classicState.PlayerX == _classicState.ExitX && _classicState.PlayerY == _classicState.ExitY)
                 PlayerExit();
@@ -82,6 +103,7 @@ public partial class ConsoleClassicGame
                 PlayerAcquireTreasure(treasure);
 
             if (_classicState.CurrentLevel != 1 && !itemPlaced) _classicEngine.MoveAllEnemies();
+            if (_classicState.CurrentLevel > 6 && !itemPlaced) _classicEngine.MoveAllEnemies(true);
 
             _shouldRedraw = true;
         }
@@ -103,21 +125,21 @@ public partial class ConsoleClassicGame
     {
         const string gameOverText = """
 
-                                        ██████╗  █████╗ ███╗   ███╗███████╗
-                                       ██╔════╝ ██╔══██╗████╗ ████║██╔════╝
-                                       ██║  ███╗███████║██╔████╔██║█████╗
-                                       ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝
-                                       ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗
-                                        ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
+                                     ██████╗  █████╗ ███╗   ███╗███████╗
+                                    ██╔════╝ ██╔══██╗████╗ ████║██╔════╝
+                                    ██║  ███╗███████║██╔████╔██║█████╗
+                                    ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝
+                                    ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗
+                                     ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
 
-                                        ██████╗ ██╗   ██╗███████╗██████╗ ██╗
-                                       ██╔═══██╗██║   ██║██╔════╝██╔══██╗██║
-                                       ██║   ██║██║   ██║█████╗  ██████╔╝██║
-                                       ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗╚═╝
-                                       ╚██████╔╝ ╚████╔╝ ███████╗██║  ██║██╗
-                                        ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚═╝
+                                     ██████╗ ██╗   ██╗███████╗██████╗ ██╗
+                                    ██╔═══██╗██║   ██║██╔════╝██╔══██╗██║
+                                    ██║   ██║██║   ██║█████╗  ██████╔╝██║
+                                    ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗╚═╝
+                                    ╚██████╔╝ ╚████╔╝ ███████╗██║  ██║██╗
+                                     ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚═╝
 
-                                       """;
+                                    """;
         const string youWonText = """
 
                                   ██╗   ██╗ ██████╗ ██╗   ██╗
@@ -162,8 +184,9 @@ public partial class ConsoleClassicGame
         ReadKey();
         ClassicSaveManager.DeleteClassicSaveFile();
         _optionsState.IsGameOngoing = false;
-        
+
         return;
+
         void WriteText(string text)
         {
             var middle = _classicState.MazeWidth / 2;

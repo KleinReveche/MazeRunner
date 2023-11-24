@@ -12,6 +12,9 @@ public static class MazeIcons
     public const char Treasure = 'T';
     public const char Fog = '@';
     public const char LostFog = '~';
+    public const char Goblin = 'G';
+    public const char Ogre = 'O';
+    public const char Dragon = 'D';
 }
 
 public enum TreasureType
@@ -38,4 +41,12 @@ public enum GameMode
 {
     Classic,
     Endless
+}
+
+public enum Enemy
+{
+    Goblin,
+    Ogre,
+    Dragon,
+    None
 }
