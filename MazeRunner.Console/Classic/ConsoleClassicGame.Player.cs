@@ -25,7 +25,7 @@ public partial class ConsoleClassicGame
         var newPlayerX = _classicState.PlayerX;
         var newPlayerY = _classicState.PlayerY;
 
-        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+        CurrentKeys.Add(key);
         switch (key)
         {
             case ConsoleKey.W:
@@ -55,13 +55,12 @@ public partial class ConsoleClassicGame
             case ConsoleKey.Escape:
                 ClassicSaveManager.SaveCurrentSave(_classicState);
                 isGamePaused = true;
+                _optionsState.IsGameOngoing = true;
                 break;
-            // ReSharper disable once RedundantEmptySwitchSection
             default:
-                break;
+                CheckSecretCombination();
+                return true;
         }
-
-        CurrentKeys.Add(key);
 
         if (placeCandle)
         {

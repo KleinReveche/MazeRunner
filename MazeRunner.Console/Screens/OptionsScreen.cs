@@ -59,7 +59,6 @@ public class OptionsScreen
             System.Console.WriteLine(buffer);
             var keyInfo = System.Console.ReadKey();
 
-            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (keyInfo.Key)
             {
                 case ConsoleKey.LeftArrow:
@@ -84,17 +83,20 @@ public class OptionsScreen
                     OptionsManager.SaveOptions(_optionsState);
 
                     if (selectedIndex == 0)
+                    {
                         _gameEngineConsole.Play();
+                        return;
+                    }
 
                     if (selectedIndex == _options.Count - 1)
-                        MainScreen.StartMenu();
+                        return;
                     break;
+                default:
+                    continue;
             }
         }
-        // ReSharper disable once FunctionNeverReturns
     }
 
-    // ReSharper disable once SuggestBaseTypeForParameter
     private void ChangeOptionValue(string optionKey, Dictionary<string, string> options, int change)
     {
         if (!options.TryGetValue(optionKey, out var value)) return;
@@ -159,6 +161,8 @@ public class OptionsScreen
                 ChangeTextStyle(_optionsState.MazeDifficulty == MazeDifficulty.AsciiInsanity ? 1 : newIndex);
                 break;
             }
+            default:
+                throw new ArgumentException("Invalid option key");
         }
     }
 

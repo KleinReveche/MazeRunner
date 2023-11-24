@@ -1,4 +1,6 @@
-﻿namespace Reveche.MazeRunner;
+﻿using System.Text.Json.Serialization;
+
+namespace Reveche.MazeRunner;
 
 public class OptionsState
 {
@@ -8,5 +10,5 @@ public class OptionsState
     public MazeDifficulty MazeDifficulty { get; set; }
     public GameMode GameMode { get; set; }
     public bool IsCurrentlyPlaying { get; set; }
-    public bool IsGameOngoing { get; set; }
+    [JsonIgnore] public bool IsGameOngoing { get; set; }
 }

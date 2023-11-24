@@ -50,11 +50,13 @@ public partial class GameRenderer
             .Any(candleLocation => Math.Abs(x - candleLocation.Item2) <= classicState.CandleVisibilityRadius
                                    && Math.Abs(y - candleLocation.Item1) <= classicState.CandleVisibilityRadius);
         var isTemporaryVisible = classicState is { PlayerHasIncreasedVisibility: true };
+        var hasDecreasedVisibilityEffect = classicState.DecreasedVisibilityEffectDuration > 0;
         var isGameDone = classicState.CurrentLevel > classicState.MaxLevels &&
                          optionsState.GameMode == GameMode.Classic;
 
         return distanceToPlayer <= classicState.PlayerVisibilityRadius +
-               (isTemporaryVisible ? classicState.IncreasedVisibilityEffectRadius : 0)
+               (isTemporaryVisible ? classicState.IncreasedVisibilityEffectRadius : 0) -
+               (hasDecreasedVisibilityEffect ? classicState.IncreasedVisibilityEffectRadius : 0)
                || isWithinCandleRadius || classicState.AtAGlance || isGameDone;
     }
 
@@ -74,6 +76,23 @@ public partial class GameRenderer
         if (x == ExitX && y == ExitY) return IsUtf8(MazeIcons.Exit);
 
         if (classicEngine.CheckEnemyCollision(x, y) && classicState.CurrentLevel != 1) return IsUtf8(MazeIcons.Enemy);
+        
+        //check higher level enemies here and return the appropriate icon according to type
+        if (classicState.CurrentLevel > 6)
+        {
+            // check if higher level enemy is on the coordinates
+            var enemy = classicState.HigherClassEnemy.FirstOrDefault(enemyLocation =>
+                x == enemyLocation.enemyX && y == enemyLocation.enemyY);
+            
+            if (enemy != default)
+                return enemy.enemy switch
+                {
+                    Enemy.Goblin => IsUtf8(MazeIcons.Goblin),
+                    Enemy.Ogre => IsUtf8(MazeIcons.Ogre),
+                    Enemy.Dragon => IsUtf8(MazeIcons.Dragon),
+                    _ => IsUtf8(MazeIcons.Enemy)
+                };
+        }
 
         if (isCandle) return IsUtf8(MazeIcons.Candle);
         return isTreasure ? IsUtf8(MazeIcons.Treasure) : IsUtf8(isBomb ? MazeIcons.Bomb : Maze[y, x]);
@@ -94,6 +113,9 @@ public partial class GameRenderer
                 MazeIcons.Treasure => "📦",
                 MazeIcons.Fog => "🟫",
                 MazeIcons.LostFog => "🟥",
+                MazeIcons.Goblin => "👺",
+                MazeIcons.Ogre => "👹",
+                MazeIcons.Dragon => "🐲",
                 _ => icon.ToString()
             };
         }

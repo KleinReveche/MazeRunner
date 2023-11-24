@@ -46,8 +46,6 @@ public class LeaderboardScreen
 
             if (keyInfo.Key is ConsoleKey.Escape or ConsoleKey.Spacebar or ConsoleKey.Enter) break;
         }
-
-        MainScreen.StartMenu();
     }
 
     private static void DisplayCategory()
@@ -74,9 +72,11 @@ public class LeaderboardScreen
     {
         var maxNameLength = Math.Max(_leaderboard.Max(playerScore => playerScore.Name.Length), 6);
         var maxScoreLength = Math.Max(_leaderboard.Max(playerScore => playerScore.Score.ToString().Length), 5);
-        var maxDifficultyLength = Math.Max(_leaderboard.Max(playerScore => playerScore.MazeDifficulty.ToString().Length), 10);
+        var maxDifficultyLength =
+            Math.Max(_leaderboard.Max(playerScore => playerScore.MazeDifficulty.ToString().Length), 10);
         var maxCompletionLength = Math.Max(_leaderboard.Max(playerScore => playerScore.GameMode.ToString().Length), 9);
-        var maxLevelLength = Math.Max(_leaderboard.Max(playerScore => playerScore.CompletedLevels.ToString().Length), 5);
+        var maxLevelLength =
+            Math.Max(_leaderboard.Max(playerScore => playerScore.CompletedLevels.ToString().Length), 5);
 
         _namePadding = maxNameLength + 2;
         _scorePadding = maxScoreLength + 2;
@@ -113,6 +113,8 @@ public class LeaderboardScreen
                     return level != 0 ? level : playerScoreB.Score.CompareTo(playerScoreA.Score);
                 });
                 break;
+            default:
+                throw new ArgumentException("Wrong category index");
         }
     }
 

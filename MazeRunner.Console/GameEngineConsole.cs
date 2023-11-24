@@ -1,6 +1,5 @@
 ﻿using Reveche.MazeRunner.Classic;
 using Reveche.MazeRunner.Console.Classic;
-using Reveche.MazeRunner.Console.Screens;
 
 namespace Reveche.MazeRunner.Console;
 
@@ -22,8 +21,5 @@ public class GameEngineConsole(OptionsState optionsState, ClassicState classicSt
             default:
                 throw new ArgumentOutOfRangeException();
         }
-
-        System.Console.ReadKey();
-        MainScreen.StartMenu();
     }
 }

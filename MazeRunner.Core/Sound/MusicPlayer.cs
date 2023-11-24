@@ -1,4 +1,6 @@
-﻿namespace Reveche.MazeRunner.Sound;
+﻿using DotNetXtensions.Cryptography;
+
+namespace Reveche.MazeRunner.Sound;
 
 public class MusicPlayer(OptionsState optionsState)
 {
@@ -11,7 +13,7 @@ public class MusicPlayer(OptionsState optionsState)
     public void PlayBackgroundMusic(CancellationToken cancellationToken)
     {
         var player = new MusicPlayerCore(optionsState);
-        var random = new Random();
+        var random = new CryptoRandom();
 
         while (!cancellationToken.IsCancellationRequested && optionsState.IsSoundOn)
         {
@@ -19,22 +21,22 @@ public class MusicPlayer(OptionsState optionsState)
             using var sound = typeof(MusicPlayer).Assembly
                 .GetManifestResourceStream(
                     $"Reveche.MazeRunner.Resources.Music.{_mp3Resources[randomIndex].soundName}")!;
-            
+
             player.PlaySound(sound);
-                
+
             var mp3ResourceLength = _mp3Resources[randomIndex].length;
-            if (optionsState.IsCurrentlyPlaying) Thread.Sleep(mp3ResourceLength);
 
             // This ensures that unnecessary checks are not done when the game is not playing.
             var millisecondsPassed = 0;
             while (!cancellationToken.IsCancellationRequested
-                   && optionsState is { IsSoundOn: true, IsCurrentlyPlaying: false }
+                   && optionsState is { IsSoundOn: true, IsCurrentlyPlaying: true }
                    && millisecondsPassed < mp3ResourceLength)
             {
                 millisecondsPassed += 500;
                 Thread.Sleep(500);
             }
         }
+
         player.Dispose();
     }
 }
