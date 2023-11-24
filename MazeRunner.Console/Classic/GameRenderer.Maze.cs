@@ -87,9 +87,9 @@ public partial class GameRenderer
             if (enemy != default)
                 return enemy.enemy switch
                 {
-                    Enemy.Goblin => IsUtf8(MazeIcons.Goblin),
-                    Enemy.Ogre => IsUtf8(MazeIcons.Ogre),
-                    Enemy.Dragon => IsUtf8(MazeIcons.Dragon),
+                    HighClassEnemy.Goblin => IsUtf8(MazeIcons.Goblin),
+                    HighClassEnemy.Ogre => IsUtf8(MazeIcons.Ogre),
+                    HighClassEnemy.Dragon => IsUtf8(MazeIcons.Dragon),
                     _ => IsUtf8(MazeIcons.Enemy)
                 };
         }

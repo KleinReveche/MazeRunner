@@ -16,7 +16,7 @@ public partial class ClassicEngine
         for (var i = 0; i < enemyCount; i++)
         {
             (int enemyY, int enemyX) enemyLocation = default;
-            (int enemyY, int enemyX, Enemy enemy) higherClassEnemyLocation = default;
+            (int enemyY, int enemyX, HighClassEnemy enemy) higherClassEnemyLocation = default;
 
             if (isHigherLevel) higherClassEnemyLocation = higherClassEnemyLocations[i];
             else enemyLocation = enemyLocations[i];
@@ -142,13 +142,16 @@ public partial class ClassicEngine
         enemy = enemyLocation != default ? (enemyLocation.enemyX, enemyLocation.enemyY) : (0, 0);
         return enemyLocation != default;
     }
-    
-    private bool CheckEnemyCollision(int x, int y, out (int enemyX, int enemyY, Enemy enemy) enemy)
+
+    private bool CheckHigherClassEnemyCollision(int x, int y, out (int enemyX, int enemyY, HighClassEnemy enemy) enemy)
     {
         var enemyLocation = classicState.HigherClassEnemy.FirstOrDefault(enemyLocation =>
             x == enemyLocation.enemyX && y == enemyLocation.enemyY);
 
-        enemy = enemyLocation != default ? (enemyLocation.enemyX, enemyLocation.enemyY, enemyLocation.enemy) : (0, 0, Enemy.None);
+        enemy = enemyLocation != default
+            ? (enemyLocation.enemyX, enemyLocation.enemyY, enemyLocation.enemy)
+            : (0, 0, HighClassEnemy.None);
         return enemyLocation != default;
     }
+
 }

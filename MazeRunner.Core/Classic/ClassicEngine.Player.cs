@@ -11,14 +11,18 @@ public partial class ClassicEngine
         var playerDamage = 0;
         playerIsDead = false;
 
-        if (CheckEnemyCollision(PlayerX, PlayerY) && !classicState.IsPlayerInvulnerable)
+        var enemyCollision = CheckEnemyCollision(PlayerX, PlayerY);
+        var higherClassEnemyCollision = CheckHigherClassEnemyCollision(PlayerX, PlayerY,
+            out (int EnemyX, int EnemyY, HighClassEnemy Enemy) higherClassEnemy);
+
+        if (enemyCollision && !classicState.IsPlayerInvulnerable)
             playerDamage = random.Next(20, 33);
 
-        if (CheckEnemyCollision(PlayerX, PlayerY, out (int EnemyX, int EnemyY, Enemy Enemy) higherClassEnemy) &&
-            classicState is { CurrentLevel: > 6, IsPlayerInvulnerable: false })
-            switch (higherClassEnemy.Enemy)
+        var higherClassEnemyDictionary = new Dictionary<HighClassEnemy, Action>
+        {
             {
-                case Enemy.Goblin:
+                HighClassEnemy.Goblin, () =>
+                {
                     if (random.Next(1, 100) <= 50)
                     {
                         if (classicState.BombCount > 0) classicState.BombCount--;
@@ -29,22 +33,28 @@ public partial class ClassicEngine
                     }
 
                     playerDamage += random.Next(35, 47);
-                    break;
-                case Enemy.Ogre:
+                }
+            },
+            {
+                HighClassEnemy.Ogre, () =>
+                {
                     playerDamage += random.Next(51, 69);
                     classicState.DecreasedVisibilityEffectDuration =
                         random.Next(1, (int)(3 * (_difficultyModifier + _higherLevelModifier)));
-                    break;
-                case Enemy.Dragon:
+                }
+            },
+            {
+                HighClassEnemy.Dragon, () =>
+                {
                     playerDamage += random.Next(70, 93);
                     classicState.PlayerBurnDuration =
                         random.Next(1, (int)(3 * (_difficultyModifier + _higherLevelModifier)));
-                    break;
-                case Enemy.None:
-                    break;
-                default:
-                    throw new ArgumentException("Wrong enemy type");
+                }
             }
+        };
+
+        if (higherClassEnemyCollision && classicState is { CurrentLevel: > 6, IsPlayerInvulnerable: false })
+            higherClassEnemyDictionary[higherClassEnemy.Enemy]();
 
         classicState.PlayerHealth -= playerDamage;
 
@@ -66,35 +76,35 @@ public partial class ClassicEngine
     private void AcquireTreasure((int treasureY, int treasureX, TreasureType treasureType, int count) treasure)
     {
         if (treasure.treasureType == TreasureType.None) return;
-        switch (treasure.treasureType)
+
+        var treasureActions = new Dictionary<TreasureType, Action>
         {
-            case TreasureType.Bomb:
-                classicState.BombCount += treasure.count;
-                break;
-            case TreasureType.Candle:
-                classicState.CandleCount += treasure.count;
-                break;
-            case TreasureType.Life:
-                classicState.PlayerLife += treasure.count;
-                classicState.PlayerMaxHealth += (int)(5 * (_difficultyModifier + _higherLevelModifier));
-                classicState.PlayerHealth = classicState.PlayerMaxHealth;
-                break;
-            case TreasureType.IncreasedVisibilityEffect:
-                classicState.PlayerHasIncreasedVisibility = true;
-                break;
-            case TreasureType.TemporaryInvulnerabilityEffect:
-                classicState.IsPlayerInvulnerable = true;
-                classicState.PlayerInvincibilityEffectDuration =
-                    (int)(15 * (_difficultyModifier + _higherLevelModifier));
-                break;
-            case TreasureType.AtAGlanceEffect:
-                classicState.AtAGlance = true;
-                break;
-            case TreasureType.None:
-                break;
-            default:
-                throw new ArgumentException("Wrong treasure type");
-        }
+            { TreasureType.Bomb, () => classicState.BombCount += treasure.count },
+            { TreasureType.Candle, () => classicState.CandleCount += treasure.count },
+            {
+                TreasureType.Life, () =>
+                {
+                    classicState.PlayerLife += treasure.count;
+                    classicState.PlayerMaxHealth += (int)(5 * (_difficultyModifier + _higherLevelModifier));
+                    classicState.PlayerHealth = classicState.PlayerMaxHealth;
+                }
+            },
+            { TreasureType.IncreasedVisibilityEffect, () => classicState.PlayerHasIncreasedVisibility = true },
+            {
+                TreasureType.TemporaryInvulnerabilityEffect, () =>
+                {
+                    classicState.IsPlayerInvulnerable = true;
+                    classicState.PlayerInvincibilityEffectDuration =
+                        (int)(15 * (_difficultyModifier + _higherLevelModifier));
+                }
+            },
+            { TreasureType.AtAGlanceEffect, () => classicState.AtAGlance = true }
+        };
+
+        if (treasureActions.TryGetValue(treasure.treasureType, out var action))
+            action();
+        else
+            throw new ArgumentException("Wrong treasure type");
 
         _gameSoundFx.PlayFx(SoundFx.ItemPickup);
         classicState.Score += (int)(treasure.count *
@@ -123,8 +133,11 @@ public partial class ClassicEngine
             for (var y = -BlastRadius; y <= BlastRadius; y++)
             for (var x = -BlastRadius; x <= BlastRadius; x++)
             {
+                var bombXRadius = bomb.bombX + x;
+                var bombYRadius = bomb.bombY + y;
                 var playerIsInvulnerable = classicState.IsPlayerInvulnerable;
-                if (bomb.bombX + x == PlayerX && bomb.bombY + y == PlayerY && !playerIsInvulnerable)
+
+                if (bombXRadius == PlayerX && bombYRadius == PlayerY && !playerIsInvulnerable)
                 {
                     classicState.PlayerHealth -= 75;
                     if (classicState.PlayerHealth <= 0)
@@ -134,22 +147,22 @@ public partial class ClassicEngine
                     }
                 }
 
-                if (CheckEnemyCollision(bomb.bombX + x, bomb.bombY + y, out (int EnemyX, int EnemyY) enemy))
+                if (CheckEnemyCollision(bombXRadius, bombYRadius, out (int EnemyX, int EnemyY) enemy))
                 {
                     classicState.EnemyLocations.Remove((enemy.EnemyY, enemy.EnemyX));
                     classicState.Score += (int)(20 * (_difficultyModifier + _higherLevelModifier));
                 }
 
-                if (CheckEnemyCollision(bomb.bombX + x, bomb.bombY + y,
-                        out (int EnemyX, int EnemyY, Enemy Enemy) higherClassEnemy))
+                if (CheckHigherClassEnemyCollision(bombXRadius, bombYRadius,
+                        out (int EnemyX, int EnemyY, HighClassEnemy Enemy) higherClassEnemy))
                 {
                     classicState.HigherClassEnemy.Remove((higherClassEnemy.EnemyY, higherClassEnemy.EnemyX,
                         higherClassEnemy.Enemy));
                     classicState.Score += (int)(50 * (_difficultyModifier + _higherLevelModifier));
                 }
 
-                if (_mazeGen.IsInBounds(bomb.bombX + x, bomb.bombY + y))
-                    Maze[bomb.bombY + y, bomb.bombX + x] = MazeIcons.Empty;
+                if (_mazeGen.IsInBounds(bombXRadius, bombYRadius))
+                    Maze[bombYRadius, bombXRadius] = MazeIcons.Empty;
             }
 
             classicState.BombLocations.Remove(bomb);

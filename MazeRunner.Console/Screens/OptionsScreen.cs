@@ -20,8 +20,8 @@ public class OptionsScreen
         _options = new Dictionary<string, string>
         {
             { "Play", "" },
-            { "Game Mode", _gameModeValues.ElementAt((int)_optionsState.GameMode) },
-            { "Difficulty", _difficultyValues.ElementAt((int)_optionsState.MazeDifficulty) },
+            { "Game Mode", _gameModeValues[_optionsState.GameMode.GetHashCode()] },
+            { "Difficulty", _difficultyValues[_optionsState.MazeDifficulty.GetHashCode()] },
             { "Text Style", _optionsState.IsUtf8 ? _textStyleValues[0] : _textStyleValues[1] },
             { "Music", _optionsState.IsSoundOn ? _soundValues[0] : _soundValues[1] },
             { "Sound Effects", _optionsState.IsSoundFxOn ? _soundValues[0] : _soundValues[1] },
@@ -133,16 +133,10 @@ public class OptionsScreen
                 options[optionKey] = _soundValues[newIndex];
                 _optionsState.IsSoundOn = !_optionsState.IsSoundOn;
 
-                switch (_optionsState.IsSoundOn)
-                {
-                    case false:
-                        MazeRunnerConsole.BackgroundSoundManager.StopBackgroundMusic();
-                        break;
-                    case true:
-                        MazeRunnerConsole.BackgroundSoundManager.RestartBackgroundMusic();
-                        break;
-                }
-
+                if (_optionsState.IsSoundOn)
+                    MazeRunnerConsole.BackgroundSoundManager.RestartBackgroundMusic();
+                else
+                    MazeRunnerConsole.BackgroundSoundManager.StopBackgroundMusic();
                 break;
             }
             case "Sound Effects":

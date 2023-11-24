@@ -8,7 +8,7 @@ public class ClassicState
     public List<(int bombY, int bombX, int timer)> BombLocations = [];
     public List<(int candleY, int CandleX)> CandleLocations = [];
     public List<(int enemyY, int enemyX)> EnemyLocations = [];
-    public List<(int enemyY, int enemyX, Enemy enemy)> HigherClassEnemy = [];
+    public List<(int enemyY, int enemyX, HighClassEnemy enemy)> HigherClassEnemy = [];
 
     [JsonIgnore] public char[,] Maze = null!;
 
