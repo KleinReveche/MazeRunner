@@ -177,7 +177,7 @@ public static class MainScreen
                     if (quit) return;
                     continue;
                 default:
-                    break;
+                    continue;
             }
         }
     }

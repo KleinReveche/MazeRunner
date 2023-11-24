@@ -1,5 +1,4 @@
-﻿using DotNetXtensions.Cryptography;
-using Reveche.MazeRunner.Classic;
+﻿using Reveche.MazeRunner.Classic;
 using Reveche.MazeRunner.Serializable;
 using Reveche.MazeRunner.Sound;
 using static System.Console;
@@ -50,25 +49,10 @@ public partial class ConsoleClassicGame
                 if (!continueGame) _classicEngine.InitializeNewLevel();
                 continueGame = false;
                 _levelIsCompleted = false;
-                if (_classicState.CurrentLevel > 5)
-                {
-                    var random = new Random();
-                    if (random.Next(1, 100) >= 80)
-                        _classicState.PlayerMaxHealth += 10 * (int)Math.Ceiling(_classicState.CurrentLevel / 2.0);
-                }
-                _classicState.PlayerBurnDuration = 0;
-                _classicState.DecreasedVisibilityEffectDuration = 0;
+                _classicEngine.NewLevel();
             }
-            
-            if (_classicState.DecreasedVisibilityEffectDuration > 0)
-                _classicState.DecreasedVisibilityEffectDuration--;
 
-            if (_classicState.PlayerBurnDuration > 0)
-            {
-                var random = new CryptoRandom();
-                _classicState.PlayerHealth -= random.Next(3, 11);
-                _classicState.PlayerBurnDuration--;
-            }
+            _classicEngine.AdjustEffects();
 
             if (_shouldRedraw) Draw();
 
@@ -124,14 +108,14 @@ public partial class ConsoleClassicGame
     private void DisplayGameDone()
     {
         const string gameOverText = """
-
+                                    
                                      ██████╗  █████╗ ███╗   ███╗███████╗
                                     ██╔════╝ ██╔══██╗████╗ ████║██╔════╝
                                     ██║  ███╗███████║██╔████╔██║█████╗
                                     ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝
                                     ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗
                                      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
-
+                                    
                                      ██████╗ ██╗   ██╗███████╗██████╗ ██╗
                                     ██╔═══██╗██║   ██║██╔════╝██╔══██╗██║
                                     ██║   ██║██║   ██║█████╗  ██████╔╝██║

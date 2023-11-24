@@ -85,7 +85,7 @@ public partial class ClassicEngine
                             newEnemyX++;
                             break;
                         default:
-                            throw new Exception("Wrong direction");
+                            throw new ArgumentException("Invalid direction");
                     }
 
                     if (!IsCellValid(newEnemyX, newEnemyY)) continue;

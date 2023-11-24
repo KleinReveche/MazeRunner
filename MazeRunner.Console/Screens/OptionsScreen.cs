@@ -59,7 +59,6 @@ public class OptionsScreen
             System.Console.WriteLine(buffer);
             var keyInfo = System.Console.ReadKey();
 
-            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (keyInfo.Key)
             {
                 case ConsoleKey.LeftArrow:
@@ -93,12 +92,11 @@ public class OptionsScreen
                         return;
                     break;
                 default:
-                    break;
+                    continue;
             }
         }
     }
 
-    // ReSharper disable once SuggestBaseTypeForParameter
     private void ChangeOptionValue(string optionKey, Dictionary<string, string> options, int change)
     {
         if (!options.TryGetValue(optionKey, out var value)) return;
@@ -164,7 +162,7 @@ public class OptionsScreen
                 break;
             }
             default:
-                throw new Exception("Invalid option key");
+                throw new ArgumentException("Invalid option key");
         }
     }
 

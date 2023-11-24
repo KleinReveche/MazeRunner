@@ -43,7 +43,7 @@ public partial class ClassicEngine
                 case Enemy.None:
                     break;
                 default:
-                    throw new Exception("Wrong enemy type");
+                    throw new ArgumentException("Wrong enemy type");
             }
 
         classicState.PlayerHealth -= playerDamage;
@@ -93,7 +93,7 @@ public partial class ClassicEngine
             case TreasureType.None:
                 break;
             default:
-                throw new Exception("Wrong treasure type");
+                throw new ArgumentException("Wrong treasure type");
         }
 
         _gameSoundFx.PlayFx(SoundFx.ItemPickup);

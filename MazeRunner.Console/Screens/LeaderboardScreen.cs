@@ -114,7 +114,7 @@ public class LeaderboardScreen
                 });
                 break;
             default:
-                throw new Exception("Wrong category index");
+                throw new ArgumentException("Wrong category index");
         }
     }
 

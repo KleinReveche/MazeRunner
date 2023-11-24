@@ -1,4 +1,5 @@
-﻿using Reveche.MazeRunner.Sound;
+﻿using DotNetXtensions.Cryptography;
+using Reveche.MazeRunner.Sound;
 
 namespace Reveche.MazeRunner.Classic;
 
@@ -115,5 +116,28 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
 
         classicState.Score += timeScore < 0 ? 0 : timeScore;
         classicState.Score += (int)(50 * (_difficultyModifier + _higherLevelModifier)); // For completing the level
+    }
+    
+    public void AdjustEffects()
+    {
+        if (classicState.DecreasedVisibilityEffectDuration > 0)
+            classicState.DecreasedVisibilityEffectDuration--;
+
+        if (classicState.PlayerBurnDuration <= 0) return;
+        var random = new CryptoRandom();
+        classicState.PlayerHealth -= random.Next(3, 11);
+        classicState.PlayerBurnDuration--;
+    }
+
+    public void NewLevel()
+    {
+        if (classicState.CurrentLevel > 5)
+        {
+            var random = new CryptoRandom();
+            if (random.Next(1, 100) >= 80)
+                classicState.PlayerMaxHealth += 10 * (int)Math.Ceiling(classicState.CurrentLevel / 2.0);
+        }
+        classicState.PlayerBurnDuration = 0;
+        classicState.DecreasedVisibilityEffectDuration = 0;
     }
 }
