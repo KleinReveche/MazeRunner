@@ -51,7 +51,9 @@ public class MusicPlayerCore : IDisposable
 
     private static string CreateTempAudioFile(Stream sound, string name)
     {
-        var tempFile = Path.Join(Path.GetTempPath(), name);
+        if (!name.Contains(".mp3")) throw new ArgumentException("The sound must be an MP3 file.");
+        
+        var tempFile = Path.Join(Path.GetTempPath(), $"MazeRunner_{name}");
 
         if (File.Exists(tempFile)) return tempFile;
 
