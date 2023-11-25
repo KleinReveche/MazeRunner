@@ -50,6 +50,7 @@ public class MazeGen(ClassicState classicState)
     {
         var random = new CryptoRandom();
         var min = classicState.CurrentLevel * 4 / 2;
+        if (classicState.CurrentLevel > 15) min = 29;
 
         do
         {
