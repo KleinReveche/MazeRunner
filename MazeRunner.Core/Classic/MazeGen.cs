@@ -4,8 +4,6 @@ namespace Reveche.MazeRunner.Classic;
 
 public class MazeGen(ClassicState classicState)
 {
-    private readonly CryptoRandom _cryptoRandom = new();
-
     public void InitializeMaze()
     {
         var mazeHeight = classicState.MazeHeight;
@@ -21,10 +19,10 @@ public class MazeGen(ClassicState classicState)
             var isBorder = x == 0 || x == mazeWidth - 1 || y == 0 || y == mazeHeight - 1;
             classicState.Maze[y, x] = isBorder ? MazeIcons.Border : MazeIcons.Wall;
         }
-        
+
         classicState.TreasureLocations.Clear();
         classicState.EnemyLocations.Clear();
-        
+
         GenerateMaze(1, 1); // Start generating maze from (1, 1)
         GenerateExit();
         GenerateEnemy();
@@ -50,12 +48,14 @@ public class MazeGen(ClassicState classicState)
 
     private void GenerateExit()
     {
+        var random = new CryptoRandom();
         var min = classicState.CurrentLevel * 4 / 2;
+        if (classicState.CurrentLevel > 15) min = 29;
 
         do
         {
-            classicState.ExitX = _cryptoRandom.Next(min, classicState.MazeWidth - 1);
-            classicState.ExitY = _cryptoRandom.Next(min, classicState.MazeHeight - 1);
+            classicState.ExitX = random.Next(min, classicState.MazeWidth - 1);
+            classicState.ExitY = random.Next(min, classicState.MazeHeight - 1);
         } while (
             (classicState.ExitX == classicState.PlayerX && classicState.ExitY == classicState.PlayerY)
             || classicState.Maze[classicState.ExitY, classicState.ExitX] == MazeIcons.Wall
@@ -66,6 +66,7 @@ public class MazeGen(ClassicState classicState)
 
     private void GenerateEnemy()
     {
+        var random = new CryptoRandom();
         var difficultyMultiplier = classicState.MazeDifficulty switch
         {
             MazeDifficulty.Easy => 1,
@@ -73,8 +74,9 @@ public class MazeGen(ClassicState classicState)
             MazeDifficulty.Hard => 2,
             _ => 3
         };
-        var maxEnemies = _cryptoRandom.Next(classicState.CurrentLevel + 1, classicState.CurrentLevel + 2 * difficultyMultiplier);
-        var maxHighLevelEnemies = _cryptoRandom.Next(0, 3 * difficultyMultiplier);
+        var maxEnemies = random.Next(classicState.CurrentLevel + 1,
+            classicState.CurrentLevel + 2 * difficultyMultiplier);
+        var maxHighLevelEnemies = random.Next(0, 3 * difficultyMultiplier);
 
         if (classicState.CurrentLevel == 1) return;
 
@@ -83,50 +85,49 @@ public class MazeGen(ClassicState classicState)
             CalculateEnemyPosition(out var enemyX, out var enemyY);
             classicState.EnemyLocations.Add((enemyY, enemyX));
         }
-        
+
         if (classicState.CurrentLevel <= 6) return;
-        
+
         for (var i = 0; i < maxHighLevelEnemies; i++)
         {
-            var higherClassEnemy = _cryptoRandom.Next(0, 100) switch
+            var higherClassEnemy = random.Next(0, 100) switch
             {
-                <= 30 => Enemy.None,
-                <= 80 => Enemy.Goblin,
-                <= 97 => Enemy.Ogre,
-                _ => Enemy.Dragon
+                <= 30 => HighClassEnemy.None,
+                <= 80 => HighClassEnemy.Goblin,
+                <= 97 => HighClassEnemy.Ogre,
+                _ => HighClassEnemy.Dragon
             };
-            
-            if (higherClassEnemy == Enemy.None) continue;
+
+            if (higherClassEnemy == HighClassEnemy.None) continue;
 
             CalculateEnemyPosition(out var enemyX, out var enemyY);
             classicState.HigherClassEnemy.Add((enemyY, enemyX, higherClassEnemy));
         }
+    }
+    
+    private void CalculateEnemyPosition(out int enemyX, out int enemyY)
+    {
+        var random = new CryptoRandom();
+        var minCoords = classicState.CurrentLevel * 4 / 2;
+        var minHigherLevelCoords = classicState.CurrentLevel / 2;
+        if (classicState.CurrentLevel > 4) minCoords = minHigherLevelCoords;
 
-        return;
-        
-        void CalculateEnemyPosition(out int enemyX, out int enemyY)
+        do
         {
-            var minCoords = classicState.CurrentLevel * 4 / 2;
-            var minHigherLevelCoords = classicState.CurrentLevel / 2;
-            if (classicState.CurrentLevel > 4) minCoords = minHigherLevelCoords;
-            
-            do
-            {
-                enemyX = _cryptoRandom.Next(minCoords, classicState.MazeWidth - 1);
-                enemyY = _cryptoRandom.Next(minCoords, classicState.MazeHeight - 1);
-            } while (IsInvalidEnemyPosition(enemyX, enemyY));
-        }
+            enemyX = random.Next(minCoords, classicState.MazeWidth - 1);
+            enemyY = random.Next(minCoords, classicState.MazeHeight - 1);
+        } while (IsInvalidEnemyPosition(enemyX, enemyY));
     }
 
     private void GenerateTreasure()
     {
+        var random = new CryptoRandom();
         if (classicState.CurrentLevel <= 2) return;
-        var treasureCount = _cryptoRandom.Next(1, classicState.CurrentLevel - 1);
+        var treasureCount = random.Next(1, classicState.CurrentLevel - 1);
 
         for (var i = 0; i < treasureCount; i++)
         {
             int treasureX = 0, treasureY = 0;
-            var random2 = new CryptoRandom();
             bool isTreasureAlreadyThere = false,
                 isTreasureOnPlayer = false,
                 isTreasureOnExit = false,
@@ -134,8 +135,8 @@ public class MazeGen(ClassicState classicState)
 
             do
             {
-                treasureX = _cryptoRandom.Next(2, classicState.MazeWidth - 2);
-                treasureY = _cryptoRandom.Next(2, classicState.MazeHeight - 2);
+                treasureX = random.Next(2, classicState.MazeWidth - 2);
+                treasureY = random.Next(2, classicState.MazeHeight - 2);
 
                 isTreasureAlreadyThere = classicState.TreasureLocations.Any(treasureLocation =>
                     treasureLocation.treasureX == treasureX && treasureLocation.treasureY == treasureY);
@@ -154,7 +155,8 @@ public class MazeGen(ClassicState classicState)
                 treasureType is TreasureType.Life
                     or TreasureType.IncreasedVisibilityEffect
                     or TreasureType.TemporaryInvulnerabilityEffect
-                    ? 1 : random2.Next(1, classicState.CurrentLevel)));
+                    ? 1
+                    : random.Next(1, classicState.CurrentLevel)));
         }
 
         foreach (var treasureLocation in classicState.TreasureLocations)
@@ -180,13 +182,14 @@ public class MazeGen(ClassicState classicState)
         var isHigherEnemyAlreadyThere = classicState.HigherClassEnemy.Any(enemyLocation =>
             enemyLocation.enemyX == x && enemyLocation.enemyY == y);
 
-        return x == classicState.ExitX || y == classicState.ExitY || isEnemyAlreadyThere || isHigherEnemyAlreadyThere || 
+        return x == classicState.ExitX || y == classicState.ExitY || isEnemyAlreadyThere || isHigherEnemyAlreadyThere ||
                !IsInBounds(x, y) || IsInsideWalls(x, y);
     }
 
-    private TreasureType GetRandomTreasureType()
+    private static TreasureType GetRandomTreasureType()
     {
-        var treasureTypeRandom = _cryptoRandom.Next(0, 100);
+        var random = new CryptoRandom();
+        var treasureTypeRandom = random.Next(0, 100);
 
         return treasureTypeRandom switch
         {
@@ -200,11 +203,12 @@ public class MazeGen(ClassicState classicState)
         };
     }
 
-    private void Shuffle(IList<int> array)
+    private static void Shuffle(IList<int> array)
     {
+        var random = new CryptoRandom();
         for (var i = array.Count - 1; i > 0; i--)
         {
-            var j = _cryptoRandom.Next(0, i + 1);
+            var j = random.Next(0, i + 1);
             (array[i], array[j]) = (array[j], array[i]);
         }
     }

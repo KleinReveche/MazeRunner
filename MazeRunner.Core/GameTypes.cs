@@ -43,7 +43,7 @@ public enum GameMode
     Endless
 }
 
-public enum Enemy
+public enum HighClassEnemy
 {
     Goblin,
     Ogre,

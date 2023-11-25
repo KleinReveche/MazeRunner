@@ -35,11 +35,11 @@ public class MusicPlayerCore : IDisposable
         _player.Stop();
     }
 
-    public void PlaySound(Stream sound)
+    public void PlaySound(Stream sound, string name)
     {
         try
         {
-            _player.Play(CreateTempAudioFile(sound)).Wait();
+            _player.Play(CreateTempAudioFile(sound, name)).Wait();
         }
         catch
         {
@@ -49,9 +49,14 @@ public class MusicPlayerCore : IDisposable
         }
     }
 
-    private static string CreateTempAudioFile(Stream sound)
+    private static string CreateTempAudioFile(Stream sound, string name)
     {
-        var tempFile = Path.GetTempFileName() + ".mp3";
+        if (!name.Contains(".mp3")) throw new ArgumentException("The sound must be an MP3 file.");
+        
+        var tempFile = Path.Join(Path.GetTempPath(), $"MazeRunner_{name}");
+
+        if (File.Exists(tempFile)) return tempFile;
+
         using var fileStream = File.OpenWrite(tempFile);
         sound.CopyTo(fileStream);
         return tempFile;

@@ -22,14 +22,14 @@ public class MusicPlayer(OptionsState optionsState)
                 .GetManifestResourceStream(
                     $"Reveche.MazeRunner.Resources.Music.{_mp3Resources[randomIndex].soundName}")!;
 
-            player.PlaySound(sound);
+            player.PlaySound(sound, _mp3Resources[randomIndex].soundName);
 
             var mp3ResourceLength = _mp3Resources[randomIndex].length;
 
             // This ensures that unnecessary checks are not done when the game is not playing.
             var millisecondsPassed = 0;
             while (!cancellationToken.IsCancellationRequested
-                   && optionsState is { IsSoundOn: true, IsCurrentlyPlaying: true }
+                   && optionsState is { IsSoundOn: true }
                    && millisecondsPassed < mp3ResourceLength)
             {
                 millisecondsPassed += 500;
