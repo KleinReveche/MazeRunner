@@ -49,7 +49,6 @@ public partial class ConsoleClassicGame
                 if (!continueGame) _classicEngine.InitializeNewLevel();
                 continueGame = false;
                 _levelIsCompleted = false;
-                _classicEngine.NewLevel();
             }
 
             _classicEngine.AdjustEffects();

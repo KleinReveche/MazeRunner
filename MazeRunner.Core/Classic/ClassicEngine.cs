@@ -37,6 +37,30 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
     {
         if (classicState.PlayerHasIncreasedVisibility)
             classicState.PlayerHasIncreasedVisibility = false;
+        
+        if (classicState.CurrentLevel > 4)
+        {
+            classicState.PlayerMaxHealth += 10 + classicState.CurrentLevel > 10 ? 20 : 10;
+        }
+        
+        var random = new CryptoRandom();
+        if (random.Next(0, 100) > 65)
+        {
+            classicState.PlayerHealth = classicState.PlayerMaxHealth;
+            
+            var itemIncrease = random.Next(0, 100) switch
+            {
+                <= 50 => 1,
+                <= 80 => 2,
+                <= 95 => 3,
+                _ => 4
+            };
+            classicState.BombCount += itemIncrease;
+            classicState.CandleCount += itemIncrease;
+        }
+        
+        classicState.PlayerBurnDuration = 0;
+        classicState.DecreasedVisibilityEffectDuration = 0;
         classicState.CandleLocations.Clear();
         classicState.BombLocations.Clear();
         classicState.MazeHeight = _mazeGen.GenerateRandomMazeSize();
@@ -117,7 +141,7 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
         classicState.Score += timeScore < 0 ? 0 : timeScore;
         classicState.Score += (int)(50 * (_difficultyModifier + _higherLevelModifier)); // For completing the level
     }
-    
+
     public void AdjustEffects()
     {
         if (classicState.DecreasedVisibilityEffectDuration > 0)
@@ -127,17 +151,5 @@ public partial class ClassicEngine(OptionsState optionsState, ClassicState class
         var random = new CryptoRandom();
         classicState.PlayerHealth -= random.Next(3, 11);
         classicState.PlayerBurnDuration--;
-    }
-
-    public void NewLevel()
-    {
-        if (classicState.CurrentLevel > 5)
-        {
-            var random = new CryptoRandom();
-            if (random.Next(1, 100) >= 80)
-                classicState.PlayerMaxHealth += 10 * (int)Math.Ceiling(classicState.CurrentLevel / 2.0);
-        }
-        classicState.PlayerBurnDuration = 0;
-        classicState.DecreasedVisibilityEffectDuration = 0;
     }
 }
