@@ -40,7 +40,7 @@ public partial class ClassicEngine
                 {
                     playerDamage += random.Next(51, 69);
                     classicState.DecreasedVisibilityEffectDuration =
-                        random.Next(1, (int)(3 * (_difficultyModifier + _higherLevelModifier)));
+                        random.Next(10, (int)(20 * (_difficultyModifier + _higherLevelModifier)));
                 }
             },
             {
@@ -48,7 +48,7 @@ public partial class ClassicEngine
                 {
                     playerDamage += random.Next(70, 93);
                     classicState.PlayerBurnDuration =
-                        random.Next(1, (int)(3 * (_difficultyModifier + _higherLevelModifier)));
+                        random.Next(4, (int)(7 * (_difficultyModifier + _higherLevelModifier)));
                 }
             }
         };
