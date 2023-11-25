@@ -17,7 +17,11 @@ public partial class GameRenderer(OptionsState optionsState, ClassicEngine class
             ("Candles", classicState.CandleCount)
         };
 
-        if (classicState.IsPlayerInvulnerable || classicState.PlayerHasIncreasedVisibility)
+        var hasDecreasedVisibilityEffect = classicState.DecreasedVisibilityEffectDuration > 0;
+        var isBurning = classicState.PlayerBurnDuration > 0;
+
+        if (classicState.IsPlayerInvulnerable || classicState.PlayerHasIncreasedVisibility ||
+            hasDecreasedVisibilityEffect || isBurning)
         {
             if (classicState.IsPlayerInvulnerable)
                 inventory.Add(("Invulnerability", classicState.PlayerInvincibilityEffectDuration));
@@ -25,7 +29,13 @@ public partial class GameRenderer(OptionsState optionsState, ClassicEngine class
             if (classicState.PlayerHasIncreasedVisibility)
                 inventory.Add(("Increased Visibility", 1));
 
-            inventoryWidth = 24;
+            if (hasDecreasedVisibilityEffect)
+                inventory.Add(("Decreased Visibility", classicState.DecreasedVisibilityEffectDuration));
+
+            if (isBurning)
+                inventory.Add(("Burn", classicState.PlayerBurnDuration));
+
+            inventoryWidth = 28;
             height++;
         }
 
