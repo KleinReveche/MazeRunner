@@ -22,7 +22,7 @@ public class MusicPlayer(OptionsState optionsState)
                 .GetManifestResourceStream(
                     $"Reveche.MazeRunner.Resources.Music.{_mp3Resources[randomIndex].soundName}")!;
 
-            player.PlaySound(sound);
+            player.PlaySound(sound, _mp3Resources[randomIndex].soundName);
 
             var mp3ResourceLength = _mp3Resources[randomIndex].length;
 
