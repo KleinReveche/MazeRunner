@@ -22,11 +22,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout Repo
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 0
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.100-rc.2.23502.2
+        dotnet-version: 8.0.x
         
     - name: Restore dependencies
       run: dotnet restore
@@ -40,8 +44,8 @@ jobs:
     - name: Publish
       shell: bash
       run: |
-        tag=$(git rev-parse --short HEAD)
-        release_name="MazeRunner-$tag-${{ matrix.target }}"
+        tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+        release_name="MazeRunner.Console-$tag-${{ matrix.target }}"
         
         if [ "${{ matrix.target }}" == "win-x64" ]; then
           csproj="${{ github.workspace }}\MazeRunner.Console\MazeRunner.Console.csproj"
@@ -50,7 +54,7 @@ jobs:
         fi
         
         # Build everything
-        dotnet publish "$csproj" --runtime "${{ matrix.target }}" -c Release --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:DebugType=None -p:DebugSymbols=false -o "$release_name"
+        dotnet publish "$csproj" --runtime "${{ matrix.target }}" -c Release --self-contained true -p:PublishTrimmed=true -p:DebugType=None -p:DebugSymbols=false -o "$release_name"
         
         # Move and rename the executable to a release folder
         mkdir release
@@ -64,10 +68,12 @@ jobs:
           mv "./$release_name/MazeRunner.Console" "./release/$release_name"
         fi
 
-    - name: Release
-      uses: softprops/action-gh-release@v1
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
       with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: release/MazeRunner*
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
         draft: true
-        files: "release/*"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
