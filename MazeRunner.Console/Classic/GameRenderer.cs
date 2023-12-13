@@ -20,7 +20,7 @@ public partial class GameRenderer(OptionsState optionsState, ClassicEngine class
         var hasDecreasedVisibilityEffect = classicState.DecreasedVisibilityEffectDuration > 0;
         var isBurning = classicState.PlayerBurnDuration > 0;
 
-        if (classicState.IsPlayerInvulnerable || classicState.PlayerHasIncreasedVisibility ||
+        if (classicState.IsPlayerInvulnerable || classicState.PlayerHasIncreasedVisibility || 
             hasDecreasedVisibilityEffect || isBurning)
         {
             if (classicState.IsPlayerInvulnerable)
@@ -42,16 +42,15 @@ public partial class GameRenderer(OptionsState optionsState, ClassicEngine class
         inventoryBuffer.Clear();
         var inventoryHeight = height - 2;
 
-        const char verticalSide = '│';
-        const char horizontalSide = '─';
+        const char verticalSide = '║';
+        const char horizontalSide = '═';
         var middle = inventoryWidth / 2;
         var currentScore = $"Score: {classicState.Score}";
         var playerLife = $"{classicState.PlayerLife} {(classicState.PlayerLife == 1 ? "Life" : "Lives")} Left";
         var playerHealth = $"Health: {(classicState.PlayerHealth > 0 ? classicState.PlayerHealth : 0)}";
 
         AppendCorner(true);
-        inventoryBuffer.AppendLine("│".PadRight(middle - 6) +
-                                   "Player Stats".PadRight(middle + 6) + "│");
+        inventoryBuffer.AppendLine("║".PadRight(middle - 6) + "Player Stats".PadRight(middle + 6) + "║");
         AppendHorizontalLine();
         AppendEmptyLine();
 
@@ -93,23 +92,23 @@ public partial class GameRenderer(OptionsState optionsState, ClassicEngine class
             AppendLine($"{item.Item1} {item2}");
         }
 
-        for (var i = inventory.Count; i < inventoryHeight - 4; i++)
-            AppendEmptyLine();
+        for (var i = inventory.Count; i < inventoryHeight - 4; i++) AppendEmptyLine();
+        
         AppendCorner(false);
 
         return inventoryBuffer;
 
-        void AppendEmptyLine() =>
+        void AppendEmptyLine() => 
             inventoryBuffer.AppendLine($"{verticalSide}".PadRight(inventoryWidth, ' ') + verticalSide);
 
-        void AppendLine(string text) =>
+        void AppendLine(string text) => 
             inventoryBuffer.AppendLine($"{verticalSide} {text}".PadRight(inventoryWidth) + verticalSide);
 
         void AppendCorner(bool isTop) =>
-            inventoryBuffer.AppendLine((isTop ? "┌" : "└").PadRight(inventoryWidth, horizontalSide) + (isTop ? "┐" : "┘"));
+            inventoryBuffer.AppendLine((isTop ? "╔" : "╚").PadRight(inventoryWidth, horizontalSide) + (isTop ? "╗" : "╝"));
 
         void AppendHorizontalLine() =>
-            inventoryBuffer.AppendLine("├".PadRight(inventoryWidth, horizontalSide) + "┤");
+            inventoryBuffer.AppendLine("╠".PadRight(inventoryWidth, horizontalSide) + "╣");
     }
 
     public StringBuilder DrawCombinedBuffer()
@@ -126,15 +125,12 @@ public partial class GameRenderer(OptionsState optionsState, ClassicEngine class
 
         for (var i = 0; i < len; i++)
         {
-            if (i < mazeBufferLines.Length - 1)
-                combinedBuffer.Append((string?)mazeBufferLines[i]);
-            else
-                combinedBuffer.Append(' ', classicState.MazeWidth * (optionsState.IsUtf8 ? 2 : 1));
+            if (i < mazeBufferLines.Length - 1) combinedBuffer.Append((string?)mazeBufferLines[i]);
+            else combinedBuffer.Append(' ', classicState.MazeWidth * (optionsState.IsUtf8 ? 2 : 1));
 
             combinedBuffer.Append(' ', 2);
 
-            if (i < inventoryBufferLines.Length)
-                combinedBuffer.Append(inventoryBufferLines[i]);
+            if (i < inventoryBufferLines.Length) combinedBuffer.Append(inventoryBufferLines[i]);
 
             combinedBuffer.AppendLine();
         }
